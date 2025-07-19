@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { NetworkData } from '../types/network'
 import './NetworkGraph.css'
@@ -273,30 +273,38 @@ function NetworkGraphV3({
   collisionRadius,
   centerStrength,
 }: NetworkGraphProps) {
-  const svgRef = useRef<SVGSVGElement>(null)
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
-  
-  // Create visualization instance using useMemo to ensure stability
-  const visualization = useMemo(() => new D3NetworkVisualization(), [])
+  const visualizationRef = useRef<D3NetworkVisualization | null>(null)
+  const isInitializedRef = useRef(false)
 
-  // Initialize on mount (synchronously during render)
-  if (svgRef.current && !visualization['simulation']) {
-    visualization.initialize(
-      svgRef.current,
-      data,
-      width,
-      height,
-      { linkDistance, chargeStrength, collisionRadius, centerStrength },
-      { onHover: setHoveredNode }
-    )
+  // Use callback ref to initialize when DOM is ready
+  const svgRefCallback = (node: SVGSVGElement | null) => {
+    if (node && !isInitializedRef.current) {
+      isInitializedRef.current = true
+      
+      if (!visualizationRef.current) {
+        visualizationRef.current = new D3NetworkVisualization()
+      }
+      
+      visualizationRef.current.initialize(
+        node,
+        data,
+        width,
+        height,
+        { linkDistance, chargeStrength, collisionRadius, centerStrength },
+        { onHover: setHoveredNode }
+      )
+    }
   }
 
   // Update parameters when they change
-  visualization.updateParams({ linkDistance, chargeStrength, collisionRadius, centerStrength })
+  if (visualizationRef.current && isInitializedRef.current) {
+    visualizationRef.current.updateParams({ linkDistance, chargeStrength, collisionRadius, centerStrength })
+  }
 
   return (
     <div className="network-graph-container">
-      <svg ref={svgRef} className="network-graph">
+      <svg ref={svgRefCallback} className="network-graph">
         <rect width={width} height={height} fill="#fafafa" />
       </svg>
       {hoveredNode && (
