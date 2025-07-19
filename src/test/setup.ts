@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { afterEach } from 'vitest'
 import { resetNetworkDataCache } from '../data/networkDataProvider'
-import { resetNetworkDataResource } from '../components/StartupUniverseV4'
+import { resetNetworkDataResource } from '../components/StartupUniverse'
 
 // Mock ResizeObserver
 (globalThis as any).ResizeObserver = class ResizeObserver {

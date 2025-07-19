@@ -1,21 +1,21 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import StartupUniverseV4 from './StartupUniverseV4'
+import StartupUniverse from './StartupUniverse'
 
-describe('StartupUniverseV4', () => {
+describe('StartupUniverse', () => {
   it('renders title and subtitle', () => {
-    render(<StartupUniverseV4 />)
+    render(<StartupUniverse />)
     expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
     expect(screen.getByText('A Visual Guide to Startups, Founders & Venture Capitalists')).toBeInTheDocument()
   })
 
   it('shows loading state initially', () => {
-    render(<StartupUniverseV4 />)
+    render(<StartupUniverse />)
     expect(screen.getByText('Loading visualization data...')).toBeInTheDocument()
   })
 
   it('renders info panel', () => {
-    render(<StartupUniverseV4 />)
+    render(<StartupUniverse />)
     expect(screen.getByText(/Hover over nodes to see connections/)).toBeInTheDocument()
   })
 })

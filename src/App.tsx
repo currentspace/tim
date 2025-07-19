@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import StartupUniverseV4 from './components/StartupUniverseV4'
+import StartupUniverse from './components/StartupUniverse'
 
 function App() {
   const [showStartupUniverse, setShowStartupUniverse] = useState(true)
@@ -23,7 +23,7 @@ function App() {
         </button>
       </div>
       {showStartupUniverse ? (
-        <StartupUniverseV4 />
+        <StartupUniverse />
       ) : (
         <div className="coming-soon">
           <p>More visualizations coming soon!</p>

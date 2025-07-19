@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { NetworkData } from '../types/network'
 import './NetworkGraph.css'
@@ -13,51 +13,60 @@ interface NetworkGraphProps {
   centerStrength: number
 }
 
-function NetworkGraph({
-  data,
-  width = 1200,
-  height = 800,
-  linkDistance,
-  chargeStrength,
-  collisionRadius,
-  centerStrength,
-}: NetworkGraphProps) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null)
+// Initialize D3 visualization outside of component lifecycle
+class D3NetworkVisualization {
+  private simulation: d3.Simulation<any, any> | null = null
+  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null
+  private g: d3.Selection<SVGGElement, unknown, null, undefined> | null = null
+  private nodes: any[] = []
+  private links: any[] = []
+  private nodeElements: d3.Selection<any, any, any, any> | null = null
+  private linkElements: d3.Selection<any, any, any, any> | null = null
 
-  useEffect(() => {
-    if (!svgRef.current) return
+  initialize(
+    svgElement: SVGSVGElement,
+    data: NetworkData,
+    width: number,
+    height: number,
+    params: {
+      linkDistance: number
+      chargeStrength: number
+      collisionRadius: number
+      centerStrength: number
+    },
+    callbacks: {
+      onHover: (nodeId: string | null) => void
+    }
+  ) {
+    if (this.simulation) return // Already initialized
 
-    // Clear previous content
-    d3.select(svgRef.current).selectAll('*').remove()
-
-    const svg = d3.select(svgRef.current)
+    this.svg = d3.select(svgElement)
       .attr('width', width)
       .attr('height', height)
 
     // Create main group for zoom/pan
-    const g = svg.append('g')
+    this.g = this.svg.append('g')
 
     // Add zoom behavior
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.5, 3])
       .on('zoom', (event) => {
-        g.attr('transform', event.transform)
+        this.g?.attr('transform', event.transform)
       })
 
-    svg.call(zoom)
+    this.svg.call(zoom)
 
-    // Create a copy of nodes and links to avoid mutating original data
-    const nodes = data.nodes.map(d => ({ ...d }))
-    const links = data.links.map(d => ({ ...d }))
+    // Create a copy of nodes and links
+    this.nodes = data.nodes.map(d => ({ ...d }))
+    this.links = data.links.map(d => ({ ...d }))
 
     // Define positions for different node types
     const vcX = width * 0.15
     const startupX = width * 0.5
     const founderX = width * 0.85
 
-    // Initialize node positions based on type
-    nodes.forEach((node: any) => {
+    // Initialize node positions
+    this.nodes.forEach((node: any) => {
       if (node.type === 'vc') {
         node.x = vcX + (Math.random() - 0.5) * 100
         node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
@@ -71,12 +80,12 @@ function NetworkGraph({
     })
 
     // Create force simulation
-    const simulation = d3.forceSimulation(nodes as any)
-      .force('link', d3.forceLink(links as any)
+    this.simulation = d3.forceSimulation(this.nodes)
+      .force('link', d3.forceLink(this.links)
         .id((d: any) => d.id)
-        .distance(linkDistance)
+        .distance(params.linkDistance)
         .strength(0.5))
-      .force('charge', d3.forceManyBody().strength(chargeStrength))
+      .force('charge', d3.forceManyBody().strength(params.chargeStrength))
       .force('x', d3.forceX()
         .x((d: any) => {
           if (d.type === 'vc') return vcX
@@ -86,14 +95,12 @@ function NetworkGraph({
         })
         .strength(0.2))
       .force('y', d3.forceY(height / 2).strength(0.05))
-      .force('collision', d3.forceCollide().radius(collisionRadius))
-      .force('center', d3.forceCenter(width / 2, height / 2).strength(centerStrength))
+      .force('collision', d3.forceCollide().radius(params.collisionRadius))
+      .force('center', d3.forceCenter(width / 2, height / 2).strength(params.centerStrength))
 
-    // Create gradient definitions for links
-    const defs = svg.append('defs')
-
-    // Add gradients for each link
-    links.forEach((link: any, i) => {
+    // Create gradients
+    const defs = this.svg.append('defs')
+    this.links.forEach((link: any, i) => {
       const gradient = defs.append('linearGradient')
         .attr('id', `gradient-${i}`)
         .attr('gradientUnits', 'userSpaceOnUse')
@@ -110,10 +117,10 @@ function NetworkGraph({
     })
 
     // Create links
-    const link = g.append('g')
+    this.linkElements = this.g.append('g')
       .attr('class', 'links')
       .selectAll('path')
-      .data(links)
+      .data(this.links)
       .enter().append('path')
       .attr('class', 'link')
       .attr('stroke', (_, i) => `url(#gradient-${i})`)
@@ -122,19 +129,19 @@ function NetworkGraph({
       .attr('opacity', 0.4)
 
     // Create nodes
-    const node = g.append('g')
+    this.nodeElements = this.g.append('g')
       .attr('class', 'nodes')
       .selectAll('g')
-      .data(nodes)
+      .data(this.nodes)
       .enter().append('g')
       .attr('class', 'node')
       .call(d3.drag<any, any>()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended))
+        .on('start', this.dragstarted.bind(this))
+        .on('drag', this.dragged.bind(this))
+        .on('end', this.dragended.bind(this)))
 
-    // Add circles for nodes
-    node.append('circle')
+    // Add circles
+    this.nodeElements.append('circle')
       .attr('r', (d: any) => {
         if (d.type === 'vc') return 8 + Math.sqrt(d.investments)
         if (d.type === 'startup') return 10 + Math.sqrt(d.fundingAmount / 10000000)
@@ -149,28 +156,16 @@ function NetworkGraph({
       })
       .attr('opacity', 0.8)
       .on('mouseover', (_, d: any) => {
-        setHoveredNode(d.id)
-        // Highlight connected nodes
-        link.attr('opacity', (l: any) => 
-          l.source.id === d.id || l.target.id === d.id ? 0.8 : 0.1
-        )
-        node.attr('opacity', (n: any) => {
-          const isConnected = links.some((l: any) => 
-            (l.source.id === d.id && l.target.id === n.id) ||
-            (l.target.id === d.id && l.source.id === n.id) ||
-            n.id === d.id
-          )
-          return isConnected ? 1 : 0.3
-        })
+        callbacks.onHover(d.id)
+        this.highlightConnections(d.id)
       })
       .on('mouseout', () => {
-        setHoveredNode(null)
-        link.attr('opacity', 0.4)
-        node.attr('opacity', 1)
+        callbacks.onHover(null)
+        this.resetHighlight()
       })
 
-    // Add labels for nodes
-    node.append('text')
+    // Add labels
+    this.nodeElements.append('text')
       .text((d: any) => d.name)
       .attr('x', (d: any) => {
         if (d.type === 'vc') return -15
@@ -188,17 +183,15 @@ function NetworkGraph({
       .attr('pointer-events', 'none')
 
     // Update positions on tick
-    simulation.on('tick', () => {
-      // Update link positions with curves
-      link.attr('d', (d: any) => {
+    this.simulation.on('tick', () => {
+      this.linkElements?.attr('d', (d: any) => {
         const dx = d.target.x - d.source.x
         const dy = d.target.y - d.source.y
         const dr = Math.sqrt(dx * dx + dy * dy) * 2
         return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`
       })
 
-      // Update link gradients
-      links.forEach((link: any, i) => {
+      this.links.forEach((link: any, i) => {
         d3.select(`#gradient-${i}`)
           .attr('x1', link.source.x)
           .attr('y1', link.source.y)
@@ -206,37 +199,112 @@ function NetworkGraph({
           .attr('y2', link.target.y)
       })
 
-      // Update node positions
-      node.attr('transform', (d: any) => `translate(${d.x},${d.y})`)
+      this.nodeElements?.attr('transform', (d: any) => `translate(${d.x},${d.y})`)
     })
+  }
 
-    // Drag functions
-    function dragstarted(event: any, d: any) {
-      if (!event.active) simulation.alphaTarget(0.3).restart()
-      d.fx = d.x
-      d.fy = d.y
-    }
+  updateParams(params: {
+    linkDistance: number
+    chargeStrength: number
+    collisionRadius: number
+    centerStrength: number
+  }) {
+    if (!this.simulation) return
 
-    function dragged(event: any, d: any) {
-      d.fx = event.x
-      d.fy = event.y
-    }
+    this.simulation
+      .force('link', d3.forceLink(this.links)
+        .id((d: any) => d.id)
+        .distance(params.linkDistance)
+        .strength(0.5))
+      .force('charge', d3.forceManyBody().strength(params.chargeStrength))
+      .force('collision', d3.forceCollide().radius(params.collisionRadius))
+      .alpha(0.3)
+      .restart()
+  }
 
-    function dragended(event: any, d: any) {
-      if (!event.active) simulation.alphaTarget(0)
-      d.fx = null
-      d.fy = null
-    }
+  private highlightConnections(nodeId: string) {
+    this.linkElements?.attr('opacity', (l: any) => 
+      l.source.id === nodeId || l.target.id === nodeId ? 0.8 : 0.1
+    )
+    this.nodeElements?.attr('opacity', (n: any) => {
+      const isConnected = this.links.some((l: any) => 
+        (l.source.id === nodeId && l.target.id === n.id) ||
+        (l.target.id === nodeId && l.source.id === n.id) ||
+        n.id === nodeId
+      )
+      return isConnected ? 1 : 0.3
+    })
+  }
 
-    // Cleanup
-    return () => {
-      simulation.stop()
+  private resetHighlight() {
+    this.linkElements?.attr('opacity', 0.4)
+    this.nodeElements?.attr('opacity', 1)
+  }
+
+  private dragstarted(event: any, d: any) {
+    if (!event.active) this.simulation?.alphaTarget(0.3).restart()
+    d.fx = d.x
+    d.fy = d.y
+  }
+
+  private dragged(event: any, d: any) {
+    d.fx = event.x
+    d.fy = event.y
+  }
+
+  private dragended(event: any, d: any) {
+    if (!event.active) this.simulation?.alphaTarget(0)
+    d.fx = null
+    d.fy = null
+  }
+
+  destroy() {
+    this.simulation?.stop()
+    this.svg?.selectAll('*').remove()
+  }
+}
+
+function NetworkGraph({
+  data,
+  width = 1200,
+  height = 800,
+  linkDistance,
+  chargeStrength,
+  collisionRadius,
+  centerStrength,
+}: NetworkGraphProps) {
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null)
+  const visualizationRef = useRef<D3NetworkVisualization | null>(null)
+  const isInitializedRef = useRef(false)
+
+  // Use callback ref to initialize when DOM is ready
+  const svgRefCallback = (node: SVGSVGElement | null) => {
+    if (node && !isInitializedRef.current) {
+      isInitializedRef.current = true
+      
+      if (!visualizationRef.current) {
+        visualizationRef.current = new D3NetworkVisualization()
+      }
+      
+      visualizationRef.current.initialize(
+        node,
+        data,
+        width,
+        height,
+        { linkDistance, chargeStrength, collisionRadius, centerStrength },
+        { onHover: setHoveredNode }
+      )
     }
-  }, [data, width, height, linkDistance, chargeStrength, collisionRadius, centerStrength])
+  }
+
+  // Update parameters when they change
+  if (visualizationRef.current && isInitializedRef.current) {
+    visualizationRef.current.updateParams({ linkDistance, chargeStrength, collisionRadius, centerStrength })
+  }
 
   return (
     <div className="network-graph-container">
-      <svg ref={svgRef} className="network-graph">
+      <svg ref={svgRefCallback} className="network-graph">
         <rect width={width} height={height} fill="#fafafa" />
       </svg>
       {hoveredNode && (
