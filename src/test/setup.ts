@@ -5,8 +5,9 @@ import { resetNetworkDataResource } from '../utils/testUtils'
 
 // Mock ResizeObserver
 globalThis.ResizeObserver = class ResizeObserver {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(_callback: ResizeObserverCallback) {
-    // Mock implementation - callback stored but not used in tests
+    // Callback parameter is required by ResizeObserver interface but not used in mock
   }
 
   observe(_target: Element) {

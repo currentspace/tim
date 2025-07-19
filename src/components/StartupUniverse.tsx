@@ -1,68 +1,14 @@
-import { useState, Suspense, startTransition } from 'react'
+import { use, useState, Suspense, startTransition } from 'react'
 import NetworkGraph from './NetworkGraph'
 import LoadingSpinner from './LoadingSpinner'
 import ErrorBoundary from './ErrorBoundary'
-import { NetworkData } from '../types/network'
-import { setResetFunction } from '../utils/testUtils'
+import getNetworkData from '../data/networkDataProvider'
 import './StartupUniverse.css'
 
-// Create a resource for Suspense
-interface Resource<T> {
-  read(): T
-}
-
-function createResource<T>(promise: Promise<T>): Resource<T> {
-  let status: 'pending' | 'success' | 'error' = 'pending'
-  let result: T
-  let error: unknown
-
-  const suspender = promise.then(
-    (data) => {
-      status = 'success'
-      result = data
-    },
-    (err: unknown) => {
-      status = 'error'
-      error = err
-    },
-  )
-
-  return {
-    read() {
-      if (status === 'pending') {
-        // eslint-disable-next-line @typescript-eslint/only-throw-error
-        throw suspender
-      } else if (status === 'error') {
-        throw new Error(String(error))
-      }
-      return result
-    },
-  }
-}
-
-// Cache for the resource
-let networkDataResource: Resource<NetworkData> | null = null
-
-// Set the reset function for testing
-setResetFunction(() => {
-  networkDataResource = null
-})
-
-function getNetworkDataResource(): Resource<NetworkData> {
-  if (!networkDataResource) {
-    // Import the data provider
-    const dataPromise = import('../data/networkDataProvider').then((module) =>
-      module.fetchNetworkData(),
-    )
-    networkDataResource = createResource(dataPromise)
-  }
-  return networkDataResource
-}
-
-// Separate component that uses the data
+// NetworkVisualization component that uses React 19's use hook
 function NetworkVisualization() {
-  const resource = getNetworkDataResource()
-  const data = resource.read() // This will suspend if data is not ready
+  // React 19's use hook automatically handles Suspense
+  const data = use(getNetworkData())
 
   const [linkDistance, setLinkDistance] = useState(150)
   const [chargeStrength, setChargeStrength] = useState(-300)
