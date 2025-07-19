@@ -1,16 +1,13 @@
-# Wrangler configuration for Cloudflare Pages
+# Cloudflare Pages Configuration
+# Requires Wrangler v3.45.0+ and V2 build system
 # This file is optional but enables advanced features
 
+# Required fields for Pages
 name = "tim"
+pages_build_output_dir = "dist"
+
+# Compatibility settings
 compatibility_date = "2025-07-19"
-
-# Build configuration
-[build]
-command = "pnpm run build"
-
-# Specify build output directory
-[site]
-bucket = "./dist"
 
 # Environment variables for build time
 [env.production.vars]

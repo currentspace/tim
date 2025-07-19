@@ -1,0 +1,17 @@
+# Redirects configuration for Cloudflare Pages
+# Place this file in your public/ directory
+# Max 2000 static + 100 dynamic redirects
+
+# Force HTTPS (if using custom domain)
+# http://tim.current.space/* https://tim.current.space/:splat 301
+
+# Remove www (if applicable)
+# https://www.tim.current.space/* https://tim.current.space/:splat 301
+
+# Old URL redirects (examples)
+# /old-page /new-page 301
+# /blog/* /news/:splat 301
+
+# SPA fallback - serve index.html for all routes (for client-side routing)
+# This should be last as it's a catch-all
+/* /index.html 200
