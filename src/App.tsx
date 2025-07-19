@@ -9,15 +9,19 @@ function App() {
     <>
       <h1>Charles - Data Visualization App</h1>
       <div className="nav-buttons">
-        <button 
+        <button
           className={showStartupUniverse ? 'active' : ''}
-          onClick={() => setShowStartupUniverse(true)}
+          onClick={() => {
+            setShowStartupUniverse(true)
+          }}
         >
           Startup Universe
         </button>
-        <button 
+        <button
           className={!showStartupUniverse ? 'active' : ''}
-          onClick={() => setShowStartupUniverse(false)}
+          onClick={() => {
+            setShowStartupUniverse(false)
+          }}
         >
           Sample Charts
         </button>

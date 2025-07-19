@@ -5,14 +5,12 @@ import { networkData } from './networkData'
 let dataPromise: Promise<NetworkData> | null = null
 
 export function fetchNetworkData(): Promise<NetworkData> {
-  if (!dataPromise) {
-    dataPromise = new Promise((resolve) => {
-      // Simulate network delay
-      setTimeout(() => {
-        resolve(networkData)
-      }, 500)
-    })
-  }
+  dataPromise ??= new Promise((resolve) => {
+    // Simulate network delay
+    setTimeout(() => {
+      resolve(networkData)
+    }, 500)
+  })
   return dataPromise
 }
 

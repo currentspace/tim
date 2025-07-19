@@ -3,6 +3,7 @@
 ## Project Setup Summary
 
 This is a React 19.1 web application using modern patterns without useEffect:
+
 - **pnpm** as package manager
 - **Vite** for fast development and optimized builds
 - **TypeScript** with strict configuration
@@ -78,7 +79,7 @@ function createResource<T>(promise: Promise<T>): Resource<T> {
 function DataComponent() {
   const resource = getDataResource()
   const data = resource.read() // This will suspend
-  
+
   return <div>{data.content}</div>
 }
 
@@ -107,7 +108,7 @@ function ComponentWithD3() {
   const svgRefCallback = (node: SVGSVGElement | null) => {
     if (node && !isInitialized) {
       setIsInitialized(true)
-      
+
       // Initialize D3 or other DOM manipulation here
       visualizationRef.current = new Visualization()
       visualizationRef.current.initialize(node)
@@ -169,12 +170,10 @@ let dataPromise: Promise<MyData> | null = null
 export function fetchMyData(): Promise<MyData> {
   if (!dataPromise) {
     dataPromise = fetch('/api/data')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         // Simulate delay if needed
-        return new Promise(resolve => 
-          setTimeout(() => resolve(data), 500)
-        )
+        return new Promise((resolve) => setTimeout(() => resolve(data), 500))
       })
   }
   return dataPromise
@@ -209,7 +208,7 @@ function getMyDataResource(): Resource<MyData> {
 function MyDataVisualization() {
   const resource = getMyDataResource()
   const data = resource.read() // Suspends here
-  
+
   return <div>{/* Render your data */}</div>
 }
 
@@ -246,7 +245,7 @@ describe('MyComponent', () => {
 
   it('renders data after loading', async () => {
     render(<MyComponent />)
-    
+
     await waitFor(() => {
       expect(screen.getByText('Expected Content')).toBeInTheDocument()
     }, { timeout: 2000 })

@@ -13,7 +13,7 @@ describe('SampleChart', () => {
     expect(container.querySelector('.chart-container')).toBeInTheDocument()
   })
 
-  it('renders recharts components', async () => {
+  it('renders recharts components', () => {
     const { container } = render(<SampleChart />)
     // Recharts components might render asynchronously
     // Just check that the container exists, as Recharts might not render in test environment

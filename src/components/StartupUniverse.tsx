@@ -3,6 +3,7 @@ import NetworkGraph from './NetworkGraph'
 import LoadingSpinner from './LoadingSpinner'
 import ErrorBoundary from './ErrorBoundary'
 import { NetworkData } from '../types/network'
+import { setResetFunction } from '../utils/testUtils'
 import './StartupUniverse.css'
 
 // Create a resource for Suspense
@@ -13,41 +14,45 @@ interface Resource<T> {
 function createResource<T>(promise: Promise<T>): Resource<T> {
   let status: 'pending' | 'success' | 'error' = 'pending'
   let result: T
-  let error: any
+  let error: unknown
 
   const suspender = promise.then(
     (data) => {
       status = 'success'
       result = data
     },
-    (err) => {
+    (err: unknown) => {
       status = 'error'
       error = err
-    }
+    },
   )
 
   return {
     read() {
       if (status === 'pending') {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw suspender
       } else if (status === 'error') {
-        throw error
-      } else if (status === 'success') {
-        return result
+        throw new Error(String(error))
       }
-      throw new Error('This should never happen')
-    }
+      return result
+    },
   }
 }
 
 // Cache for the resource
 let networkDataResource: Resource<NetworkData> | null = null
 
+// Set the reset function for testing
+setResetFunction(() => {
+  networkDataResource = null
+})
+
 function getNetworkDataResource(): Resource<NetworkData> {
   if (!networkDataResource) {
     // Import the data provider
-    const dataPromise = import('../data/networkDataProvider').then(
-      module => module.fetchNetworkData()
+    const dataPromise = import('../data/networkDataProvider').then((module) =>
+      module.fetchNetworkData(),
     )
     networkDataResource = createResource(dataPromise)
   }
@@ -58,18 +63,19 @@ function getNetworkDataResource(): Resource<NetworkData> {
 function NetworkVisualization() {
   const resource = getNetworkDataResource()
   const data = resource.read() // This will suspend if data is not ready
-  
+
   const [linkDistance, setLinkDistance] = useState(150)
   const [chargeStrength, setChargeStrength] = useState(-300)
   const [collisionRadius, setCollisionRadius] = useState(30)
   const [centerStrength, setCenterStrength] = useState(0.05)
 
   // Use startTransition to avoid replacing visible content with loading state
-  const updateParam = (setter: (value: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    startTransition(() => {
-      setter(Number(e.target.value))
-    })
-  }
+  const updateParam =
+    (setter: (value: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      startTransition(() => {
+        setter(Number(e.target.value))
+      })
+    }
 
   return (
     <>
@@ -86,7 +92,7 @@ function NetworkVisualization() {
             />
           </label>
         </div>
-        
+
         <div className="control-group">
           <label>
             Force Strength: {chargeStrength}
@@ -99,7 +105,7 @@ function NetworkVisualization() {
             />
           </label>
         </div>
-        
+
         <div className="control-group">
           <label>
             Collision Radius: {collisionRadius}
@@ -112,7 +118,7 @@ function NetworkVisualization() {
             />
           </label>
         </div>
-        
+
         <div className="control-group">
           <label>
             Center Gravity: {centerStrength.toFixed(2)}
@@ -159,7 +165,7 @@ function StartupUniverse() {
     <div className="startup-universe">
       <h2>The Startup Universe</h2>
       <p className="subtitle">A Visual Guide to Startups, Founders & Venture Capitalists</p>
-      
+
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
           <NetworkVisualization />
@@ -167,16 +173,17 @@ function StartupUniverse() {
       </ErrorBoundary>
 
       <div className="info-panel">
-        <p>Hover over nodes to see connections. Drag nodes to reposition them. Zoom and pan to explore.</p>
-        <p>Node size represents: VCs (number of investments), Startups (funding amount), Founders (companies founded)</p>
+        <p>
+          Hover over nodes to see connections. Drag nodes to reposition them. Zoom and pan to
+          explore.
+        </p>
+        <p>
+          Node size represents: VCs (number of investments), Startups (funding amount), Founders
+          (companies founded)
+        </p>
       </div>
     </div>
   )
 }
 
 export default StartupUniverse
-
-// Reset function for testing
-export function resetNetworkDataResource() {
-  networkDataResource = null
-}

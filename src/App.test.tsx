@@ -18,21 +18,21 @@ describe('App', () => {
   it('switches between views on button click', async () => {
     const user = userEvent.setup()
     render(<App />)
-    
+
     // Initially shows Startup Universe (wait for it to load)
     expect(await screen.findByText('The Startup Universe')).toBeInTheDocument()
-    
+
     // Click Sample Charts
     const sampleChartsButton = screen.getByRole('button', { name: /Sample Charts/i })
     await user.click(sampleChartsButton)
-    
+
     // Should show coming soon message
     expect(screen.getByText('More visualizations coming soon!')).toBeInTheDocument()
-    
+
     // Click back to Startup Universe
     const startupUniverseButton = screen.getByRole('button', { name: /Startup Universe/i })
     await user.click(startupUniverseButton)
-    
+
     // Should show Startup Universe again
     expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
   })

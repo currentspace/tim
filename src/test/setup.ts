@@ -1,13 +1,25 @@
 import '@testing-library/jest-dom'
 import { afterEach } from 'vitest'
 import { resetNetworkDataCache } from '../data/networkDataProvider'
-import { resetNetworkDataResource } from '../components/StartupUniverse'
+import { resetNetworkDataResource } from '../utils/testUtils'
 
 // Mock ResizeObserver
-(globalThis as any).ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+globalThis.ResizeObserver = class ResizeObserver {
+  constructor(_callback: ResizeObserverCallback) {
+    // Mock implementation - callback stored but not used in tests
+  }
+
+  observe(_target: Element) {
+    // Mock implementation
+  }
+
+  unobserve(_target: Element) {
+    // Mock implementation
+  }
+
+  disconnect() {
+    // Mock implementation
+  }
 }
 
 // Reset data cache between tests

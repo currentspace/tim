@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { NetworkData } from '../types/network'
+import { SimulationNode, SimulationLink } from '../types/d3-network'
 import './NetworkGraph.css'
 
 interface NetworkGraphProps {
@@ -13,15 +14,22 @@ interface NetworkGraphProps {
   centerStrength: number
 }
 
+// Type guard to check if source/target is a node
+function isNode(value: SimulationNode | string): value is SimulationNode {
+  return typeof value === 'object'
+}
+
 // Initialize D3 visualization outside of component lifecycle
 class D3NetworkVisualization {
-  private simulation: d3.Simulation<any, any> | null = null
+  private simulation: d3.Simulation<SimulationNode, SimulationLink> | null = null
   private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null
   private g: d3.Selection<SVGGElement, unknown, null, undefined> | null = null
-  private nodes: any[] = []
-  private links: any[] = []
-  private nodeElements: d3.Selection<any, any, any, any> | null = null
-  private linkElements: d3.Selection<any, any, any, any> | null = null
+  private nodes: SimulationNode[] = []
+  private links: SimulationLink[] = []
+  private nodeElements: d3.Selection<SVGGElement, SimulationNode, SVGGElement, unknown> | null =
+    null
+  private linkElements: d3.Selection<SVGPathElement, SimulationLink, SVGGElement, unknown> | null =
+    null
 
   initialize(
     svgElement: SVGSVGElement,
@@ -36,29 +44,28 @@ class D3NetworkVisualization {
     },
     callbacks: {
       onHover: (nodeId: string | null) => void
-    }
+    },
   ) {
     if (this.simulation) return // Already initialized
 
-    this.svg = d3.select(svgElement)
-      .attr('width', width)
-      .attr('height', height)
+    this.svg = d3.select(svgElement).attr('width', width).attr('height', height)
 
     // Create main group for zoom/pan
     this.g = this.svg.append('g')
 
     // Add zoom behavior
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
+    const zoom = d3
+      .zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.5, 3])
-      .on('zoom', (event) => {
-        this.g?.attr('transform', event.transform)
+      .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+        this.g?.attr('transform', event.transform.toString())
       })
 
     this.svg.call(zoom)
 
     // Create a copy of nodes and links
-    this.nodes = data.nodes.map(d => ({ ...d }))
-    this.links = data.links.map(d => ({ ...d }))
+    this.nodes = data.nodes.map((d) => ({ ...d })) as SimulationNode[]
+    this.links = data.links.map((d) => ({ ...d })) as SimulationLink[]
 
     // Define positions for different node types
     const vcX = width * 0.15
@@ -66,96 +73,137 @@ class D3NetworkVisualization {
     const founderX = width * 0.85
 
     // Initialize node positions
-    this.nodes.forEach((node: any) => {
-      if (node.type === 'vc') {
-        node.x = vcX + (Math.random() - 0.5) * 100
-        node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
-      } else if (node.type === 'startup') {
-        node.x = startupX + (Math.random() - 0.5) * 200
-        node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
-      } else if (node.type === 'founder') {
-        node.x = founderX + (Math.random() - 0.5) * 100
-        node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+    this.nodes.forEach((node) => {
+      switch (node.type) {
+        case 'vc':
+          node.x = vcX + (Math.random() - 0.5) * 100
+          node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+          break
+        case 'startup':
+          node.x = startupX + (Math.random() - 0.5) * 200
+          node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+          break
+        case 'founder':
+          node.x = founderX + (Math.random() - 0.5) * 100
+          node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+          break
       }
     })
 
     // Create force simulation
-    this.simulation = d3.forceSimulation(this.nodes)
-      .force('link', d3.forceLink(this.links)
-        .id((d: any) => d.id)
-        .distance(params.linkDistance)
-        .strength(0.5))
-      .force('charge', d3.forceManyBody().strength(params.chargeStrength))
-      .force('x', d3.forceX()
-        .x((d: any) => {
-          if (d.type === 'vc') return vcX
-          if (d.type === 'startup') return startupX
-          if (d.type === 'founder') return founderX
-          return width / 2
-        })
-        .strength(0.2))
-      .force('y', d3.forceY(height / 2).strength(0.05))
-      .force('collision', d3.forceCollide().radius(params.collisionRadius))
-      .force('center', d3.forceCenter(width / 2, height / 2).strength(params.centerStrength))
+    this.simulation = d3
+      .forceSimulation(this.nodes)
+      .force(
+        'link',
+        d3
+          .forceLink<SimulationNode, SimulationLink>(this.links)
+          .id((d) => d.id)
+          .distance(params.linkDistance)
+          .strength(0.5),
+      )
+      .force('charge', d3.forceManyBody<SimulationNode>().strength(params.chargeStrength))
+      .force(
+        'x',
+        d3
+          .forceX<SimulationNode>()
+          .x((d) => {
+            switch (d.type) {
+              case 'vc':
+                return vcX
+              case 'startup':
+                return startupX
+              case 'founder':
+                return founderX
+            }
+          })
+          .strength(0.2),
+      )
+      .force('y', d3.forceY<SimulationNode>(height / 2).strength(0.05))
+      .force('collision', d3.forceCollide<SimulationNode>().radius(params.collisionRadius))
+      .force(
+        'center',
+        d3.forceCenter<SimulationNode>(width / 2, height / 2).strength(params.centerStrength),
+      )
 
     // Create gradients
     const defs = this.svg.append('defs')
-    this.links.forEach((link: any, i) => {
-      const gradient = defs.append('linearGradient')
-        .attr('id', `gradient-${i}`)
+    this.links.forEach((link, i) => {
+      const gradient = defs
+        .append('linearGradient')
+        .attr('id', `gradient-${String(i)}`)
         .attr('gradientUnits', 'userSpaceOnUse')
 
-      gradient.append('stop')
+      gradient
+        .append('stop')
         .attr('offset', '0%')
         .attr('stop-color', link.type === 'investment' ? '#646cff' : '#82ca9d')
         .attr('stop-opacity', 0.6)
 
-      gradient.append('stop')
+      gradient
+        .append('stop')
         .attr('offset', '100%')
         .attr('stop-color', link.type === 'investment' ? '#8884d8' : '#82ca9d')
         .attr('stop-opacity', 0.2)
     })
 
     // Create links
-    this.linkElements = this.g.append('g')
+    this.linkElements = this.g
+      .append('g')
       .attr('class', 'links')
       .selectAll('path')
       .data(this.links)
-      .enter().append('path')
+      .enter()
+      .append('path')
       .attr('class', 'link')
-      .attr('stroke', (_, i) => `url(#gradient-${i})`)
-      .attr('stroke-width', (d: any) => Math.sqrt(d.value / 10000000))
+      .attr('stroke', (_, i) => `url(#gradient-${String(i)})`)
+      .attr('stroke-width', (d) => Math.sqrt(d.value / 10000000))
       .attr('fill', 'none')
       .attr('opacity', 0.4)
 
     // Create nodes
-    this.nodeElements = this.g.append('g')
+    this.nodeElements = this.g
+      .append('g')
       .attr('class', 'nodes')
       .selectAll('g')
       .data(this.nodes)
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr('class', 'node')
-      .call(d3.drag<any, any>()
-        .on('start', this.dragstarted.bind(this))
-        .on('drag', this.dragged.bind(this))
-        .on('end', this.dragended.bind(this)))
+      .call(
+        d3
+          .drag<SVGGElement, SimulationNode>()
+          .on('start', this.dragstarted.bind(this))
+          .on('drag', this.dragged.bind(this))
+          .on('end', this.dragended.bind(this)),
+      )
 
     // Add circles
-    this.nodeElements.append('circle')
-      .attr('r', (d: any) => {
-        if (d.type === 'vc') return 8 + Math.sqrt(d.investments)
-        if (d.type === 'startup') return 10 + Math.sqrt(d.fundingAmount / 10000000)
-        if (d.type === 'founder') return 6 + d.companies * 2
-        return 10
+    this.nodeElements
+      .append('circle')
+      .attr('r', (d) => {
+        switch (d.type) {
+          case 'vc':
+            return 8 + Math.sqrt(d.investments)
+          case 'startup':
+            return 10 + Math.sqrt(d.fundingAmount / 10000000)
+          case 'founder':
+            return 6 + d.companies * 2
+          default:
+            return 10
+        }
       })
-      .attr('fill', (d: any) => {
-        if (d.type === 'vc') return '#646cff'
-        if (d.type === 'startup') return '#8884d8'
-        if (d.type === 'founder') return '#82ca9d'
-        return '#666'
+      .attr('fill', (d) => {
+        switch (d.type) {
+          case 'vc':
+            return '#646cff'
+          case 'startup':
+            return '#8884d8'
+          case 'founder':
+            return '#82ca9d'
+        }
       })
       .attr('opacity', 0.8)
-      .on('mouseover', (_, d: any) => {
+      .on('mouseover', (_, d) => {
         callbacks.onHover(d.id)
         this.highlightConnections(d.id)
       })
@@ -165,15 +213,16 @@ class D3NetworkVisualization {
       })
 
     // Add labels
-    this.nodeElements.append('text')
-      .text((d: any) => d.name)
-      .attr('x', (d: any) => {
+    this.nodeElements
+      .append('text')
+      .text((d) => d.name)
+      .attr('x', (d) => {
         if (d.type === 'vc') return -15
         if (d.type === 'founder') return 15
         return 0
       })
       .attr('y', 4)
-      .attr('text-anchor', (d: any) => {
+      .attr('text-anchor', (d) => {
         if (d.type === 'vc') return 'end'
         if (d.type === 'founder') return 'start'
         return 'middle'
@@ -184,22 +233,31 @@ class D3NetworkVisualization {
 
     // Update positions on tick
     this.simulation.on('tick', () => {
-      this.linkElements?.attr('d', (d: any) => {
-        const dx = d.target.x - d.source.x
-        const dy = d.target.y - d.source.y
+      this.linkElements?.attr('d', (d) => {
+        const source = d.source as SimulationNode
+        const target = d.target as SimulationNode
+        const dx = (target.x ?? 0) - (source.x ?? 0)
+        const dy = (target.y ?? 0) - (source.y ?? 0)
         const dr = Math.sqrt(dx * dx + dy * dy) * 2
-        return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`
+        return `M${String(source.x ?? 0)},${String(source.y ?? 0)}A${String(dr)},${String(dr)} 0 0,1 ${String(target.x ?? 0)},${String(target.y ?? 0)}`
       })
 
-      this.links.forEach((link: any, i) => {
-        d3.select(`#gradient-${i}`)
-          .attr('x1', link.source.x)
-          .attr('y1', link.source.y)
-          .attr('x2', link.target.x)
-          .attr('y2', link.target.y)
+      this.links.forEach((link, i) => {
+        const source = link.source as SimulationNode
+        const target = link.target as SimulationNode
+        if (isNode(source) && isNode(target)) {
+          d3.select(`#gradient-${String(i)}`)
+            .attr('x1', source.x ?? 0)
+            .attr('y1', source.y ?? 0)
+            .attr('x2', target.x ?? 0)
+            .attr('y2', target.y ?? 0)
+        }
       })
 
-      this.nodeElements?.attr('transform', (d: any) => `translate(${d.x},${d.y})`)
+      this.nodeElements?.attr(
+        'transform',
+        (d) => `translate(${String(d.x ?? 0)},${String(d.y ?? 0)})`,
+      )
     })
   }
 
@@ -212,10 +270,14 @@ class D3NetworkVisualization {
     if (!this.simulation) return
 
     this.simulation
-      .force('link', d3.forceLink(this.links)
-        .id((d: any) => d.id)
-        .distance(params.linkDistance)
-        .strength(0.5))
+      .force(
+        'link',
+        d3
+          .forceLink<SimulationNode, SimulationLink>(this.links)
+          .id((d) => d.id)
+          .distance(params.linkDistance)
+          .strength(0.5),
+      )
       .force('charge', d3.forceManyBody().strength(params.chargeStrength))
       .force('collision', d3.forceCollide().radius(params.collisionRadius))
       .alpha(0.3)
@@ -223,15 +285,21 @@ class D3NetworkVisualization {
   }
 
   private highlightConnections(nodeId: string) {
-    this.linkElements?.attr('opacity', (l: any) => 
-      l.source.id === nodeId || l.target.id === nodeId ? 0.8 : 0.1
-    )
-    this.nodeElements?.attr('opacity', (n: any) => {
-      const isConnected = this.links.some((l: any) => 
-        (l.source.id === nodeId && l.target.id === n.id) ||
-        (l.target.id === nodeId && l.source.id === n.id) ||
-        n.id === nodeId
-      )
+    this.linkElements?.attr('opacity', (l) => {
+      const sourceId = isNode(l.source) ? l.source.id : l.source
+      const targetId = isNode(l.target) ? l.target.id : l.target
+      return sourceId === nodeId || targetId === nodeId ? 0.8 : 0.1
+    })
+    this.nodeElements?.attr('opacity', (n) => {
+      const isConnected = this.links.some((l) => {
+        const sourceId = isNode(l.source) ? l.source.id : l.source
+        const targetId = isNode(l.target) ? l.target.id : l.target
+        return (
+          (sourceId === nodeId && targetId === n.id) ||
+          (targetId === nodeId && sourceId === n.id) ||
+          n.id === nodeId
+        )
+      })
       return isConnected ? 1 : 0.3
     })
   }
@@ -241,18 +309,27 @@ class D3NetworkVisualization {
     this.nodeElements?.attr('opacity', 1)
   }
 
-  private dragstarted(event: any, d: any) {
+  private dragstarted(
+    event: d3.D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
+    d: SimulationNode,
+  ) {
     if (!event.active) this.simulation?.alphaTarget(0.3).restart()
-    d.fx = d.x
-    d.fy = d.y
+    d.fx = d.x ?? 0
+    d.fy = d.y ?? 0
   }
 
-  private dragged(event: any, d: any) {
+  private dragged(
+    event: d3.D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
+    d: SimulationNode,
+  ) {
     d.fx = event.x
     d.fy = event.y
   }
 
-  private dragended(event: any, d: any) {
+  private dragended(
+    event: d3.D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
+    d: SimulationNode,
+  ) {
     if (!event.active) this.simulation?.alphaTarget(0)
     d.fx = null
     d.fy = null
@@ -281,25 +358,28 @@ function NetworkGraph({
   const svgRefCallback = (node: SVGSVGElement | null) => {
     if (node && !isInitializedRef.current) {
       isInitializedRef.current = true
-      
-      if (!visualizationRef.current) {
-        visualizationRef.current = new D3NetworkVisualization()
-      }
-      
+
+      visualizationRef.current ??= new D3NetworkVisualization()
+
       visualizationRef.current.initialize(
         node,
         data,
         width,
         height,
         { linkDistance, chargeStrength, collisionRadius, centerStrength },
-        { onHover: setHoveredNode }
+        { onHover: setHoveredNode },
       )
     }
   }
 
   // Update parameters when they change
   if (visualizationRef.current && isInitializedRef.current) {
-    visualizationRef.current.updateParams({ linkDistance, chargeStrength, collisionRadius, centerStrength })
+    visualizationRef.current.updateParams({
+      linkDistance,
+      chargeStrength,
+      collisionRadius,
+      centerStrength,
+    })
   }
 
   return (
@@ -308,9 +388,7 @@ function NetworkGraph({
         <rect width={width} height={height} fill="#fafafa" />
       </svg>
       {hoveredNode && (
-        <div className="tooltip">
-          {data.nodes.find(n => n.id === hoveredNode)?.name}
-        </div>
+        <div className="tooltip">{data.nodes.find((n) => n.id === hoveredNode)?.name}</div>
       )}
     </div>
   )

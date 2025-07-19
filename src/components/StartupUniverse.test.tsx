@@ -6,7 +6,9 @@ describe('StartupUniverse', () => {
   it('renders title and subtitle', () => {
     render(<StartupUniverse />)
     expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
-    expect(screen.getByText('A Visual Guide to Startups, Founders & Venture Capitalists')).toBeInTheDocument()
+    expect(
+      screen.getByText('A Visual Guide to Startups, Founders & Venture Capitalists'),
+    ).toBeInTheDocument()
   })
 
   it('shows loading state initially', () => {
