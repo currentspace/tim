@@ -1,31 +1,21 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import StartupUniverse from './StartupUniverse'
+import StartupUniverseV3 from './StartupUniverseV3'
 
-describe('StartupUniverse', () => {
+describe('StartupUniverseV3', () => {
   it('renders title and subtitle', () => {
-    render(<StartupUniverse />)
+    render(<StartupUniverseV3 />)
     expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
     expect(screen.getByText('A Visual Guide to Startups, Founders & Venture Capitalists')).toBeInTheDocument()
   })
 
-  it('renders control sliders', () => {
-    render(<StartupUniverse />)
-    expect(screen.getByText(/Link Distance:/)).toBeInTheDocument()
-    expect(screen.getByText(/Force Strength:/)).toBeInTheDocument()
-    expect(screen.getByText(/Collision Radius:/)).toBeInTheDocument()
-    expect(screen.getByText(/Center Gravity:/)).toBeInTheDocument()
-  })
-
-  it('renders legend items', () => {
-    render(<StartupUniverse />)
-    expect(screen.getByText('Venture Capitalists')).toBeInTheDocument()
-    expect(screen.getByText('Startups')).toBeInTheDocument()
-    expect(screen.getByText('Founders')).toBeInTheDocument()
+  it('shows loading state initially', () => {
+    render(<StartupUniverseV3 />)
+    expect(screen.getByText('Loading visualization data...')).toBeInTheDocument()
   })
 
   it('renders info panel', () => {
-    render(<StartupUniverse />)
+    render(<StartupUniverseV3 />)
     expect(screen.getByText(/Hover over nodes to see connections/)).toBeInTheDocument()
   })
 })

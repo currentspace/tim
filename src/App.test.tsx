@@ -19,8 +19,8 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
     
-    // Initially shows Startup Universe
-    expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
+    // Initially shows Startup Universe (wait for it to load)
+    expect(await screen.findByText('The Startup Universe')).toBeInTheDocument()
     
     // Click Sample Charts
     const sampleChartsButton = screen.getByRole('button', { name: /Sample Charts/i })
