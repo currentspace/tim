@@ -12,6 +12,6 @@
 # /old-page /new-page 301
 # /blog/* /news/:splat 301
 
-# SPA fallback - serve index.html for all routes (for client-side routing)
-# This should be last as it's a catch-all
-/* /index.html 200
+# Note: Cloudflare Pages automatically handles SPA routing
+# The fallback to index.html happens by default for non-existent paths
+# No need for /* /index.html 200 rule

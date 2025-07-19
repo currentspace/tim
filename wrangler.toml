@@ -1,6 +1,5 @@
 # Cloudflare Pages Configuration
 # Requires Wrangler v3.45.0+ and V2 build system
-# This file is optional but enables advanced features
 
 # Required fields for Pages
 name = "tim"
@@ -9,58 +8,30 @@ pages_build_output_dir = "dist"
 # Compatibility settings
 compatibility_date = "2025-07-19"
 
-# Environment variables for build time
+# Environment variables
+[vars]
+# Global variables available in all environments
+# API_URL = "https://api.example.com"
+
 [env.production.vars]
+# Production-specific variables
 # NODE_ENV = "production"
-# Add any build-time environment variables here
 
-# Headers rules
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+[env.preview.vars]
+# Preview/staging variables  
+# NODE_ENV = "preview"
+# DEBUG = "true"
 
-# Cache control for static assets
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+# Optional: Bindings for Pages Functions
+# [[kv_namespaces]]
+# binding = "MY_KV"
+# id = "xxxxxxxxxxxxx"
 
-# Security headers for the app
-[[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com"
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "xxxxxxxxxxxxx"
 
-# Redirects (examples)
-# [[redirects]]
-#   from = "/old-path"
-#   to = "/new-path"
-#   status = 301
-
-# Custom 404 page
-# [[redirects]]
-#   from = "/*"
-#   to = "/404.html"
-#   status = 404
-
-# Functions configuration (if you add API routes later)
-# [functions]
-# directory = "functions"
-# include = ["api/*"]
-
-# Compatibility flags for Pages Functions
-# [compatibility_flags]
-# nodejs_compat = true
-
-# Development settings
-[env.preview]
-# Add preview/staging specific settings here
-
-# Analytics (if you have Cloudflare Analytics)
-# [analytics]
-# token = "YOUR_ANALYTICS_TOKEN"
+# Note: Headers and redirects should be configured in:
+# - public/_headers for custom HTTP headers
+# - public/_redirects for URL redirects
