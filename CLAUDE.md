@@ -10,7 +10,6 @@ This is a React 19.1 web application using modern patterns without useEffect:
 - **Vitest** for unit testing
 - **React Testing Library** for component testing
 - **D3.js** for advanced network visualizations
-- **Recharts** for simple charts
 
 ## Key Commands
 

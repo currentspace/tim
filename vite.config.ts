@@ -3,4 +3,25 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    // Enable module preload injection
+    modulePreload: {
+      // Preload all JS modules
+      resolveDependencies: (_filename, deps) => {
+        return deps
+      },
+    },
+    // Generate better chunks for HTTP/2
+    rollupOptions: {
+      output: {
+        // Separate vendor chunks for better caching
+        manualChunks: {
+          d3: ['d3'],
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
+    // Inline assets smaller than 4kb
+    assetsInlineLimit: 4096,
+  },
 })
