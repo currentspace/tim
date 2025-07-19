@@ -1,22 +1,34 @@
 import { useState } from 'react'
 import './App.css'
-import SampleChart from './components/SampleChart'
+import StartupUniverse from './components/StartupUniverse'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showStartupUniverse, setShowStartupUniverse] = useState(true)
 
   return (
     <>
-      <h1>Charles - React Charting App</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <h1>Charles - Data Visualization App</h1>
+      <div className="nav-buttons">
+        <button 
+          className={showStartupUniverse ? 'active' : ''}
+          onClick={() => setShowStartupUniverse(true)}
+        >
+          Startup Universe
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button 
+          className={!showStartupUniverse ? 'active' : ''}
+          onClick={() => setShowStartupUniverse(false)}
+        >
+          Sample Charts
+        </button>
       </div>
-      <SampleChart />
+      {showStartupUniverse ? (
+        <StartupUniverse />
+      ) : (
+        <div className="coming-soon">
+          <p>More visualizations coming soon!</p>
+        </div>
+      )}
     </>
   )
 }

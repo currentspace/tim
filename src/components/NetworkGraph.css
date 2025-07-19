@@ -1,0 +1,52 @@
+.network-graph-container {
+  position: relative;
+  background: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.network-graph {
+  cursor: grab;
+}
+
+.network-graph:active {
+  cursor: grabbing;
+}
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  stroke: #fff;
+  stroke-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.node:hover circle {
+  stroke-width: 3px;
+  filter: brightness(1.2);
+}
+
+.node text {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+.link {
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 1000;
+}

@@ -8,3 +8,37 @@
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
 }
+
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.nav-buttons button {
+  padding: 0.8rem 1.5rem;
+  border: 2px solid #646cff;
+  background: transparent;
+  color: #646cff;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-buttons button:hover {
+  background: #646cff;
+  color: white;
+}
+
+.nav-buttons button.active {
+  background: #646cff;
+  color: white;
+}
+
+.coming-soon {
+  text-align: center;
+  padding: 4rem;
+  color: #666;
+  font-size: 1.2rem;
+}

@@ -17,6 +17,8 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0",
     "react": "~19.1.0",
     "react-dom": "~19.1.0",
     "recharts": "^3.1.0"

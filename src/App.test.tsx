@@ -6,20 +6,34 @@ import App from './App'
 describe('App', () => {
   it('renders headline', () => {
     render(<App />)
-    expect(screen.getByText('Charles - React Charting App')).toBeInTheDocument()
+    expect(screen.getByText('Charles - Data Visualization App')).toBeInTheDocument()
   })
 
-  it('increments counter on button click', async () => {
+  it('shows navigation buttons', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: /Startup Universe/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Sample Charts/i })).toBeInTheDocument()
+  })
+
+  it('switches between views on button click', async () => {
     const user = userEvent.setup()
     render(<App />)
     
-    const button = screen.getByRole('button', { name: /count is 0/i })
-    expect(button).toBeInTheDocument()
+    // Initially shows Startup Universe
+    expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
     
-    await user.click(button)
-    expect(screen.getByRole('button', { name: /count is 1/i })).toBeInTheDocument()
+    // Click Sample Charts
+    const sampleChartsButton = screen.getByRole('button', { name: /Sample Charts/i })
+    await user.click(sampleChartsButton)
     
-    await user.click(button)
-    expect(screen.getByRole('button', { name: /count is 2/i })).toBeInTheDocument()
+    // Should show coming soon message
+    expect(screen.getByText('More visualizations coming soon!')).toBeInTheDocument()
+    
+    // Click back to Startup Universe
+    const startupUniverseButton = screen.getByRole('button', { name: /Startup Universe/i })
+    await user.click(startupUniverseButton)
+    
+    // Should show Startup Universe again
+    expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
   })
 })
