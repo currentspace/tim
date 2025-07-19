@@ -1,0 +1,69 @@
+# Wrangler configuration for Cloudflare Pages
+# This file is optional but enables advanced features
+
+name = "tim"
+compatibility_date = "2025-07-19"
+
+# Build configuration
+[build]
+command = "pnpm run build"
+
+# Specify build output directory
+[site]
+bucket = "./dist"
+
+# Environment variables for build time
+[env.production.vars]
+# NODE_ENV = "production"
+# Add any build-time environment variables here
+
+# Headers rules
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache control for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Security headers for the app
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com"
+
+# Redirects (examples)
+# [[redirects]]
+#   from = "/old-path"
+#   to = "/new-path"
+#   status = 301
+
+# Custom 404 page
+# [[redirects]]
+#   from = "/*"
+#   to = "/404.html"
+#   status = 404
+
+# Functions configuration (if you add API routes later)
+# [functions]
+# directory = "functions"
+# include = ["api/*"]
+
+# Compatibility flags for Pages Functions
+# [compatibility_flags]
+# nodejs_compat = true
+
+# Development settings
+[env.preview]
+# Add preview/staging specific settings here
+
+# Analytics (if you have Cloudflare Analytics)
+# [analytics]
+# token = "YOUR_ANALYTICS_TOKEN"
