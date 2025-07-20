@@ -12,28 +12,36 @@ describe('App', () => {
   it('shows navigation buttons', () => {
     render(<App />)
     expect(screen.getByRole('button', { name: /Startup Universe/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Sample Charts/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Tariff Impact/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Country Exposure/i })).toBeInTheDocument()
   })
 
   it('switches between views on button click', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    // Initially shows Startup Universe (wait for it to load)
-    expect(await screen.findByText('The Startup Universe')).toBeInTheDocument()
+    // Initially shows Tariff Impact
+    expect(screen.getByText('Anticipated Tariff Impact')).toBeInTheDocument()
 
-    // Click Sample Charts
-    const sampleChartsButton = screen.getByRole('button', { name: /Sample Charts/i })
-    await user.click(sampleChartsButton)
-
-    // Should show coming soon message
-    expect(screen.getByText('More visualizations coming soon!')).toBeInTheDocument()
-
-    // Click back to Startup Universe
+    // Click Startup Universe
     const startupUniverseButton = screen.getByRole('button', { name: /Startup Universe/i })
     await user.click(startupUniverseButton)
 
-    // Should show Startup Universe again
-    expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
+    // Should show Startup Universe (wait for it to load)
+    expect(await screen.findByText('The Startup Universe')).toBeInTheDocument()
+
+    // Click Country Exposure
+    const countryExposureButton = screen.getByRole('button', { name: /Country Exposure/i })
+    await user.click(countryExposureButton)
+
+    // Should show Country Exposure
+    expect(screen.getByText('Manufacturing Country Exposure')).toBeInTheDocument()
+
+    // Click back to Tariff Impact
+    const tariffImpactButton = screen.getByRole('button', { name: /Tariff Impact/i })
+    await user.click(tariffImpactButton)
+
+    // Should show Tariff Impact again
+    expect(screen.getByText('Anticipated Tariff Impact')).toBeInTheDocument()
   })
 })

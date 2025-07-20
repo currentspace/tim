@@ -1,37 +1,43 @@
 import { useState } from 'react'
 import './App.css'
 import StartupUniverse from './components/StartupUniverse'
+import AnticipatedTariffImpact from './components/AnticipatedTariffImpact'
+import CountryExposure from './components/CountryExposure'
+
+type ViewType = 'startup' | 'tariff' | 'exposure'
 
 function App() {
-  const [showStartupUniverse, setShowStartupUniverse] = useState(true)
+  const [currentView, setCurrentView] = useState<ViewType>('tariff')
 
   return (
     <>
       <h1>Charles - Data Visualization App</h1>
       <div className="nav-buttons">
         <button
-          className={showStartupUniverse ? 'active' : ''}
-          onClick={() => {
-            setShowStartupUniverse(true)
-          }}
+          className={currentView === 'startup' ? 'active' : ''}
+          onClick={() => { setCurrentView('startup') }}
         >
           Startup Universe
         </button>
         <button
-          className={!showStartupUniverse ? 'active' : ''}
-          onClick={() => {
-            setShowStartupUniverse(false)
-          }}
+          className={currentView === 'tariff' ? 'active' : ''}
+          onClick={() => { setCurrentView('tariff') }}
         >
-          Sample Charts
+          Tariff Impact
+        </button>
+        <button
+          className={currentView === 'exposure' ? 'active' : ''}
+          onClick={() => { setCurrentView('exposure') }}
+        >
+          Country Exposure
         </button>
       </div>
-      {showStartupUniverse ? (
+      {currentView === 'startup' ? (
         <StartupUniverse />
+      ) : currentView === 'tariff' ? (
+        <AnticipatedTariffImpact />
       ) : (
-        <div className="coming-soon">
-          <p>More visualizations coming soon!</p>
-        </div>
+        <CountryExposure />
       )}
     </>
   )
