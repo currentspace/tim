@@ -1,253 +1,257 @@
 .country-exposure {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #4d94ff 0%, #1a75ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.controls {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.control-group label {
-  font-weight: 600;
-  color: #333;
-}
-
-.company-select,
-.date-slider {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  min-width: 200px;
-}
-
-.exposure-summary {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  margin-bottom: 3rem;
-}
-
-.summary-card {
   background: white;
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.summary-card h3 {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.summary-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #333;
+.navigation-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.visualization-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.pie-chart-container {
+.nav-button {
+  padding: 0.5rem 1rem;
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.custom-tooltip {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
-.custom-tooltip .country-name {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+.nav-button:hover {
+  background: #f0f0f0;
 }
 
-.custom-tooltip p {
-  margin: 0.25rem 0;
+.nav-button.active {
+  background: #646cff;
+  color: white;
+  border-color: #646cff;
+}
+
+.percentage-share {
+  font-size: 0.9rem;
+  color: #666;
+  padding: 0 1rem;
+}
+
+.company-title h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+}
+
+.company-title p {
+  margin: 0;
+  color: #666;
   font-size: 0.9rem;
 }
 
-.country-details {
+.current-view {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.country-details h2 {
-  margin-bottom: 1.5rem;
+.current-view h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
   color: #333;
 }
 
-.country-table {
+.view-subtitle {
+  margin: 0 0 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.company-info {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.company-select-inline {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.total-display {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.visualization-container {
+  display: flex;
+  background: white;
+  padding: 2rem;
+  margin: 0;
+  gap: 2rem;
+}
+
+.visualization-container svg {
+  flex: 1;
+  background: white;
+}
+
+.country-legend {
+  width: 250px;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  height: fit-content;
+}
+
+.country-legend h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.legend-items {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.table-header {
-  display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr;
-  gap: 1rem;
-  padding: 0.75rem;
-  font-weight: 600;
-  color: #666;
-  border-bottom: 2px solid #f0f0f0;
-}
-
-.table-row {
-  display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-bottom: 1px solid #f0f0f0;
-  align-items: center;
-}
-
-.table-row:hover {
-  background: #f9f9f9;
-}
-
-.country-cell {
+.legend-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .color-indicator {
   width: 16px;
   height: 16px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.tariff-active {
-  color: #ff4d4d;
-  font-weight: 600;
-}
-
-.tariff-none {
-  color: #82ca9d;
-}
-
-.impact-value {
-  color: #ff4d4d;
-  font-weight: 600;
-}
-
-.company-detail {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 2rem;
-}
-
-.company-detail h2 {
-  margin-bottom: 1.5rem;
+.country-name {
+  flex: 1;
   color: #333;
 }
 
-.manufacturing-info {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+.percentage {
+  color: #666;
+  font-size: 0.85rem;
 }
 
-.manufacturing-location {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: #f9f9f9;
-  border-radius: 8px;
+.country-arc {
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
-.location-indicator {
+.timeline-container {
+  background: white;
+  padding: 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.timeline-container h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.timeline-wrapper {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.timeline-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #333;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  border-radius: 2px;
+}
+
+.timeline-slider:hover {
+  opacity: 1;
+}
+
+.timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
   width: 20px;
   height: 20px;
+  background: #333;
+  cursor: pointer;
   border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 1024px) {
-  .visualization-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .controls {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .exposure-summary {
-    flex-direction: column;
-    align-items: center;
-  }
+.timeline-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #333;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.timeline-info {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* D3 Tooltip Styles */
+.d3-tooltip {
+  font-size: 0.9rem;
+  z-index: 1000;
 }
 
 @media (max-width: 768px) {
-  .table-header,
-  .table-row {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
+  .visualization-container {
+    flex-direction: column;
   }
   
-  .table-header {
-    display: none;
+  .country-legend {
+    width: 100%;
   }
   
-  .table-row {
-    padding: 1rem;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
+  .header-top {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
   
-  .table-row > span::before {
-    content: attr(data-label);
-    font-weight: 600;
-    margin-right: 0.5rem;
+  .navigation-controls {
+    flex-wrap: wrap;
   }
 }

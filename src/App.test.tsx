@@ -21,7 +21,7 @@ describe('App', () => {
     render(<App />)
 
     // Initially shows Tariff Impact
-    expect(screen.getByText('Anticipated Tariff Impact')).toBeInTheDocument()
+    expect(screen.getByText('ANTICIPATED')).toBeInTheDocument()
 
     // Click Startup Universe
     const startupUniverseButton = screen.getByRole('button', { name: /Startup Universe/i })
@@ -35,13 +35,13 @@ describe('App', () => {
     await user.click(countryExposureButton)
 
     // Should show Country Exposure
-    expect(screen.getByText('Manufacturing Country Exposure')).toBeInTheDocument()
+    expect(screen.getByText('HP TIM Dashboard')).toBeInTheDocument()
 
     // Click back to Tariff Impact
     const tariffImpactButton = screen.getByRole('button', { name: /Tariff Impact/i })
     await user.click(tariffImpactButton)
 
     // Should show Tariff Impact again
-    expect(screen.getByText('Anticipated Tariff Impact')).toBeInTheDocument()
+    expect(screen.getByText('ANTICIPATED')).toBeInTheDocument()
   })
 })
