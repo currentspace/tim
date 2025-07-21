@@ -86,19 +86,19 @@ describe('CountryExposure', () => {
 
   it('has HP selected by default', () => {
     render(<CountryExposure />)
-    const selector = screen.getByRole('combobox') as HTMLSelectElement
-    expect(selector.value).toBe('hp')
+    const selector = screen.getByRole('combobox')
+    expect((selector as HTMLSelectElement).value).toBe('hp')
   })
 
   it('allows company selection', async () => {
     render(<CountryExposure />)
-    const selector = screen.getByRole('combobox') as HTMLSelectElement
+    const selector = screen.getByRole('combobox')
 
     // Change to Apple
     fireEvent.change(selector, { target: { value: 'apple' } })
 
     await waitFor(() => {
-      expect(selector.value).toBe('apple')
+      expect((selector as HTMLSelectElement).value).toBe('apple')
     })
   })
 
