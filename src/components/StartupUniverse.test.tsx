@@ -4,6 +4,11 @@ import { act } from 'react'
 import StartupUniverse from './StartupUniverse'
 
 describe('StartupUniverse', () => {
+  // Note: These tests verify basic component rendering with Suspense.
+  // For comprehensive Suspense state testing (loading/error states),
+  // see docs/TESTING_SUSPENSE.md for recommended patterns using
+  // dependency injection or module mocking without polluting production code.
+  
   it('renders title and subtitle', async () => {
     // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {

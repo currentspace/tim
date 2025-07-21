@@ -130,6 +130,22 @@ Vitest Module Mocking
 React Testing Library: Async Utilities
 [https://testing-library.com/docs/dom-testing-library/api-async/](https://testing-library.com/docs/dom-testing-library/api-async/)
 
+## PRACTICAL LIMITATIONS
+
+In practice, testing Suspense with React 19.1's `use()` hook can be challenging:
+
+1. **Promise Caching**: React caches the promise result internally. Once a component suspends with a promise, it won't re-render until React itself decides to retry.
+
+2. **Module State**: If your data provider module maintains internal state (like a cached promise), you need to reset it between tests.
+
+3. **Timing Issues**: Even with controllable promises, React's internal scheduling can make it difficult to reliably test transitions between loading and loaded states.
+
+For these reasons, consider:
+- Testing loading states with never-resolving promises
+- Testing success states with immediately-resolved promises
+- Testing error states with immediately-rejected promises
+- Using integration tests or E2E tests for complex loading sequences
+
 ## NEED HELP?
 
 If you want, ask for an example PR using your StartupUniverse/getNetworkData, or for a more complex multi-component scenario.
