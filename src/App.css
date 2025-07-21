@@ -151,3 +151,32 @@
   flex: 1;
   overflow: auto;
 }
+
+/* Secondary Navigation */
+.secondary-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding: 1rem 3rem;
+  background: var(--color-paper);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.nav-link {
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  font-weight: var(--weight-medium);
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-ink);
+}
+
+.nav-link.active {
+  color: var(--color-ink);
+  font-weight: var(--weight-semibold);
+}

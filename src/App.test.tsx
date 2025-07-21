@@ -31,8 +31,10 @@ describe('App', () => {
     render(<RouterProvider router={router} />)
 
     await waitFor(() => {
-      expect(screen.getByText('ANTICIPATED')).toBeInTheDocument()
-      expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
+      // There are multiple ANTICIPATED elements, check for at least one
+      expect(screen.getAllByText('ANTICIPATED').length).toBeGreaterThan(0)
+      // Also multiple Staples Technology Solutions elements
+      expect(screen.getAllByText('Staples Technology Solutions').length).toBeGreaterThan(0)
     })
   })
 
@@ -42,8 +44,8 @@ describe('App', () => {
     
     await waitFor(() => {
       // Check for elements specific to AnticipatedTariffImpact
-      expect(screen.getByText('Dollar Volume')).toBeInTheDocument()
-      // Multiple elements have this text, so check for at least one
+      // Multiple elements have this text due to header and component content
+      expect(screen.getAllByText('Dollar Volume').length).toBeGreaterThan(0)
       expect(screen.getAllByText('Tariff Exposure & Rate').length).toBeGreaterThan(0)
     })
   })

@@ -3,9 +3,9 @@
   align-items: center;
   justify-content: space-between;
   background: var(--color-paper);
-  padding: 1.5rem 3rem;
+  padding: 1rem 3rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  min-height: 80px;
+  height: 80px;
 }
 
 .nav-section {
@@ -76,12 +76,27 @@
   font-family: var(--font-heading);
   background: #FF8A00;
   color: white;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 2.5rem;
   font-weight: var(--weight-bold);
   font-size: var(--type-lg);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-wider);
   border-radius: 24px;
   text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(255, 138, 0, 0.25);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-badge:hover {
+  background: #FF7A00;
+  box-shadow: 0 4px 12px rgba(255, 138, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.tab-badge:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(255, 138, 0, 0.25);
 }
 
 /* Company Branding */
@@ -91,8 +106,8 @@
 
 .company-name {
   font-family: var(--font-heading);
-  font-size: var(--type-lg);
-  font-weight: var(--weight-bold);
+  font-size: var(--type-base);
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-normal);
   margin: 0;
   color: var(--color-ink);
@@ -100,9 +115,10 @@
 
 .company-subtitle {
   font-family: var(--font-data);
-  font-size: var(--type-sm);
+  font-size: var(--type-xs);
   color: var(--color-ink-muted);
   margin: 0;
+  margin-top: 2px;
 }
 
 /* Utility Buttons */
