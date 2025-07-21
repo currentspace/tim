@@ -346,6 +346,7 @@ class CountryTariffVisualization {
   }
 
   private updateLegend(date: Date) {
+    if (!this.legendItems) return
     this.legendItems.select('.legend-value').text((d) => {
       // Find the closest data point
       const closestValue = d.values.reduce((prev, curr) => {
