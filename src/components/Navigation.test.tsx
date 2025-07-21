@@ -86,7 +86,13 @@ describe('Navigation', () => {
     const { rerender } = render(<Navigation currentView="tariff" onViewChange={mockOnViewChange} />)
 
     // Test each view type
-    const viewTypes = ['startup', 'timeline', 'country-timeline', 'exposure', 'notifications']
+    const viewTypes: Parameters<typeof Navigation>[0]['currentView'][] = [
+      'startup',
+      'timeline',
+      'country-timeline',
+      'exposure',
+      'notifications',
+    ]
 
     for (const viewType of viewTypes) {
       mockOnViewChange.mockClear()
