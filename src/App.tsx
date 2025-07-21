@@ -18,6 +18,8 @@ function App() {
         return 'TIMELINE'
       case '/startup-universe':
         return 'UNIVERSE'
+      case '/notifications':
+        return 'NOTIFICATIONS'
       default:
         return 'ANTICIPATED'
     }
@@ -78,19 +80,49 @@ function App() {
       <TopNavigation
         leftSection={getLeftSection()}
         centerSection={
-          <button 
-            className="tab-badge"
-            onClick={() => {
-              // Simple navigation cycle through views
-              const routes = ['/', '/country-exposure', '/company-timeline', '/country-timeline', '/startup-universe']
-              const currentIndex = routes.indexOf(location.pathname)
-              const nextIndex = (currentIndex + 1) % routes.length
-              window.location.href = routes[nextIndex]
-            }}
-            title="Click to navigate to next view"
-          >
-            {getViewName()}
-          </button>
+          <div className="navigation-center">
+            <nav className="main-navigation">
+              <Link 
+                to="/" 
+                className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+              >
+                Anticipated Tariff
+              </Link>
+              <Link 
+                to="/country-exposure" 
+                className={`nav-link ${location.pathname === '/country-exposure' ? 'active' : ''}`}
+              >
+                Country Exposure
+              </Link>
+              <Link 
+                to="/company-timeline" 
+                className={`nav-link ${location.pathname === '/company-timeline' ? 'active' : ''}`}
+              >
+                Company Timeline
+              </Link>
+              <Link 
+                to="/country-timeline" 
+                className={`nav-link ${location.pathname === '/country-timeline' ? 'active' : ''}`}
+              >
+                Country Timeline
+              </Link>
+              <Link 
+                to="/startup-universe" 
+                className={`nav-link ${location.pathname === '/startup-universe' ? 'active' : ''}`}
+              >
+                Startup Universe
+              </Link>
+              <Link 
+                to="/notifications" 
+                className={`nav-link ${location.pathname === '/notifications' ? 'active' : ''}`}
+              >
+                Notifications
+              </Link>
+            </nav>
+            <div className="tab-badge">
+              {getViewName()}
+            </div>
+          </div>
         }
         rightSection={
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
