@@ -16,6 +16,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .title-section {
@@ -79,6 +80,11 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(30px);
+}
+
+.company-title {
+  text-align: center;
+  flex: 1;
 }
 
 .company-title h2 {
@@ -149,15 +155,15 @@ input:checked + .slider:before {
 }
 
 .visualization-container {
-  display: flex;
   background: white;
   padding: 2rem;
   margin: 0;
-  gap: 2rem;
+  min-height: 500px;
+  position: relative;
 }
 
 .visualization-container svg {
-  flex: 1;
+  width: 100%;
   background: white;
 }
 
@@ -210,10 +216,6 @@ input:checked + .slider:before {
 
 .company-bubble {
   transition: transform 0.2s;
-}
-
-.company-bubble:hover {
-  transform: scale(1.05);
 }
 
 .timeline-container {
@@ -315,18 +317,46 @@ input:checked + .slider:before {
   fill: #ef4444;
 }
 
+.notifications-section {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.notifications-label {
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
+  font-weight: var(--weight-medium);
+}
+
+/* Product breakdown styles */
+.breakdown-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  fill: #333;
+}
+
+.right-panel {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.product-item text {
+  font-family: var(--font-data);
+}
+
 @media (max-width: 768px) {
-  .visualization-container {
-    flex-direction: column;
-  }
-
-  .legend {
-    width: 100%;
-  }
-
   .header-top {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+
+  .notifications-section {
+    position: static;
+    transform: none;
+    margin-top: 1rem;
   }
 }
