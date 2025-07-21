@@ -332,11 +332,17 @@ class CountryTariffVisualization {
   }
 
   private updateSelectedDate(date: Date) {
-    this.selectedLine.attr('x1', this.xScale(date)).attr('x2', this.xScale(date))
-    this.updateLegend(date)
+    if (this.selectedLine && this.xScale) {
+      this.selectedLine.attr('x1', this.xScale(date)).attr('x2', this.xScale(date))
+    }
+    if (this.legendItems) {
+      this.updateLegend(date)
+    }
   }
 
   private updateLegend(date: Date) {
+    if (!this.legendItems) return
+    
     this.legendItems.select('.legend-value').text((d) => {
       // Find the closest data point
       const closestValue = d.values.reduce((prev, curr) => {
@@ -437,7 +443,7 @@ function CountryTariffTimeline() {
       </div>
 
       <div className="visualization-container">
-        <svg ref={svgRefCallback}></svg>
+        <svg ref={svgRefCallback} data-testid="country-timeline-svg"></svg>
       </div>
 
       <div className="timeline-container">
@@ -453,6 +459,7 @@ function CountryTariffTimeline() {
               setSelectedDate(new Date(parseInt(e.target.value)))
             }}
             className="timeline-slider"
+            aria-label="Timeline slider"
           />
           <div className="timeline-labels">
             <span>Jan 2025</span>
