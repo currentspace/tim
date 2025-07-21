@@ -24,10 +24,9 @@ class CountryExposureVisualization {
   private tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown>
   private width = 900
   private height = 600
-  private centerX = 300
+  private centerX = 350
   private centerY = this.height / 2
-  private innerRadius = 50
-  private outerRadius = 180
+  private outerRadius = 200
 
   constructor(svgElement: SVGSVGElement) {
     this.svg = d3.select(svgElement)
@@ -50,88 +49,73 @@ class CountryExposureVisualization {
       .append('g')
       .attr('transform', `translate(${String(this.centerX)},${String(this.centerY)}`)
 
-    // Create concentric circles
-    const scales = [0.2, 0.4, 0.6, 0.8, 1.0]
-    scales.forEach((scale) => {
+    // Sort data by percentage descending
+    const sortedData = [...exposureData].sort((a, b) => b.percentage - a.percentage)
+
+    // Create concentric circles for each country
+    const radiusScale = d3
+      .scaleSqrt()
+      .domain([0, d3.max(sortedData, d => d.percentage) || 0])
+      .range([30, this.outerRadius])
+
+    // Add circles from largest to smallest
+    sortedData.forEach((d, i) => {
+      const radius = radiusScale(d.percentage)
+      
       g.append('circle')
-        .attr('r', this.innerRadius + (this.outerRadius - this.innerRadius) * scale)
-        .attr('fill', 'none')
-        .attr('stroke', '#e0e0e0')
-        .attr('stroke-width', 1)
-        .style('stroke-dasharray', scale === 1 ? 'none' : '2,2')
+        .attr('r', radius)
+        .attr('fill', COUNTRY_COLORS[d.country] ?? '#888888')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 3)
+        .style('opacity', 0.8)
+        .style('cursor', 'pointer')
+        .on('mouseenter', (event: MouseEvent) => {
+          d3.select(event.currentTarget as SVGCircleElement)
+            .style('opacity', 1)
+            .attr('stroke-width', 4)
+
+          const revenue = d.totalRevenue / 1e6
+          const content = `
+            <div class="tooltip-title">${d.country}</div>
+            <div class="tooltip-value">Revenue: $${revenue.toFixed(0)}M</div>
+            <div class="tooltip-value">Share: ${d.percentage.toFixed(1)}%</div>
+            <div class="tooltip-value">Tariff: ${String(d.currentTariff)}%</div>
+          `
+          showTooltip(this.tooltip, content, event)
+        })
+        .on('mouseleave', (event: MouseEvent) => {
+          d3.select(event.currentTarget as SVGCircleElement)
+            .style('opacity', 0.8)
+            .attr('stroke-width', 3)
+          hideTooltip(this.tooltip)
+        })
+        .on('mousemove', (event: MouseEvent) => {
+          this.tooltip
+            .style('left', `${String(event.pageX + 10)}px`)
+            .style('top', `${String(event.pageY - 28)}px`)
+        })
     })
 
-    // Calculate angles
-    const totalPercentage = d3.sum(exposureData, (d) => d.percentage)
-    let currentAngle = -Math.PI / 2
-
-    const arcs: ArcData[] = exposureData.map((d) => {
-      const angleSize = (d.percentage / totalPercentage) * 2 * Math.PI
-      const startAngle = currentAngle
-      const endAngle = currentAngle + angleSize
-      currentAngle = endAngle
-
-      return {
-        ...d,
-        startAngle,
-        endAngle,
-        midAngle: (startAngle + endAngle) / 2,
-      }
-    })
-
-    // Create arc generator
-    const arcGenerator = d3
-      .arc<ArcData>()
-      .startAngle((d) => d.startAngle)
-      .endAngle((d) => d.endAngle)
-      .innerRadius(this.innerRadius)
-      .outerRadius((d) => {
-        return this.innerRadius + (this.outerRadius - this.innerRadius) * (d.percentage / 30)
-      })
-
-    // Add colored arcs
-    g.selectAll('.country-arc')
-      .data(arcs)
-      .enter()
-      .append('path')
-      .attr('class', 'country-arc')
-      .attr('d', arcGenerator)
-      .attr('fill', (d) => COUNTRY_COLORS[d.country] ?? '#888888')
-      .attr('stroke', 'white')
-      .attr('stroke-width', 2)
-      .style('opacity', 0.8)
-      .style('cursor', 'pointer')
-      .on('mouseenter', (event: MouseEvent, d) => {
-        d3.select(event.currentTarget as SVGPathElement).style('opacity', 1)
-
-        const revenue = d.totalRevenue / 1e6
-        const content = `
-          <div class="tooltip-title">${d.country}</div>
-          <div class="tooltip-value">Revenue: $${revenue.toFixed(0)}M</div>
-          <div class="tooltip-value">Share: ${d.percentage.toFixed(1)}%</div>
-          <div class="tooltip-value">Tariff: ${String(d.currentTariff)}%</div>
-        `
-        showTooltip(this.tooltip, content, event)
-      })
-      .on('mouseleave', (event: MouseEvent) => {
-        d3.select(event.currentTarget as SVGPathElement).style('opacity', 0.8)
-        hideTooltip(this.tooltip)
-      })
-      .on('mousemove', (event: MouseEvent) => {
-        this.tooltip
-          .style('left', `${String(event.pageX + 10)}px`)
-          .style('top', `${String(event.pageY - 28)}px`)
-      })
+    // Add center company name
+    g.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em')
+      .style('font-family', 'var(--font-heading)')
+      .style('font-size', '24px')
+      .style('font-weight', 'bold')
+      .style('fill', '#333')
+      .text(selectedCompany === 'HP Inc.' ? 'HP' : selectedCompany)
 
     // Add leader lines and labels
     const legendX = this.centerX + this.outerRadius + 100
     const legendStartY = 80
     const legendSpacing = 35
 
-    arcs.forEach((d, i) => {
-      const arcMidRadius = this.innerRadius + ((this.outerRadius - this.innerRadius) * (d.percentage / 30)) / 2
-      const startX = (Math.cos(d.midAngle) * (arcMidRadius + this.outerRadius)) / 2
-      const startY = (Math.sin(d.midAngle) * (arcMidRadius + this.outerRadius)) / 2
+    sortedData.forEach((d, i) => {
+      const radius = radiusScale(d.percentage)
+      const angle = -Math.PI / 4 + (i * Math.PI) / (sortedData.length + 1)
+      const startX = Math.cos(angle) * (radius + 10)
+      const startY = Math.sin(angle) * (radius + 10)
       const endY = legendStartY + i * legendSpacing
 
       // Create curved leader line path
@@ -175,29 +159,8 @@ class CountryExposureVisualization {
         .style('font-size', '14px')
         .style('font-weight', '600')
         .style('fill', '#666')
-        .text(`${String((d.totalRevenue / 1e6).toFixed(0))}M`)
+        .text(`${String(Math.round(d.totalRevenue / 1e6))}M`)
     })
-
-    // Add center circle
-    g.append('circle')
-      .attr('r', this.innerRadius - 5)
-      .attr('fill', '#4169E1')
-      .style('opacity', 0.9)
-
-    // Add center company name
-    if (selectedCompany !== 'all') {
-      const company = techCompanies.find((c) => c.id === selectedCompany)
-      if (company) {
-        g.append('text')
-          .attr('text-anchor', 'middle')
-          .attr('dy', '0.3em')
-          .style('font-family', 'var(--font-heading)')
-          .style('font-size', '18px')
-          .style('font-weight', '700')
-          .style('fill', 'white')
-          .text(company.name === 'HP Inc.' ? 'HP' : company.name)
-      }
-    }
   }
 
   destroy() {
@@ -217,6 +180,31 @@ function CountryExposure() {
   )
 
   const exposureData = useMemo(() => {
+    // For HP, use design mockup values
+    if (selectedCompany === 'hp') {
+      const mockData = [
+        { country: 'China', revenue: 485000000, percentage: 28.5 },
+        { country: 'Vietnam', revenue: 320000000, percentage: 18.8 },
+        { country: 'Mexico', revenue: 275000000, percentage: 16.2 },
+        { country: 'EU', revenue: 230000000, percentage: 13.5 },
+        { country: 'Taiwan', revenue: 160000000, percentage: 9.4 },
+        { country: 'Japan', revenue: 95000000, percentage: 5.6 },
+        { country: 'Malaysia', revenue: 75000000, percentage: 4.4 },
+        { country: 'South Korea', revenue: 65000000, percentage: 3.8 },
+        { country: 'Philippines', revenue: 35000000, percentage: 2.1 },
+        { country: 'Thailand', revenue: 25000000, percentage: 1.5 },
+      ]
+      
+      return mockData.map(d => ({
+        country: d.country,
+        totalRevenue: d.revenue,
+        percentage: d.percentage,
+        affectedCompanies: ['HP Inc.'],
+        currentTariff: activeTariff?.rates[d.country] ?? 0,
+      }))
+    }
+    
+    // Original calculation for other companies
     const companies =
       selectedCompany === 'all'
         ? techCompanies
@@ -312,7 +300,7 @@ function CountryExposure() {
           </select>
         </div>
         <p className="total-display">
-          Total: {(exposureData.reduce((sum, d) => sum + d.totalRevenue, 0) / 1e6) | 0}M
+          Total: ${Math.round(exposureData.reduce((sum, d) => sum + d.totalRevenue, 0) / 1e6)}M
         </p>
       </div>
 

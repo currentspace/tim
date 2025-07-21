@@ -155,8 +155,8 @@ describe('CountryExposure', () => {
     render(<CountryExposure />)
     const totalText = screen.getByText(/Total:/i)
     expect(totalText).toBeInTheDocument()
-    // Check that it shows a number with M suffix
-    expect(totalText.textContent).toMatch(/Total: \d+M/)
+    // Check that it shows a dollar amount with M suffix
+    expect(totalText.textContent).toMatch(/Total: \$\d+M/)
   })
 
   it('shows company options in selector', () => {

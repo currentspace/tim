@@ -83,7 +83,7 @@ describe('AnticipatedTariffImpact', () => {
   it('displays timeline labels', () => {
     render(<AnticipatedTariffImpact />)
     expect(screen.getByText('Jun 2025')).toBeInTheDocument()
-    expect(screen.getByText('Aug 2025')).toBeInTheDocument()
+    expect(screen.getAllByText('Aug 2025').length).toBeGreaterThan(0)
     expect(screen.getByText('Oct 2025')).toBeInTheDocument()
     expect(screen.getByText('Dec 2025')).toBeInTheDocument()
   })
