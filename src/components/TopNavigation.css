@@ -225,6 +225,8 @@ input:checked + .toggle-slider:before {
   cursor: pointer;
   border-radius: 3px;
   transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .view-toggle-button.active {

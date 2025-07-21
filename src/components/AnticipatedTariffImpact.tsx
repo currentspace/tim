@@ -51,7 +51,7 @@ function AnticipatedTariffImpact() {
 
   // Filter to show only specific companies and calculate percentages
   const companyData: CompanyData[] = useMemo(() => {
-    const targetCompanies = ['HP Inc.', 'Apple', 'Dell Technologies']
+    const targetCompanies = ['Canon', 'HP Inc.', 'Apple']
     return allImpacts
       .filter((impact) => targetCompanies.includes(impact.company))
       .map((impact) => ({
@@ -61,7 +61,7 @@ function AnticipatedTariffImpact() {
         netRevenue: impact.netRevenue,
         impactPercentage: (impact.tariffImpact / impact.baseRevenue) * 100,
       }))
-      .sort((a, b) => b.impactPercentage - a.impactPercentage) // Sort by impact percentage descending
+      // Don't sort - maintain specific order for positioning
   }, [allImpacts])
 
   // Create visualization
@@ -99,13 +99,24 @@ function AnticipatedTariffImpact() {
     }
 
     // Calculate positions for three bubbles in triangular arrangement
-    const positions = [
-      { x: centerX, y: centerY - radius }, // Top (Dell)
-      { x: centerX - radius * 0.866, y: centerY + radius * 0.5 }, // Bottom left (HP)
-      { x: centerX + radius * 0.866, y: centerY + radius * 0.5 }, // Bottom right (Apple)
-    ]
+    // Match the design mockup: Canon top, HP bottom left, Apple bottom right
+    const getPosition = (company: string) => {
+      // Adjust positioning to match design mockup exactly
+      const adjustedRadius = radius * 0.7 // Slightly tighter arrangement
+      switch (company) {
+        case 'Canon':
+        case 'Dell Technologies':
+          return { x: centerX, y: centerY - adjustedRadius * 0.8 } // Top
+        case 'HP Inc.':
+          return { x: centerX - adjustedRadius * 0.866, y: centerY + adjustedRadius * 0.5 } // Bottom left
+        case 'Apple':
+          return { x: centerX + adjustedRadius * 0.866, y: centerY + adjustedRadius * 0.5 } // Bottom right
+        default:
+          return { x: centerX, y: centerY }
+      }
+    }
 
-    // Create company groups with circular arrangement
+    // Create company groups with specific positioning
     const companyGroups = svg
       .selectAll('.company-bubble')
       .data(companyData)
@@ -114,7 +125,10 @@ function AnticipatedTariffImpact() {
       .attr('class', 'company-bubble')
       .attr(
         'transform',
-        (_, i) => `translate(${String(positions[i].x)},${String(positions[i].y)})`,
+        (d) => {
+          const pos = getPosition(d.company)
+          return `translate(${String(pos.x)},${String(pos.y)})`
+        }
       )
 
     // Add circles

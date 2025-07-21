@@ -25,6 +25,25 @@ function App() {
 
   // Determine left section content based on current view
   const getLeftSection = () => {
+    // For country exposure, show back button
+    if (location.pathname === '/country-exposure') {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <Link to="/" className="back-button">
+            ← Back to Tariff View
+          </Link>
+          <div className="toggle-group">
+            <span className="toggle-label">Percentage</span>
+            <label className="toggle-switch">
+              <input type="checkbox" />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>Dollar Volume</span>
+          </div>
+        </div>
+      )
+    }
+    
     // For company timeline, show Timeline/Chart toggle
     if (location.pathname === '/company-timeline') {
       return (
@@ -36,7 +55,7 @@ function App() {
     }
     
     // For most views, show the value toggle
-    const toggleConfig = location.pathname === '/' || location.pathname === '/country-exposure'
+    const toggleConfig = location.pathname === '/'
       ? { label: 'Dollar Volume' }
       : { label: 'Percentage' }
     
@@ -47,6 +66,9 @@ function App() {
           <input type="checkbox" />
           <span className="toggle-slider"></span>
         </label>
+        {location.pathname === '/' && (
+          <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>Tariff Exposure & Rate</span>
+        )}
       </div>
     )
   }
@@ -71,9 +93,27 @@ function App() {
           </button>
         }
         rightSection={
-          <div className="company-branding">
-            <h1 className="company-name">Staples Technology Solutions</h1>
-            <p className="company-subtitle">TIM Dashboard</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            {(location.pathname === '/country-timeline' || location.pathname === '/company-timeline') && (
+              <div className="view-toggle">
+                <Link 
+                  to="/country-timeline" 
+                  className={`view-toggle-button ${location.pathname === '/country-timeline' ? 'active' : ''}`}
+                >
+                  Country
+                </Link>
+                <Link 
+                  to="/company-timeline" 
+                  className={`view-toggle-button ${location.pathname === '/company-timeline' ? 'active' : ''}`}
+                >
+                  Company
+                </Link>
+              </div>
+            )}
+            <div className="company-branding">
+              <h1 className="company-name">Staples Technology Solutions</h1>
+              <p className="company-subtitle">TIM Dashboard</p>
+            </div>
           </div>
         }
       />
