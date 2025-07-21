@@ -29,11 +29,91 @@ pnpm preview      # Preview production build locally
 
 # Code Quality
 pnpm lint         # Run ESLint
+pnpm lint:fix     # Run ESLint and fix issues
+pnpm format       # Format code with Prettier
+pnpm format:check # Check code formatting (CI)
+pnpm test:ci      # Run tests once (CI mode)
 
 # Package Management
 pnpm add <package>      # Add a dependency
 pnpm add -D <package>   # Add a dev dependency
 pnpm install            # Install all dependencies
+```
+
+## CI/CD Workflow
+
+This project uses GitHub Actions for CI/CD with branch protection on `main`. All code must pass
+formatting, linting, and tests before merging.
+
+### Creating a Pull Request
+
+```bash
+# 1. Create a new feature branch
+git checkout -b feature/my-feature
+
+# 2. Make your changes and commit
+git add .
+git commit -m "Add new feature"
+
+# 3. Push to GitHub
+git push -u origin feature/my-feature
+
+# 4. Create a pull request
+gh pr create --base main --title "Add new feature" --body "Description of changes"
+
+# Or create PR with auto-merge enabled
+gh pr create --base main --title "Add new feature" --body "Description of changes" --auto-merge
+```
+
+### Auto-Merge Setup
+
+To enable auto-merge when creating a PR:
+
+```bash
+# Create PR with auto-merge (squash merge)
+gh pr create --base main --title "Title" --body "Description" && \
+gh pr merge --auto --squash
+
+# Or set auto-merge after PR creation
+gh pr merge <PR-NUMBER> --auto --squash
+```
+
+### Branch Protection Rules
+
+The `main` branch is protected with:
+
+- ✅ Pull request required before merging
+- ✅ Status checks must pass (`build` workflow)
+- ✅ Branches must be up to date before merging
+- ✅ Force pushes blocked
+- ✅ Branch deletion blocked
+
+### Workflow Summary
+
+1. **Never push directly to main** - Always use feature branches
+2. **Create PR** - Use `gh pr create` or GitHub web UI
+3. **CI runs automatically** - Format check, lint, and tests must pass
+4. **Enable auto-merge** - PR merges automatically when checks pass
+5. **Cloudflare deploys** - Automatic deployment on main branch update
+
+### Quick Commands
+
+```bash
+# Create feature branch and PR with auto-merge
+git checkout -b feature/my-feature
+# ... make changes ...
+git add . && git commit -m "My changes"
+git push -u origin feature/my-feature
+gh pr create --base main --title "My changes" --body "Description" && gh pr merge --auto --squash
+
+# Check PR status
+gh pr status
+
+# View PR checks
+gh pr checks <PR-NUMBER>
+
+# Cancel auto-merge
+gh pr merge <PR-NUMBER> --disable-auto
 ```
 
 ## React 19.1 Patterns (No useEffect!)
