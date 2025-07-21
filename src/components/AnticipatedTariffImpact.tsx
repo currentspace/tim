@@ -345,7 +345,7 @@ function AnticipatedTariffImpact() {
       </div>
 
       <div className="visualization-container">
-        <svg ref={svgRef}></svg>
+        <svg ref={svgRef} data-testid="tariff-impact-svg"></svg>
       </div>
 
       <div className="timeline-container">
@@ -364,6 +364,7 @@ function AnticipatedTariffImpact() {
             }}
             className="timeline-slider"
             step={1}
+            aria-label="Timeline slider"
           />
           <div className="timeline-labels">
             <span>Jun 2025</span>

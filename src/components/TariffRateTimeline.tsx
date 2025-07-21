@@ -396,7 +396,7 @@ function TariffRateTimeline() {
       </div>
 
       <div className="visualization-container">
-        <svg ref={svgRef}></svg>
+        <svg ref={svgRef} data-testid="tariff-timeline-svg"></svg>
       </div>
 
       <div className="timeline-container">
@@ -412,6 +412,7 @@ function TariffRateTimeline() {
               setSelectedDate(new Date(parseInt(e.target.value)))
             }}
             className="timeline-slider"
+            aria-label="Timeline slider"
           />
           <div className="timeline-labels">
             <span>Jan 2025</span>
