@@ -317,7 +317,7 @@ function CountryExposure() {
       </div>
 
       <div className="visualization-container">
-        <svg ref={svgRefCallback}></svg>
+        <svg ref={svgRefCallback} data-testid="country-exposure-svg"></svg>
       </div>
 
       <div className="timeline-container">
@@ -326,6 +326,7 @@ function CountryExposure() {
           <input
             id="date-slider"
             type="range"
+            aria-label="Date slider"
             min={dateRange.start.getTime()}
             max={dateRange.end.getTime()}
             value={selectedDate.getTime()}

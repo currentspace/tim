@@ -10,6 +10,13 @@ configure({
   asyncUtilTimeout: 2000,
 })
 
+declare global {
+  // You can augment the globalThis interface with your property
+  // Note: type should be boolean for IS_REACT_ACT_ENVIRONMENT
+  // If you have more custom globals, add them here!
+  var IS_REACT_ACT_ENVIRONMENT: boolean
+}
+
 // Suppress act() warnings in test environment
 // These are often false positives with React 19's automatic batching
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -19,9 +26,13 @@ const originalError = console.error
 console.error = (...args: unknown[]) => {
   if (
     typeof args[0] === 'string' &&
-    (args[0].includes('When testing, code that causes React state updates should be wrapped into act') ||
-     args[0].includes('Warning: The current testing environment is not configured to support act') ||
-     args[0].includes('A component suspended inside an `act` scope'))
+    (args[0].includes(
+      'When testing, code that causes React state updates should be wrapped into act',
+    ) ||
+      args[0].includes(
+        'Warning: The current testing environment is not configured to support act',
+      ) ||
+      args[0].includes('A component suspended inside an `act` scope'))
   ) {
     return
   }
