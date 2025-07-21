@@ -28,7 +28,7 @@ class CountryTariffVisualization {
   private selectedLine!: d3.Selection<SVGLineElement, unknown, null, undefined>
   private xScale!: d3.ScaleTime<number, number>
   private yScale!: d3.ScaleLinear<number, number>
-  private legendItems!: d3.Selection<SVGGElement, CountryTimeSeries, SVGGElement, unknown>
+  private legendItems?: d3.Selection<SVGGElement, CountryTimeSeries, SVGGElement, unknown>
   private lines!: d3.Selection<SVGPathElement, CountryTimeSeries, SVGGElement, unknown>
   private onDateChange: (date: Date) => void
 
@@ -233,8 +233,8 @@ class CountryTariffVisualization {
       .attr('stroke-dasharray', '4,2')
       .style('opacity', 0.5)
 
-    // Update selected date line position
-    this.updateSelectedDate(selectedDate)
+    // Update selected date line position (without updating legend since it doesn't exist yet)
+    this.updateSelectedDate(selectedDate, false)
 
     // Add interactive overlay for date selection
     const overlay = this.g
@@ -340,9 +340,11 @@ class CountryTariffVisualization {
       })
   }
 
-  private updateSelectedDate(date: Date) {
+  private updateSelectedDate(date: Date, updateLegendValues = true) {
     this.selectedLine.attr('x1', this.xScale(date)).attr('x2', this.xScale(date))
-    this.updateLegend(date)
+    if (updateLegendValues && this.legendItems) {
+      this.updateLegend(date)
+    }
   }
 
   private updateLegend(date: Date) {
