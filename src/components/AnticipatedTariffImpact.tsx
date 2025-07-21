@@ -20,14 +20,25 @@ function AnticipatedTariffImpact() {
   const svgRef = useRef<SVGSVGElement>(null)
   const [hoveredCompany, setHoveredCompany] = useState<string | null>(null)
 
-  // Set date range from Jun 2025 to Dec 2025 as shown in screenshot
-  const dateRange = useMemo(
-    () => ({
-      start: new Date('2025-06-01'),
-      end: new Date('2025-12-31'),
-    }),
-    [],
-  )
+  // Quarter positions for timeline
+  const quarters = [
+    new Date('2025-06-01'),
+    new Date('2025-08-01'),
+    new Date('2025-10-01'),
+    new Date('2025-12-01'),
+  ]
+
+  const getQuarterIndex = (date: Date): number => {
+    const time = date.getTime()
+    for (let i = quarters.length - 1; i >= 0; i--) {
+      if (time >= quarters[i].getTime()) return i
+    }
+    return 0
+  }
+
+  const getDateFromQuarterIndex = (index: number): Date => {
+    return quarters[Math.max(0, Math.min(index, quarters.length - 1))]
+  }
 
   // Start with current date (Aug 2025 as shown in screenshot)
   const [selectedDate, setSelectedDate] = useState(new Date('2025-08-01'))
@@ -257,12 +268,15 @@ function AnticipatedTariffImpact() {
           const lineEndX = width - rightPanelWidth - 20
           const lineEndY = 60 + i * 25 + 50
 
-          // Create curved path using quadratic bezier curve
-          const midX = (lineStartX + lineEndX) / 2
-          const controlPointX = midX + 50 // Curve outward to the right
-          const controlPointY = (lineStartY + lineEndY) / 2
+          // Create curved path with two control points for S-curve effect
+          // The lines should curve out from bubble, then curve back in to products
+          const midX = lineStartX + (lineEndX - lineStartX) * 0.6
+          const control1X = lineStartX + 80
+          const control1Y = lineStartY
+          const control2X = midX
+          const control2Y = lineEndY
 
-          const pathData = `M ${String(lineStartX)} ${String(lineStartY)} Q ${String(controlPointX)} ${String(controlPointY)} ${String(lineEndX)} ${String(lineEndY)}`
+          const pathData = `M ${String(lineStartX)} ${String(lineStartY)} C ${String(control1X)} ${String(control1Y)}, ${String(control2X)} ${String(control2Y)}, ${String(lineEndX)} ${String(lineEndY)}`
 
           linesGroup
             .append('path')
@@ -340,13 +354,16 @@ function AnticipatedTariffImpact() {
           <input
             id="date-slider"
             type="range"
-            min={dateRange.start.getTime()}
-            max={dateRange.end.getTime()}
-            value={selectedDate.getTime()}
+            min={0}
+            max={3}
+            value={getQuarterIndex(selectedDate)}
             onChange={(e) => {
-              setSelectedDate(new Date(parseInt(e.target.value)))
+              const quarterIndex = parseInt(e.target.value)
+              const newDate = getDateFromQuarterIndex(quarterIndex)
+              setSelectedDate(newDate)
             }}
             className="timeline-slider"
+            step={1}
           />
           <div className="timeline-labels">
             <span>Jun 2025</span>
