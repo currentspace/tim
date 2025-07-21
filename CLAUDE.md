@@ -42,7 +42,8 @@ pnpm install            # Install all dependencies
 
 ## CI/CD Workflow
 
-This project uses GitHub Actions for CI/CD with branch protection on `main`. All code must pass formatting, linting, and tests before merging.
+This project uses GitHub Actions for CI/CD with branch protection on `main`. All code must pass
+formatting, linting, and tests before merging.
 
 ### Creating a Pull Request
 
@@ -80,6 +81,7 @@ gh pr merge <PR-NUMBER> --auto --squash
 ### Branch Protection Rules
 
 The `main` branch is protected with:
+
 - ✅ Pull request required before merging
 - ✅ Status checks must pass (`build` workflow)
 - ✅ Branches must be up to date before merging
