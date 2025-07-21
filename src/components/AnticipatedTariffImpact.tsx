@@ -68,12 +68,11 @@ function AnticipatedTariffImpact() {
   useEffect(() => {
     if (!svgRef.current || companyData.length === 0) return
 
-    const width = 1000
-    const height = 500
-    const leftPanelWidth = 400
-    const rightPanelWidth = 300
-    const centerX = leftPanelWidth / 2
-    const bubbleSpacing = 150
+    const width = 800
+    const height = 400
+    const centerX = width / 2
+    const centerY = height / 2
+    const radius = 120
 
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
@@ -88,7 +87,7 @@ function AnticipatedTariffImpact() {
     const radiusScale = d3
       .scaleSqrt()
       .domain([0, d3.max(companyData, (d) => d.impactPercentage) ?? 0])
-      .range([35, 65])
+      .range([40, 80])
 
     // Get company colors
     const getCompanyColor = (companyName: string): string => {
@@ -99,14 +98,15 @@ function AnticipatedTariffImpact() {
       return '#888888'
     }
 
-    // Create left panel group for bubbles
-    const leftPanel = svg.append('g').attr('class', 'left-panel')
+    // Calculate positions for three bubbles in triangular arrangement
+    const positions = [
+      { x: centerX, y: centerY - radius }, // Top (Dell)
+      { x: centerX - radius * 0.866, y: centerY + radius * 0.5 }, // Bottom left (HP)
+      { x: centerX + radius * 0.866, y: centerY + radius * 0.5 }, // Bottom right (Apple)
+    ]
 
-    // Calculate vertical positions for bubbles
-    const startY = (height - (companyData.length - 1) * bubbleSpacing) / 2
-
-    // Create company groups with vertical alignment
-    const companyGroups = leftPanel
+    // Create company groups with circular arrangement
+    const companyGroups = svg
       .selectAll('.company-bubble')
       .data(companyData)
       .enter()
@@ -114,7 +114,7 @@ function AnticipatedTariffImpact() {
       .attr('class', 'company-bubble')
       .attr(
         'transform',
-        (_, i) => `translate(${String(centerX)},${String(startY + i * bubbleSpacing)})`,
+        (_, i) => `translate(${String(positions[i].x)},${String(positions[i].y)})`,
       )
 
     // Add circles
@@ -162,12 +162,13 @@ function AnticipatedTariffImpact() {
     // Create dotted lines group (will be populated on hover)
     const linesGroup = svg.append('g').attr('class', 'dotted-lines')
 
-    // Create right panel for product breakdown
+    // Create right panel for product breakdown - remove as it's not in the design
     const rightPanel = svg
       .append('g')
       .attr('class', 'right-panel')
-      .attr('transform', `translate(${String(width - rightPanelWidth)},${String(50)})`)
+      .attr('transform', `translate(${String(width - 250)},${String(50)})`)
       .style('opacity', 0)
+      .style('display', 'none')
 
     // Add product breakdown title
     rightPanel
@@ -203,93 +204,6 @@ function AnticipatedTariffImpact() {
           .duration(TRANSITION_DURATION)
           .attr('stroke-width', 5)
           .style('filter', 'brightness(1.1)')
-
-        // Get bubble position
-        const transform = d3.select(this).attr('transform')
-        const regex = /translate\((\d+(?:\.\d+)?),(\d+(?:\.\d+)?)\)/
-        const match = regex.exec(transform)
-        if (!match) return
-        const bubbleX = parseFloat(match[1])
-        const bubbleY = parseFloat(match[2])
-        const bubbleRadius = radiusScale(d.impactPercentage)
-
-        // Show right panel
-        rightPanel.transition().duration(TRANSITION_DURATION).style('opacity', 1)
-
-        // Update breakdown title
-        rightPanel
-          .select('.breakdown-title')
-          .text(`Rate Increase by Product Type (${d.company === 'HP Inc.' ? 'HP' : d.company})`)
-
-        // Calculate cumulative average
-        const products = getProductBreakdown(d.company)
-        const avgPercentage = products.reduce((sum, p) => sum + p.percentage, 0) / products.length
-        rightPanel.select('.cumulative-avg').text(`Cumulative Average ${avgPercentage.toFixed(2)}%`)
-
-        // Remove existing product items
-        rightPanel.selectAll('.product-item').remove()
-
-        // Add product breakdown items
-        const productItems = rightPanel
-          .selectAll('.product-item')
-          .data(products)
-          .enter()
-          .append('g')
-          .attr('class', 'product-item')
-          .attr('transform', (_, i) => `translate(0,${String(60 + i * 25)})`)
-
-        productItems
-          .append('text')
-          .attr('x', 0)
-          .attr('y', 0)
-          .style('font-family', 'var(--font-data)')
-          .style('font-size', '12px')
-          .style('fill', '#666')
-          .text((p) => p.product)
-
-        productItems
-          .append('text')
-          .attr('x', 150)
-          .attr('y', 0)
-          .attr('text-anchor', 'end')
-          .style('font-family', 'var(--font-data)')
-          .style('font-size', '12px')
-          .style('font-weight', '600')
-          .style('fill', '#333')
-          .text((p) => `${p.percentage.toFixed(2)}%`)
-
-        // Draw curved dotted lines from bubble to product items
-        linesGroup.selectAll('path').remove()
-
-        const lineStartX = bubbleX + bubbleRadius + 10
-        const lineStartY = bubbleY
-
-        products.forEach((_, i) => {
-          const lineEndX = width - rightPanelWidth - 20
-          const lineEndY = 60 + i * 25 + 50
-
-          // Create curved path with two control points for S-curve effect
-          // The lines should curve out from bubble, then curve back in to products
-          const midX = lineStartX + (lineEndX - lineStartX) * 0.6
-          const control1X = lineStartX + 80
-          const control1Y = lineStartY
-          const control2X = midX
-          const control2Y = lineEndY
-
-          const pathData = `M ${String(lineStartX)} ${String(lineStartY)} C ${String(control1X)} ${String(control1Y)}, ${String(control2X)} ${String(control2Y)}, ${String(lineEndX)} ${String(lineEndY)}`
-
-          linesGroup
-            .append('path')
-            .attr('d', pathData)
-            .attr('stroke', '#999')
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '3,3')
-            .attr('fill', 'none')
-            .style('opacity', 0)
-            .transition()
-            .duration(TRANSITION_DURATION)
-            .style('opacity', 0.6)
-        })
       })
       .on('mouseleave', function () {
         setHoveredCompany(null)
@@ -301,15 +215,6 @@ function AnticipatedTariffImpact() {
           .duration(TRANSITION_DURATION)
           .attr('stroke-width', 3)
           .style('filter', 'none')
-
-        // Hide right panel and lines
-        rightPanel.transition().duration(TRANSITION_DURATION).style('opacity', 0)
-        linesGroup
-          .selectAll('path')
-          .transition()
-          .duration(TRANSITION_DURATION)
-          .style('opacity', 0)
-          .remove()
       })
   }, [companyData, hoveredCompany])
 
@@ -330,10 +235,14 @@ function AnticipatedTariffImpact() {
             <p>TIM Dashboard</p>
           </div>
           <div className="notifications-section">
-            <span className="notifications-label">Notifications</span>
+            <button className="notifications-button">Notifications</button>
           </div>
         </div>
-        <div className="anticipated-badge">ANTICIPATED</div>
+        <div className="header-tabs">
+          <button className="tab-button">Timeline</button>
+          <div className="anticipated-badge">ANTICIPATED</div>
+          <button className="tab-button active">Chart</button>
+        </div>
       </div>
 
       <div className="current-view">
@@ -349,7 +258,8 @@ function AnticipatedTariffImpact() {
       </div>
 
       <div className="timeline-container">
-        <h3>Timeline</h3>
+        <h3 className="timeline-title">TIMELINE</h3>
+        <div className="timeline-subtitle">Aug 2025</div>
         <div className="timeline-wrapper">
           <input
             id="date-slider"
@@ -372,9 +282,6 @@ function AnticipatedTariffImpact() {
             <span>Oct 2025</span>
             <span>Dec 2025</span>
           </div>
-        </div>
-        <div className="timeline-date">
-          {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
         </div>
       </div>
     </div>

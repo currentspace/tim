@@ -1,28 +1,31 @@
 .anticipated-tariff-impact {
-  background: #f5f5f5;
+  background: var(--color-paper);
   min-height: 100vh;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--color-paper);
+  padding: 2rem 3rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .header-top {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  margin-bottom: 1rem;
-  position: relative;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .title-section {
   display: flex;
   align-items: center;
   gap: 1rem;
+  justify-self: start;
 }
 
 .dollar-volume {
@@ -84,17 +87,17 @@ input:checked + .slider:before {
 
 .company-title {
   text-align: center;
-  flex: 1;
+  justify-self: center;
 }
 
 .company-title h2 {
-  font-family: var(--font-editorial);
-  font-size: var(--type-2xl);
+  font-family: var(--font-heading);
+  font-size: var(--type-lg);
   font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-snug);
+  letter-spacing: var(--tracking-normal);
   margin: 0;
   color: var(--color-ink);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .company-title p {
@@ -107,15 +110,15 @@ input:checked + .slider:before {
 }
 
 .anticipated-badge {
-  font-family: var(--font-editorial);
-  background: var(--color-data);
-  color: var(--color-paper);
-  padding: 0.75rem 2.5rem;
+  font-family: var(--font-heading);
+  background: #FF8A00;
+  color: white;
+  padding: 0.5rem 2rem;
   display: inline-block;
   font-weight: var(--weight-bold);
-  font-size: var(--type-xl);
-  letter-spacing: var(--tracking-snug);
-  border-radius: 5px;
+  font-size: var(--type-lg);
+  letter-spacing: var(--tracking-wide);
+  border-radius: 24px;
   margin: 0 auto;
   text-align: center;
   width: fit-content;
@@ -123,16 +126,18 @@ input:checked + .slider:before {
 }
 
 .current-view {
-  background: white;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--color-paper);
+  padding: 2rem 3rem;
+  border-bottom: none;
+  margin-left: 3rem;
+  margin-top: 2rem;
 }
 
 .current-view h3 {
-  margin: 0 0 0.5rem 0;
-  font-family: var(--font-editorial);
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-heading);
   font-size: var(--type-xs);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--color-ink);
@@ -155,11 +160,14 @@ input:checked + .slider:before {
 }
 
 .visualization-container {
-  background: white;
-  padding: 2rem;
+  background: var(--color-paper);
+  padding: 0;
   margin: 0;
-  min-height: 500px;
+  flex: 1;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .visualization-container svg {
@@ -219,35 +227,48 @@ input:checked + .slider:before {
 }
 
 .timeline-container {
-  background: white;
-  padding: 2rem;
-  border-top: 1px solid #e0e0e0;
+  background: var(--color-paper);
+  padding: 2rem 3rem 3rem;
+  border-top: none;
+  position: relative;
 }
 
-.timeline-container h3 {
-  margin: 0 0 1rem 0;
-  font-family: var(--font-editorial);
-  font-size: var(--type-sm);
-  font-weight: var(--weight-semibold);
+.timeline-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--color-ink);
+  position: absolute;
+  left: 3rem;
+  top: 2rem;
+}
+
+.timeline-subtitle {
+  position: absolute;
+  right: 3rem;
+  top: 2rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
 }
 
 .timeline-wrapper {
   position: relative;
-  padding: 1rem 0;
+  padding: 4rem 3rem 1rem;
 }
 
 .timeline-slider {
   width: 100%;
-  height: 4px;
+  height: 2px;
   -webkit-appearance: none;
   appearance: none;
-  background: #e0e0e0;
+  background: rgba(0, 0, 0, 0.1);
   outline: none;
   position: relative;
-  border-radius: 2px;
+  border-radius: 1px;
   cursor: pointer;
 }
 
@@ -266,26 +287,26 @@ input:checked + .slider:before {
 .timeline-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #333;
+  width: 16px;
+  height: 16px;
+  background: var(--color-ink);
   cursor: pointer;
   border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
   transition: transform 0.2s ease;
 }
 
 .timeline-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #333;
+  width: 16px;
+  height: 16px;
+  background: var(--color-ink);
   cursor: pointer;
   border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
   transition: transform 0.2s ease;
@@ -302,17 +323,40 @@ input:checked + .slider:before {
 .timeline-labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   font-family: var(--font-data);
   font-size: var(--type-xs);
   color: var(--color-ink-muted);
+  padding: 0 0.5rem;
 }
 
-.timeline-date {
-  margin-top: 1rem;
+.header-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+}
+
+.tab-button {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
   font-family: var(--font-data);
   font-size: var(--type-sm);
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.tab-button:hover {
   color: var(--color-ink);
+}
+
+.tab-button.active {
+  color: var(--color-ink);
+  font-weight: var(--weight-semibold);
 }
 
 /* D3 Tooltip Styles */
@@ -340,10 +384,24 @@ input:checked + .slider:before {
 }
 
 .notifications-section {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  justify-self: end;
+}
+
+.notifications-button {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 1.5rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.notifications-button:hover {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .notifications-label {
