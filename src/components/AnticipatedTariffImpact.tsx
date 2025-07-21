@@ -69,11 +69,6 @@ function AnticipatedTariffImpact() {
       .attr('height', height)
       .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
 
-    // Create main group
-    const g = svg
-      .append('g')
-      .attr('transform', `translate(${String(width / 2)},${String(height / 2)})`)
-
     // Use the filtered impacts directly (already only 3 companies)
     const simulationData = impacts as SimulationNode[]
 
@@ -92,8 +87,8 @@ function AnticipatedTariffImpact() {
       return '#888888'
     }
 
-    // Create force simulation
-    const simulation = d3
+    // Pre-calculate positions using a temporary simulation
+    const tempSimulation = d3
       .forceSimulation(simulationData)
       .force('x', d3.forceX(0).strength(0.1))
       .force('y', d3.forceY(0).strength(0.1))
@@ -105,14 +100,36 @@ function AnticipatedTariffImpact() {
         }),
       )
       .force('charge', d3.forceManyBody().strength(-50))
+      .stop()
 
-    // Create company groups
-    const companyGroups = g
+    // Run simulation synchronously to calculate positions
+    for (let i = 0; i < 300; i++) {
+      tempSimulation.tick()
+    }
+
+    // Store final positions
+    const finalPositions = simulationData.map((d) => ({
+      company: d.company,
+      x: d.x ?? 0,
+      y: d.y ?? 0,
+    }))
+
+    // Create main group positioned at center
+    const mainGroup = svg
+      .append('g')
+      .attr('transform', `translate(${String(width / 2)},${String(height / 2)})`)
+
+    // Create company groups with static positions
+    const companyGroups = mainGroup
       .selectAll('.company-bubble')
       .data(simulationData)
       .enter()
       .append('g')
       .attr('class', 'company-bubble')
+      .attr('transform', (_, i) => {
+        const pos = finalPositions[i]
+        return `translate(${String(pos.x)},${String(pos.y)})`
+      })
 
     // Add circles
     companyGroups
@@ -163,38 +180,19 @@ function AnticipatedTariffImpact() {
         return `${impactPercentage.toFixed(1)}%`
       })
 
-    // Create highlight circles for hover effect (separate from physics circles)
+    // Add hover interactions directly (no simulation needed)
     companyGroups
-      .append('circle')
-      .attr('r', (d) => {
-        const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
-        return radiusScale(impactPercentage)
-      })
-      .attr('fill', 'none')
-      .attr('stroke', '#fff')
-      .attr('stroke-width', 4)
-      .style('opacity', 0)
-      .style('pointer-events', 'none')
-
-    // Add invisible interaction layer
-    companyGroups
-      .append('circle')
-      .attr('r', (d) => {
-        const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
-        return radiusScale(impactPercentage) + 5 // Slightly larger for easier hover
-      })
-      .attr('fill', 'transparent')
-      .style('cursor', 'pointer')
       .on('mouseenter', function (event: MouseEvent, d: SimulationNode) {
         const company = techCompanies.find((c) => c.name === d.company)
         if (!company || !tooltipRef.current) return
 
-        // Show highlight circle without affecting the actual circle
-        d3.select(this.parentNode)
-          .select('circle:nth-child(2)')
+        // Highlight effect
+        d3.select(this)
+          .select('circle')
           .transition()
           .duration(TRANSITION_DURATION)
-          .style('opacity', 1)
+          .attr('stroke-width', 5)
+          .style('filter', 'brightness(1.1)')
 
         const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
         const content = `
@@ -207,19 +205,19 @@ function AnticipatedTariffImpact() {
         showTooltip(tooltipRef.current, content, event)
       })
       .on('mouseleave', function () {
-        // Hide highlight circle
-        d3.select(this.parentNode)
-          .select('circle:nth-child(2)')
+        // Reset highlight
+        d3.select(this)
+          .select('circle')
           .transition()
           .duration(TRANSITION_DURATION)
-          .style('opacity', 0)
+          .attr('stroke-width', 3)
+          .style('filter', 'none')
 
         if (tooltipRef.current) {
           hideTooltip(tooltipRef.current)
         }
       })
       .on('mousemove', function (event: MouseEvent) {
-        // Update tooltip position on move
         if (tooltipRef.current) {
           tooltipRef.current
             .style('left', `${String(event.pageX + 10)}px`)
@@ -227,28 +225,8 @@ function AnticipatedTariffImpact() {
         }
       })
 
-    // Run simulation with fixed positions after initial layout
-    let tickCount = 0
-    simulation.on('tick', () => {
-      tickCount++
-      companyGroups.attr('transform', (d: SimulationNode) => {
-        return `translate(${String(d.x ?? 0)},${String(d.y ?? 0)})`
-      })
-
-      // Stop simulation after 120 ticks (roughly 2 seconds) and fix positions
-      if (tickCount > 120) {
-        simulation.stop()
-        // Fix the positions to prevent any further movement
-        simulationData.forEach((d) => {
-          d.fx = d.x
-          d.fy = d.y
-        })
-      }
-    })
-
     // Cleanup on unmount
     return () => {
-      simulation.stop()
       if (tooltipRef.current) {
         tooltipRef.current.remove()
         tooltipRef.current = null
