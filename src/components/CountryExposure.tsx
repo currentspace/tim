@@ -173,10 +173,10 @@ function CountryExposure() {
           .style('opacity', .9)
 
         tooltip.html(`
-          <strong>${d.country}</strong><br/>
-          Revenue: ${formatCurrency(d.totalRevenue)}<br/>
-          Share: ${d.percentage.toFixed(1).toString()}%<br/>
-          Tariff: ${d.currentTariff.toString()}%
+          <strong style="font-family: Inter, system-ui, -apple-system, sans-serif; font-weight: 700;">${d.country}</strong><br/>
+          <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Revenue: ${formatCurrency(d.totalRevenue)}</span><br/>
+          <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Share: ${d.percentage.toFixed(1).toString()}%</span><br/>
+          <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Tariff: ${d.currentTariff.toString()}%</span>
         `)
           .style('left', `${((event as MouseEvent).pageX + 10).toString()}px`)
           .style('top', `${((event as MouseEvent).pageY - 28).toString()}px`)
@@ -213,15 +213,20 @@ function CountryExposure() {
       labelGroup.append('text')
         .attr('text-anchor', textAnchor)
         .attr('dy', '-0.3em')
+        .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
         .style('font-size', '14px')
-        .style('font-weight', 'bold')
+        .style('font-weight', '600')
+        .style('letter-spacing', '-0.01em')
         .text(d.country)
 
       // Percentage
       labelGroup.append('text')
         .attr('text-anchor', textAnchor)
         .attr('dy', '1em')
+        .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
         .style('font-size', '12px')
+        .style('font-weight', '500')
+        .style('font-variant-numeric', 'tabular-nums')
         .style('fill', '#666')
         .text(`${d.percentage.toFixed(1)}%`)
     })
@@ -233,8 +238,10 @@ function CountryExposure() {
         g.append('text')
           .attr('text-anchor', 'middle')
           .attr('dy', '0.3em')
+          .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
           .style('font-size', '20px')
-          .style('font-weight', 'bold')
+          .style('font-weight', '800')
+          .style('letter-spacing', '-0.025em')
           .text(company.name)
       }
     }

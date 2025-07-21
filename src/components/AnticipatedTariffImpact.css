@@ -80,28 +80,35 @@ input:checked + .slider:before {
 }
 
 .company-title h2 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: var(--letter-spacing-tight);
   margin: 0;
   color: #333;
+  text-transform: uppercase;
 }
 
 .company-title p {
   margin: 0;
   color: #666;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .anticipated-badge {
   background: #ff8800;
   color: white;
-  padding: 0.5rem 2rem;
+  padding: 0.75rem 2.5rem;
   display: inline-block;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-xl);
+  letter-spacing: var(--letter-spacing-tight);
   border-radius: 5px;
   margin: 0 auto;
   text-align: center;
   width: fit-content;
+  text-transform: uppercase;
 }
 
 .current-view {
@@ -112,20 +119,25 @@ input:checked + .slider:before {
 
 .current-view h3 {
   margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   color: #333;
 }
 
 .view-subtitle {
   margin: 0 0 0.5rem 0;
   color: #666;
-  font-size: 0.9rem;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
 }
 
 .date-display {
   margin: 0;
   color: #999;
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
 }
 
 .visualization-container {
@@ -151,7 +163,10 @@ input:checked + .slider:before {
 .legend h4 {
   margin: 0 0 1rem 0;
   color: #333;
-  font-size: 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
 }
 
 .legend-items {
@@ -196,7 +211,10 @@ input:checked + .slider:before {
 
 .timeline-container h3 {
   margin: 0 0 1rem 0;
-  font-size: 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   color: #333;
 }
 

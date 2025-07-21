@@ -44,21 +44,27 @@
 }
 
 .percentage-share {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: #666;
   padding: 0 1rem;
 }
 
 .company-title h2 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: var(--letter-spacing-tight);
   margin: 0;
   color: #333;
+  text-transform: uppercase;
 }
 
 .company-title p {
   margin: 0;
   color: #666;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .current-view {
@@ -69,14 +75,18 @@
 
 .current-view h3 {
   margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   color: #333;
 }
 
 .view-subtitle {
   margin: 0 0 0.5rem 0;
   color: #666;
-  font-size: 0.9rem;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
 }
 
 .company-info {
@@ -122,7 +132,10 @@
 
 .country-legend h4 {
   margin: 0 0 1rem 0;
-  font-size: 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   color: #333;
 }
 
@@ -169,7 +182,10 @@
 
 .timeline-container h3 {
   margin: 0 0 1rem 0;
-  font-size: 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   color: #333;
 }
 

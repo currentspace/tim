@@ -1,3 +1,30 @@
+/* Main App Title with "novel edge" styling */
+#root > h1 {
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-black);
+  letter-spacing: var(--letter-spacing-tight);
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #646cff 0%, #ff8800 50%, #ff4d4d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+  padding: 0 1rem;
+}
+
+#root > h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #646cff, transparent);
+}
+
 .card {
   padding: 2em;
 }
