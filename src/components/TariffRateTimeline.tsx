@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { COMPANY_COLORS } from '../constants/colors'
+import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './TariffRateTimeline.css'
 
 interface CompanyTimeSeries {
@@ -17,6 +18,9 @@ interface CompanyTimeSeries {
 
 function TariffRateTimeline() {
   const svgRef = useRef<SVGSVGElement>(null)
+  const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> | null>(
+    null,
+  )
   const [selectedDate, setSelectedDate] = useState(new Date('2025-05-01'))
 
   useEffect(() => {
@@ -83,6 +87,9 @@ function TariffRateTimeline() {
       .domain([0, 32]) // 0-32% as shown in screenshot
       .range([innerHeight, 0])
 
+    // Create tooltip if not exists
+    tooltipRef.current ??= createTooltip()
+
     // Create grid lines
     const yAxisGrid = d3
       .axisLeft(yScale)
@@ -90,11 +97,28 @@ function TariffRateTimeline() {
       .tickFormat(() => '')
       .ticks(8)
 
+    const xAxisGrid = d3
+      .axisBottom(xScale)
+      .tickSize(-innerHeight)
+      .tickFormat(() => '')
+      .ticks(d3.timeMonth.every(1))
+
+    // Add Y grid lines
     g.append('g')
-      .attr('class', 'grid')
+      .attr('class', 'grid y-grid')
       .call(yAxisGrid)
-      .style('stroke-dasharray', '2,2')
-      .style('opacity', 0.3)
+      .style('stroke', '#e0e0e0')
+      .style('stroke-dasharray', '1,1')
+      .style('opacity', 0.5)
+
+    // Add X grid lines
+    g.append('g')
+      .attr('class', 'grid x-grid')
+      .attr('transform', `translate(0,${String(innerHeight)})`)
+      .call(xAxisGrid)
+      .style('stroke', '#e0e0e0')
+      .style('stroke-dasharray', '1,1')
+      .style('opacity', 0.5)
 
     // Create axes
     const xAxis = d3
@@ -118,10 +142,7 @@ function TariffRateTimeline() {
       .style('font-family', 'var(--font-data)')
       .style('font-size', '12px')
 
-    g.append('g')
-      .call(yAxis)
-      .style('font-family', 'var(--font-data)')
-      .style('font-size', '12px')
+    g.append('g').call(yAxis).style('font-family', 'var(--font-data)').style('font-size', '12px')
 
     // Add Y-axis label
     g.append('text')
@@ -154,7 +175,7 @@ function TariffRateTimeline() {
       .attr('stroke-width', 2)
       .style('opacity', 0.8)
 
-    // Add dots at data points
+    // Add dots at data points with hover interactions
     timeSeriesData.forEach((series) => {
       g.selectAll(`.dot-${series.companyId}`)
         .data(series.values)
@@ -163,9 +184,40 @@ function TariffRateTimeline() {
         .attr('class', `dot dot-${series.companyId}`)
         .attr('cx', (d) => xScale(d.date))
         .attr('cy', (d) => yScale(d.rate))
-        .attr('r', 3)
+        .attr('r', 4)
         .attr('fill', series.color)
-        .style('opacity', 0)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 2)
+        .style('cursor', 'pointer')
+        .on('mouseenter', function (event: MouseEvent, d) {
+          // Enlarge dot on hover
+          d3.select(this).transition().duration(200).attr('r', 6)
+
+          // Show tooltip
+          if (tooltipRef.current) {
+            const content = `
+              <div class="tooltip-title">${series.company}</div>
+              <div class="tooltip-value">Date: ${d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+              <div class="tooltip-value">Tariff Rate: ${d.rate.toFixed(2)}%</div>
+            `
+            showTooltip(tooltipRef.current, content, event)
+          }
+        })
+        .on('mouseleave', function () {
+          // Reset dot size
+          d3.select(this).transition().duration(200).attr('r', 4)
+
+          if (tooltipRef.current) {
+            hideTooltip(tooltipRef.current)
+          }
+        })
+        .on('mousemove', function (event: MouseEvent) {
+          if (tooltipRef.current) {
+            tooltipRef.current
+              .style('left', `${String(event.pageX + 10)}px`)
+              .style('top', `${String(event.pageY - 28)}px`)
+          }
+        })
     })
 
     // Add vertical line for selected date
@@ -277,13 +329,14 @@ function TariffRateTimeline() {
           .style('opacity', 1)
           .attr('stroke-width', 3)
 
-        // Show dots for this line
+        // Highlight dots for this line
+        g.selectAll('.dot').style('opacity', 0.3)
         g.selectAll(`.dot-${d.companyId}`).style('opacity', 1)
       })
       .on('mouseleave', function () {
-        // Reset all lines
+        // Reset all lines and dots
         lines.style('opacity', 0.8).attr('stroke-width', 2)
-        g.selectAll('.dot').style('opacity', 0)
+        g.selectAll('.dot').style('opacity', 1)
       })
 
     // Initialize with selected date
@@ -305,6 +358,14 @@ function TariffRateTimeline() {
       setSelectedDate(date)
       updateSelectedDate(date)
     })
+
+    // Cleanup on unmount
+    return () => {
+      if (tooltipRef.current) {
+        tooltipRef.current.remove()
+        tooltipRef.current = null
+      }
+    }
   }, [selectedDate])
 
   return (
@@ -364,4 +425,3 @@ function TariffRateTimeline() {
 }
 
 export default TariffRateTimeline
-
