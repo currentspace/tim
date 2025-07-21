@@ -6,7 +6,7 @@ interface NavigationMenuProps {
   currentView: string
 }
 
-function NavigationMenu({ currentView }: NavigationMenuProps) {
+function NavigationMenu({ currentView: _currentView }: NavigationMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const location = useLocation()

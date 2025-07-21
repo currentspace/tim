@@ -341,16 +341,11 @@ class CountryTariffVisualization {
   }
 
   private updateSelectedDate(date: Date) {
-    if (this.selectedLine && this.xScale) {
-      this.selectedLine.attr('x1', this.xScale(date)).attr('x2', this.xScale(date))
-    }
-    if (this.legendItems) {
-      this.updateLegend(date)
-    }
+    this.selectedLine.attr('x1', this.xScale(date)).attr('x2', this.xScale(date))
+    this.updateLegend(date)
   }
 
   private updateLegend(date: Date) {
-    if (!this.legendItems) return
 
     this.legendItems.select('.legend-value').text((d) => {
       // Find the closest data point
@@ -375,7 +370,7 @@ class CountryTariffVisualization {
 
 function CountryTariffTimeline() {
   const visualizationRef = useRef<CountryTariffVisualization | null>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
+  // Removed unused isInitialized state
   const [selectedDate, setSelectedDate] = useState(new Date('2025-06-01'))
 
   // Prepare time series data
@@ -412,15 +407,12 @@ function CountryTariffTimeline() {
   // Callback ref for SVG element - called when DOM element is attached/detached
   const svgRefCallback = (node: SVGSVGElement | null) => {
     if (node) {
-      if (!visualizationRef.current) {
-        visualizationRef.current = new CountryTariffVisualization(node, setSelectedDate)
-        setIsInitialized(true)
-      }
+      visualizationRef.current ??= new CountryTariffVisualization(node, setSelectedDate)
       visualizationRef.current.update(timeSeriesData, selectedDate)
     } else if (visualizationRef.current) {
       visualizationRef.current.destroy()
       visualizationRef.current = null
-      setIsInitialized(false)
+      // Cleanup complete
     }
   }
 

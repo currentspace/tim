@@ -58,11 +58,11 @@ class CountryExposureVisualization {
     // Create concentric circles for each country
     const radiusScale = d3
       .scaleSqrt()
-      .domain([0, d3.max(sortedData, (d) => d.percentage) || 0])
+      .domain([0, d3.max(sortedData, (d) => d.percentage) ?? 0])
       .range([30, this.outerRadius])
 
     // Add circles from largest to smallest
-    sortedData.forEach((d, i) => {
+    sortedData.forEach((d) => {
       const radius = radiusScale(d.percentage)
 
       g.append('circle')
@@ -173,7 +173,7 @@ class CountryExposureVisualization {
 
 function CountryExposure() {
   const visualizationRef = useRef<CountryExposureVisualization | null>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
+  // Removed unused isInitialized state
   const [selectedCompany, setSelectedCompany] = useState<string>('hp') // Default to HP like in the image
   const [selectedDate, setSelectedDate] = useState(new Date('2025-01-01'))
 
@@ -246,15 +246,12 @@ function CountryExposure() {
   // Callback ref for SVG element - called when DOM element is attached/detached
   const svgRefCallback = (node: SVGSVGElement | null) => {
     if (node) {
-      if (!visualizationRef.current) {
-        visualizationRef.current = new CountryExposureVisualization(node)
-        setIsInitialized(true)
-      }
+      visualizationRef.current ??= new CountryExposureVisualization(node)
       visualizationRef.current.update(exposureData, selectedCompany)
     } else if (visualizationRef.current) {
       visualizationRef.current.destroy()
       visualizationRef.current = null
-      setIsInitialized(false)
+      // Cleanup complete
     }
   }
 

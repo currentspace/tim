@@ -18,6 +18,9 @@ export default tseslint.config(
       '*.config.d.ts',
       'src/vite-env.d.ts',
       '*.mjs',
+      'e2e/**',
+      'scripts/**',
+      'src/App-WithSidebar.tsx',
     ],
   },
 

@@ -4,7 +4,7 @@ import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { calculateAllCompaniesImpact } from '../utils/tariffCalculations'
 import { COMPANY_COLORS } from '../constants/colors'
-import { getProductBreakdown } from '../data/productBreakdown'
+// Removed unused import - getProductBreakdown
 import { TRANSITION_DURATION } from '../utils/d3Utils'
 import './AnticipatedTariffImpact.css'
 
@@ -171,7 +171,7 @@ function AnticipatedTariffImpact() {
       .text((d) => `${d.impactPercentage.toFixed(1)}%`)
 
     // Create dotted lines group (will be populated on hover)
-    const linesGroup = svg.append('g').attr('class', 'dotted-lines')
+    svg.append('g').attr('class', 'dotted-lines')
 
     // Create right panel for product breakdown - remove as it's not in the design
     const rightPanel = svg

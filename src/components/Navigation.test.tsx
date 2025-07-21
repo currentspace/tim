@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import Navigation from './Navigation'
@@ -7,7 +7,7 @@ describe('Navigation', () => {
   const mockOnViewChange = vi.fn()
 
   beforeEach(() => {
-    mockOnViewChange.mockClear()
+    vi.clearAllMocks()
   })
 
   it('renders navigation header', () => {
@@ -82,8 +82,7 @@ describe('Navigation', () => {
     expect(screen.getByText('Configure alerts and notifications')).toBeInTheDocument()
   })
 
-  it('handles all view types correctly', async () => {
-    const user = userEvent.setup()
+  it('handles all view types correctly', () => {
     const { rerender } = render(<Navigation currentView="tariff" onViewChange={mockOnViewChange} />)
 
     // Test each view type
@@ -91,7 +90,7 @@ describe('Navigation', () => {
 
     for (const viewType of viewTypes) {
       mockOnViewChange.mockClear()
-      rerender(<Navigation currentView={viewType as any} onViewChange={mockOnViewChange} />)
+      rerender(<Navigation currentView={viewType} onViewChange={mockOnViewChange} />)
 
       // Find the corresponding button and verify it's active
       let buttonText = ''

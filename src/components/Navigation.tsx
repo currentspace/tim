@@ -78,7 +78,9 @@ function Navigation({ currentView, onViewChange }: NavigationProps) {
               <button
                 key={item.id}
                 className={`navigation-item ${currentView === item.id ? 'active' : ''}`}
-                onClick={() => onViewChange(item.id)}
+                onClick={() => {
+                  onViewChange(item.id)
+                }}
                 aria-current={currentView === item.id ? 'page' : undefined}
               >
                 <span className="navigation-item-label">{item.label}</span>
@@ -95,7 +97,9 @@ function Navigation({ currentView, onViewChange }: NavigationProps) {
               <button
                 key={item.id}
                 className={`navigation-item ${currentView === item.id ? 'active' : ''}`}
-                onClick={() => onViewChange(item.id)}
+                onClick={() => {
+                  onViewChange(item.id)
+                }}
                 aria-current={currentView === item.id ? 'page' : undefined}
               >
                 <span className="navigation-item-label">{item.label}</span>
