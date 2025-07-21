@@ -2,7 +2,9 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
-import { getActiveTariffForDate, formatCurrency } from '../utils/tariffCalculations'
+import { getActiveTariffForDate } from '../utils/tariffCalculations'
+import { COUNTRY_COLORS } from '../constants/colors'
+import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './CountryExposure.css'
 
 interface ArcData {
@@ -16,28 +18,11 @@ interface ArcData {
   midAngle: number
 }
 
-// Color palette for countries
-const COUNTRY_COLORS: Record<string, string> = {
-  China: '#ff4d4d',
-  Vietnam: '#ff8c1a',
-  Mexico: '#ffcc00',
-  EU: '#4dff4d',
-  Taiwan: '#1affe6',
-  Japan: '#1a75ff',
-  Malaysia: '#6666ff',
-  'South Korea': '#b366ff',
-  Philippines: '#ff66ff',
-  Thailand: '#ff66b3',
-  USA: '#4d94ff',
-  India: '#ff9933',
-  Israel: '#0066cc',
-  Ireland: '#009900',
-  Germany: '#ffcc00',
-  Singapore: '#ff0000',
-}
-
 function CountryExposure() {
   const svgRef = useRef<SVGSVGElement>(null)
+  const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> | null>(
+    null,
+  )
   const [selectedCompany, setSelectedCompany] = useState<string>('hp') // Default to HP like in the image
   const [selectedDate, setSelectedDate] = useState(new Date('2025-01-01'))
 
@@ -86,12 +71,12 @@ function CountryExposure() {
   useEffect(() => {
     if (!svgRef.current || exposureData.length === 0) return
 
-    const width = 800
+    const width = 900
     const height = 600
-    const centerX = width / 2
+    const centerX = 300
     const centerY = height / 2
-    const innerRadius = 80
-    const outerRadius = 200
+    const innerRadius = 50
+    const outerRadius = 180
 
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
@@ -107,14 +92,18 @@ function CountryExposure() {
       .append('g')
       .attr('transform', `translate(${centerX.toString()},${centerY.toString()})`)
 
-    // Create concentric circles (like in the image)
-    const circles = [1, 0.8, 0.6, 0.4, 0.2]
-    circles.forEach((scale) => {
+    // Create tooltip if not exists
+    tooltipRef.current ??= createTooltip()
+
+    // Create concentric circles for the radial chart
+    const scales = [0.2, 0.4, 0.6, 0.8, 1.0]
+    scales.forEach((scale) => {
       g.append('circle')
-        .attr('r', outerRadius * scale)
+        .attr('r', innerRadius + (outerRadius - innerRadius) * scale)
         .attr('fill', 'none')
         .attr('stroke', '#e0e0e0')
         .attr('stroke-width', 1)
+        .style('stroke-dasharray', scale === 1 ? 'none' : '2,2')
     })
 
     // Calculate angles for each country
@@ -154,86 +143,100 @@ function CountryExposure() {
       .append('path')
       .attr('class', 'country-arc')
       .attr('d', arcGenerator)
-      .attr('fill', (d) => COUNTRY_COLORS[d.country] || '#888888')
+      .attr('fill', (d) => COUNTRY_COLORS[d.country] ?? '#888888')
       .attr('stroke', 'white')
       .attr('stroke-width', 2)
       .style('opacity', 0.8)
-      .on('mouseover', function (event, d) {
+      .style('cursor', 'pointer')
+      .on('mouseenter', function (event: MouseEvent, d) {
         d3.select(this).style('opacity', 1)
 
         // Show tooltip
-        const tooltip = d3
-          .select('body')
-          .append('div')
-          .attr('class', 'd3-tooltip')
-          .style('opacity', 0)
-          .style('position', 'absolute')
-          .style('background', 'rgba(0, 0, 0, 0.8)')
-          .style('color', 'white')
-          .style('padding', '10px')
-          .style('border-radius', '5px')
-          .style('pointer-events', 'none')
-
-        tooltip.transition().duration(200).style('opacity', 0.9)
-
-        tooltip
-          .html(
-            `
-          <strong class="d3-title">${d.country}</strong><br/>
-          <span class="d3-value">Revenue: ${formatCurrency(d.totalRevenue)}</span><br/>
-          <span class="d3-value">Share: ${d.percentage.toFixed(1).toString()}%</span><br/>
-          <span class="d3-value">Tariff: ${d.currentTariff.toString()}%</span>
-        `,
-          )
-          .style('left', `${((event as MouseEvent).pageX + 10).toString()}px`)
-          .style('top', `${((event as MouseEvent).pageY - 28).toString()}px`)
+        if (tooltipRef.current) {
+          const revenue = d.totalRevenue / 1e6 // Convert to millions
+          const content = `
+            <div class="tooltip-title">${d.country}</div>
+            <div class="tooltip-value">Revenue: $${revenue.toFixed(0)}M</div>
+            <div class="tooltip-value">Share: ${d.percentage.toFixed(1)}%</div>
+            <div class="tooltip-value">Tariff: ${String(d.currentTariff)}%</div>
+          `
+          showTooltip(tooltipRef.current, content, event)
+        }
       })
-      .on('mouseout', function () {
+      .on('mouseleave', function () {
         d3.select(this).style('opacity', 0.8)
-        d3.selectAll('.d3-tooltip').remove()
+        if (tooltipRef.current) {
+          hideTooltip(tooltipRef.current)
+        }
+      })
+      .on('mousemove', function (event: MouseEvent) {
+        if (tooltipRef.current) {
+          tooltipRef.current
+            .style('left', `${String(event.pageX + 10)}px`)
+            .style('top', `${String(event.pageY - 28)}px`)
+        }
       })
 
-    // Add lines and labels
-    const labelRadius = outerRadius + 50
+    // Add leader lines and labels on the right side
+    const legendX = centerX + outerRadius + 100
+    const legendStartY = 80
+    const legendSpacing = 35
 
-    arcs.forEach((d) => {
-      // Calculate label position
-      const labelX = Math.cos(d.midAngle) * labelRadius
-      const labelY = Math.sin(d.midAngle) * labelRadius
+    arcs.forEach((d, i) => {
+      const arcMidRadius = innerRadius + ((outerRadius - innerRadius) * (d.percentage / 30)) / 2
+      const startX = (Math.cos(d.midAngle) * (arcMidRadius + outerRadius)) / 2
+      const startY = (Math.sin(d.midAngle) * (arcMidRadius + outerRadius)) / 2
+      const endY = legendStartY + i * legendSpacing
 
-      // Draw line from arc to label
-      g.append('line')
-        .attr('x1', Math.cos(d.midAngle) * outerRadius)
-        .attr('y1', Math.sin(d.midAngle) * outerRadius)
-        .attr('x2', labelX)
-        .attr('y2', labelY)
-        .attr('stroke', '#333')
+      // Create curved leader line path
+      const midX = startX + 100
+      const path = `M ${String(startX)} ${String(startY)} Q ${String(midX)} ${String(startY)}, ${String(legendX - centerX)} ${String(endY)}`
+
+      g.append('path')
+        .attr('d', path)
+        .attr('fill', 'none')
+        .attr('stroke', '#666')
         .attr('stroke-width', 1)
         .style('opacity', 0.6)
 
-      // Add country label with percentage
-      const textAnchor = Math.cos(d.midAngle) > 0 ? 'start' : 'end'
-      const labelGroup = g
-        .append('g')
-        .attr('transform', `translate(${labelX.toString()},${labelY.toString()})`)
+      // Add colored dot
+      svg
+        .append('circle')
+        .attr('cx', legendX - 15)
+        .attr('cy', endY + centerY)
+        .attr('r', 6)
+        .attr('fill', COUNTRY_COLORS[d.country] ?? '#888888')
 
-      // Country name
-      labelGroup
+      // Add country name
+      svg
         .append('text')
-        .attr('text-anchor', textAnchor)
-        .attr('dy', '-0.3em')
-        .attr('class', 'd3-title')
+        .attr('x', legendX)
+        .attr('y', endY + centerY)
+        .attr('dy', '0.32em')
+        .style('font-family', 'var(--font-data)')
         .style('font-size', '14px')
+        .style('fill', '#333')
         .text(d.country)
 
-      // Percentage
-      labelGroup
+      // Add revenue value
+      svg
         .append('text')
-        .attr('text-anchor', textAnchor)
-        .attr('dy', '1em')
-        .attr('class', 'd3-label')
-        .text(`${d.percentage.toFixed(1)}%`)
+        .attr('x', legendX + 150)
+        .attr('y', endY + centerY)
+        .attr('dy', '0.32em')
+        .attr('text-anchor', 'end')
+        .style('font-family', 'var(--font-data)')
+        .style('font-size', '14px')
+        .style('font-weight', '600')
+        .style('fill', '#666')
+        .text(`${String((d.totalRevenue / 1e6).toFixed(0))}M`)
     })
+
+    // Add center circle with company logo/name
+    g.append('circle')
+      .attr('r', innerRadius - 5)
+      .attr('fill', '#4169E1')
+      .style('opacity', 0.9)
 
     // Add center company name
     if (selectedCompany !== 'all') {
@@ -242,9 +245,19 @@ function CountryExposure() {
         g.append('text')
           .attr('text-anchor', 'middle')
           .attr('dy', '0.3em')
-          .attr('class', 'd3-title')
-          .style('font-size', '20px')
-          .text(company.name)
+          .style('font-family', 'var(--font-heading)')
+          .style('font-size', '18px')
+          .style('font-weight', '700')
+          .style('fill', 'white')
+          .text(company.name === 'HP Inc.' ? 'HP' : company.name)
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (tooltipRef.current) {
+        tooltipRef.current.remove()
+        tooltipRef.current = null
       }
     }
   }, [exposureData, selectedCompany])
@@ -293,27 +306,13 @@ function CountryExposure() {
             ))}
           </select>
         </div>
-        <p className="total-display">Total: 100%</p>
+        <p className="total-display">
+          Total: {(exposureData.reduce((sum, d) => sum + d.totalRevenue, 0) / 1e6) | 0}M
+        </p>
       </div>
 
       <div className="visualization-container">
         <svg ref={svgRef}></svg>
-
-        <div className="country-legend">
-          <h4>Countries</h4>
-          <div className="legend-items">
-            {exposureData.slice(0, 10).map((country) => (
-              <div key={country.country} className="legend-item">
-                <span
-                  className="color-indicator"
-                  style={{ backgroundColor: COUNTRY_COLORS[country.country] || '#888' }}
-                ></span>
-                <span className="country-name">{country.country}</span>
-                <span className="percentage">{country.percentage.toFixed(1)}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       <div className="timeline-container">

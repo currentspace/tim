@@ -121,15 +121,15 @@
 }
 
 .visualization-container {
-  display: flex;
   background: white;
   padding: 2rem;
   margin: 0;
-  gap: 2rem;
+  min-height: 600px;
+  position: relative;
 }
 
 .visualization-container svg {
-  flex: 1;
+  width: 100%;
   background: white;
 }
 
