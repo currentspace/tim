@@ -17,6 +17,7 @@ export default tseslint.config(
       '*.config.ts',
       '*.config.d.ts',
       'src/vite-env.d.ts',
+      '*.mjs',
     ],
   },
 
