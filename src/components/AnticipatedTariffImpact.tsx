@@ -53,7 +53,6 @@ function AnticipatedTariffImpact() {
       .sort((a, b) => b.impactPercentage - a.impactPercentage) // Sort by impact percentage descending
   }, [allImpacts])
 
-
   // Create visualization
   useEffect(() => {
     if (!svgRef.current || companyData.length === 0) return
@@ -74,11 +73,11 @@ function AnticipatedTariffImpact() {
       .attr('height', height)
       .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
 
-    // Create radius scale based on impact percentage
+    // Create radius scale based on impact percentage - smaller bubbles
     const radiusScale = d3
       .scaleSqrt()
       .domain([0, d3.max(companyData, (d) => d.impactPercentage) ?? 0])
-      .range([50, 90])
+      .range([35, 65])
 
     // Get company colors
     const getCompanyColor = (companyName: string): string => {
@@ -124,7 +123,7 @@ function AnticipatedTariffImpact() {
       .attr('dy', '-0.5em')
       .attr('class', 'company-name')
       .style('font-family', 'var(--font-heading)')
-      .style('font-size', '16px')
+      .style('font-size', '14px')
       .style('font-weight', '700')
       .style('letter-spacing', '-0.01em')
       .style('fill', '#fff')
@@ -142,7 +141,7 @@ function AnticipatedTariffImpact() {
       .attr('dy', '1.2em')
       .attr('class', 'impact-percentage')
       .style('font-family', 'var(--font-data)')
-      .style('font-size', '20px')
+      .style('font-size', '16px')
       .style('font-weight', '600')
       .style('font-variant-numeric', 'tabular-nums')
       .style('fill', '#fff')
@@ -248,8 +247,8 @@ function AnticipatedTariffImpact() {
           .style('fill', '#333')
           .text((p) => `${p.percentage.toFixed(2)}%`)
 
-        // Draw dotted lines from bubble to product items
-        linesGroup.selectAll('line').remove()
+        // Draw curved dotted lines from bubble to product items
+        linesGroup.selectAll('path').remove()
 
         const lineStartX = bubbleX + bubbleRadius + 10
         const lineStartY = bubbleY
@@ -258,15 +257,20 @@ function AnticipatedTariffImpact() {
           const lineEndX = width - rightPanelWidth - 20
           const lineEndY = 60 + i * 25 + 50
 
+          // Create curved path using quadratic bezier curve
+          const midX = (lineStartX + lineEndX) / 2
+          const controlPointX = midX + 50 // Curve outward to the right
+          const controlPointY = (lineStartY + lineEndY) / 2
+
+          const pathData = `M ${String(lineStartX)} ${String(lineStartY)} Q ${String(controlPointX)} ${String(controlPointY)} ${String(lineEndX)} ${String(lineEndY)}`
+
           linesGroup
-            .append('line')
-            .attr('x1', lineStartX)
-            .attr('y1', lineStartY)
-            .attr('x2', lineEndX)
-            .attr('y2', lineEndY)
+            .append('path')
+            .attr('d', pathData)
             .attr('stroke', '#999')
             .attr('stroke-width', 1)
             .attr('stroke-dasharray', '3,3')
+            .attr('fill', 'none')
             .style('opacity', 0)
             .transition()
             .duration(TRANSITION_DURATION)
@@ -287,7 +291,7 @@ function AnticipatedTariffImpact() {
         // Hide right panel and lines
         rightPanel.transition().duration(TRANSITION_DURATION).style('opacity', 0)
         linesGroup
-          .selectAll('line')
+          .selectAll('path')
           .transition()
           .duration(TRANSITION_DURATION)
           .style('opacity', 0)
