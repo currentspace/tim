@@ -5,8 +5,15 @@ import AnticipatedTariffImpact from './components/AnticipatedTariffImpact'
 import CountryExposure from './components/CountryExposure'
 import TariffRateTimeline from './components/TariffRateTimeline'
 import NotificationSettings from './components/NotificationSettings'
+import CountryTariffTimeline from './components/CountryTariffTimeline'
 
-type ViewType = 'startup' | 'tariff' | 'exposure' | 'timeline' | 'notifications'
+type ViewType =
+  | 'startup'
+  | 'tariff'
+  | 'exposure'
+  | 'timeline'
+  | 'notifications'
+  | 'country-timeline'
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('tariff')
@@ -55,6 +62,14 @@ function App() {
         >
           Notifications
         </button>
+        <button
+          className={currentView === 'country-timeline' ? 'active' : ''}
+          onClick={() => {
+            setCurrentView('country-timeline')
+          }}
+        >
+          Country Timeline
+        </button>
       </div>
       {currentView === 'startup' ? (
         <StartupUniverse />
@@ -64,6 +79,8 @@ function App() {
         <TariffRateTimeline />
       ) : currentView === 'notifications' ? (
         <NotificationSettings />
+      ) : currentView === 'country-timeline' ? (
+        <CountryTariffTimeline />
       ) : (
         <CountryExposure />
       )}
