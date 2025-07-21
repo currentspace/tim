@@ -2,11 +2,9 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
-import {
-  calculateAllCompaniesImpact,
-  formatCurrency,
-  getDateRange,
-} from '../utils/tariffCalculations'
+import { calculateAllCompaniesImpact } from '../utils/tariffCalculations'
+import { COMPANY_COLORS } from '../constants/colors'
+import { createTooltip, showTooltip, hideTooltip, TRANSITION_DURATION } from '../utils/d3Utils'
 import './AnticipatedTariffImpact.css'
 
 interface SimulationNode extends d3.SimulationNodeDatum {
@@ -24,76 +22,89 @@ interface SimulationNode extends d3.SimulationNodeDatum {
 
 function AnticipatedTariffImpact() {
   const svgRef = useRef<SVGSVGElement>(null)
-  const dateRange = useMemo(() => getDateRange(tariffTimeline), [])
+  const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> | null>(
+    null,
+  )
 
-  // Start with current date (Sep 2025)
-  const [selectedDate, setSelectedDate] = useState(new Date('2025-09-01'))
+  // Set date range from Jun 2025 to Dec 2025 as shown in screenshot
+  const dateRange = useMemo(
+    () => ({
+      start: new Date('2025-06-01'),
+      end: new Date('2025-12-31'),
+    }),
+    [],
+  )
 
-  const impacts = useMemo(
+  // Start with current date (Aug 2025 as shown in screenshot)
+  const [selectedDate, setSelectedDate] = useState(new Date('2025-08-01'))
+
+  // Get impacts for all companies
+  const allImpacts = useMemo(
     () => calculateAllCompaniesImpact(techCompanies, selectedDate, tariffTimeline),
     [selectedDate],
   )
 
+  // Filter to show only specific companies matching the screenshot style
+  const impacts = useMemo(() => {
+    const targetCompanies = ['HP Inc.', 'Apple', 'Dell Technologies']
+    return allImpacts.filter((impact) => targetCompanies.includes(impact.company))
+  }, [allImpacts])
+
   // Create visualization
   useEffect(() => {
-    if (!svgRef.current) return
+    if (!svgRef.current || impacts.length === 0) return
 
     const width = 800
-    const height = 600
-    const margin = { top: 40, right: 40, bottom: 60, left: 40 }
+    const height = 500
 
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
+
+    // Create tooltip if not exists
+    tooltipRef.current ??= createTooltip()
 
     const svg = d3
       .select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
-      .attr('viewBox', `0 0 ${width.toString()} ${height.toString()}`)
+      .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
 
     // Create main group
     const g = svg
       .append('g')
-      .attr('transform', `translate(${margin.left.toString()},${margin.top.toString()})`)
+      .attr('transform', `translate(${String(width / 2)},${String(height / 2)})`)
 
-    const innerWidth = width - margin.left - margin.right
-    const innerHeight = height - margin.top - margin.bottom
+    // Use the filtered impacts directly (already only 3 companies)
+    const simulationData = impacts as SimulationNode[]
 
-    // Sort by impact and get top companies
-    const sortedImpacts = [...impacts].sort((a, b) => b.tariffImpact - a.tariffImpact)
-    const topCompanies = sortedImpacts.slice(0, 10)
-
-    // Create scales
+    // Create scales - larger bubbles for better visibility
     const radiusScale = d3
       .scaleSqrt()
-      .domain([0, d3.max(topCompanies, (d) => d.tariffImpact) ?? 0])
-      .range([20, 80])
+      .domain([0, d3.max(simulationData, (d) => d.tariffImpact) ?? 0])
+      .range([60, 120])
 
-    const colorScale = d3
-      .scaleSequential()
-      .domain([0, 20]) // 0% to 20% impact
-      .interpolator((t) => {
-        // Custom interpolation: green -> orange -> red
-        if (t < 0.5) {
-          return d3.interpolateRgb('#82ca9d', '#FFA500')(t * 2)
-        } else {
-          return d3.interpolateRgb('#FFA500', '#DC143C')((t - 0.5) * 2)
-        }
-      })
+    // Get company colors
+    const getCompanyColor = (companyName: string): string => {
+      const company = techCompanies.find((c) => c.name === companyName)
+      if (company) {
+        return COMPANY_COLORS[company.id] || '#888888'
+      }
+      return '#888888'
+    }
 
     // Create force simulation
-    const simulationData = topCompanies as SimulationNode[]
     const simulation = d3
       .forceSimulation(simulationData)
-      .force('x', d3.forceX(innerWidth / 2).strength(0.1))
-      .force('y', d3.forceY(innerHeight / 2).strength(0.1))
+      .force('x', d3.forceX(0).strength(0.1))
+      .force('y', d3.forceY(0).strength(0.1))
       .force(
         'collide',
         d3.forceCollide((d: SimulationNode) => {
-          return radiusScale(d.tariffImpact) + 5
+          const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
+          return radiusScale(impactPercentage) + 10
         }),
       )
-      .force('charge', d3.forceManyBody().strength(-100))
+      .force('charge', d3.forceManyBody().strength(-50))
 
     // Create company groups
     const companyGroups = g
@@ -106,96 +117,144 @@ function AnticipatedTariffImpact() {
     // Add circles
     companyGroups
       .append('circle')
-      .attr('r', (d) => radiusScale(d.tariffImpact))
-      .attr('fill', (d) => {
+      .attr('r', (d) => {
         const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
-        return colorScale(impactPercentage)
+        return radiusScale(impactPercentage)
       })
+      .attr('fill', (d) => getCompanyColor(d.company))
       .attr('stroke', '#fff')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 3)
       .style('cursor', 'pointer')
+      .style('opacity', 0.9)
 
     // Add company names
     companyGroups
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('dy', '-0.3em')
-      .style('font-family', 'ABC Monument Grotesk, Inter, system-ui, -apple-system, sans-serif')
-      .style('font-size', '14px')
+      .attr('dy', '-0.5em')
+      .attr('class', 'company-name')
+      .style('font-family', 'var(--font-heading)')
+      .style('font-size', '18px')
       .style('font-weight', '700')
       .style('letter-spacing', '-0.01em')
       .style('fill', '#fff')
+      .style('pointer-events', 'none') // Prevent text from blocking mouse events
       .text((d) => {
-        const company = techCompanies.find((c) => c.name === d.company)
-        return company?.name ?? ''
+        // Show short names as in screenshot
+        if (d.company === 'HP Inc.') return 'HP'
+        if (d.company === 'Dell Technologies') return 'Dell'
+        return d.company
       })
 
-    // Add impact amount
+    // Add impact percentage
     companyGroups
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('dy', '1em')
-      .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
-      .style('font-size', '12px')
+      .attr('dy', '1.2em')
+      .attr('class', 'impact-percentage')
+      .style('font-family', 'var(--font-data)')
+      .style('font-size', '24px')
       .style('font-weight', '600')
       .style('font-variant-numeric', 'tabular-nums')
       .style('fill', '#fff')
+      .style('pointer-events', 'none') // Prevent text from blocking mouse events
       .text((d) => {
         const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
         return `${impactPercentage.toFixed(1)}%`
       })
 
-    // Add tooltip
-    const tooltip = d3
-      .select('body')
-      .append('div')
-      .attr('class', 'd3-tooltip')
+    // Create highlight circles for hover effect (separate from physics circles)
+    companyGroups
+      .append('circle')
+      .attr('r', (d) => {
+        const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
+        return radiusScale(impactPercentage)
+      })
+      .attr('fill', 'none')
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 4)
       .style('opacity', 0)
-      .style('position', 'absolute')
-      .style('background', 'rgba(0, 0, 0, 0.8)')
-      .style('color', 'white')
-      .style('padding', '10px')
-      .style('border-radius', '5px')
       .style('pointer-events', 'none')
 
+    // Add invisible interaction layer
     companyGroups
-      .on('mouseover', function (event, d) {
+      .append('circle')
+      .attr('r', (d) => {
+        const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
+        return radiusScale(impactPercentage) + 5 // Slightly larger for easier hover
+      })
+      .attr('fill', 'transparent')
+      .style('cursor', 'pointer')
+      .on('mouseenter', function (event: MouseEvent, d: SimulationNode) {
         const company = techCompanies.find((c) => c.name === d.company)
-        if (!company) return
+        if (!company || !tooltipRef.current) return
 
-        tooltip.transition().duration(200).style('opacity', 0.9)
+        // Show highlight circle without affecting the actual circle
+        d3.select(this.parentNode)
+          .select('circle:nth-child(2)')
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .style('opacity', 1)
 
-        tooltip
-          .html(
-            `
-          <strong style="font-family: ABC Monument Grotesk, Inter, system-ui, -apple-system, sans-serif; font-weight: 700;">${company.name}</strong><br/>
-          <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Base Revenue: ${formatCurrency(d.baseRevenue)}</span><br/>
-          <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Tariff Impact: ${formatCurrency(d.tariffImpact)}</span><br/>
-          <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Net Revenue: ${formatCurrency(d.netRevenue)}</span>
-        `,
-          )
-          .style('left', `${((event as MouseEvent).pageX + 10).toString()}px`)
-          .style('top', `${((event as MouseEvent).pageY - 28).toString()}px`)
+        const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
+        const content = `
+          <div class="tooltip-title">${company.name}</div>
+          <div class="tooltip-value">Tariff Impact: ${impactPercentage.toFixed(1)}%</div>
+          <div class="tooltip-value">Revenue Impact: $${(d.tariffImpact / 1e6).toFixed(1)}M</div>
+          <div class="tooltip-value">Base Revenue: $${(d.baseRevenue / 1e9).toFixed(1)}B</div>
+        `
+
+        showTooltip(tooltipRef.current, content, event)
       })
-      .on('mouseout', function () {
-        tooltip.transition().duration(500).style('opacity', 0)
+      .on('mouseleave', function () {
+        // Hide highlight circle
+        d3.select(this.parentNode)
+          .select('circle:nth-child(2)')
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .style('opacity', 0)
+
+        if (tooltipRef.current) {
+          hideTooltip(tooltipRef.current)
+        }
+      })
+      .on('mousemove', function (event: MouseEvent) {
+        // Update tooltip position on move
+        if (tooltipRef.current) {
+          tooltipRef.current
+            .style('left', `${String(event.pageX + 10)}px`)
+            .style('top', `${String(event.pageY - 28)}px`)
+        }
       })
 
-    // Run simulation
+    // Run simulation with fixed positions after initial layout
+    let tickCount = 0
     simulation.on('tick', () => {
+      tickCount++
       companyGroups.attr('transform', (d: SimulationNode) => {
-        return `translate(${(d.x ?? 0).toString()},${(d.y ?? 0).toString()})`
+        return `translate(${String(d.x ?? 0)},${String(d.y ?? 0)})`
       })
+
+      // Stop simulation after 120 ticks (roughly 2 seconds) and fix positions
+      if (tickCount > 120) {
+        simulation.stop()
+        // Fix the positions to prevent any further movement
+        simulationData.forEach((d) => {
+          d.fx = d.x
+          d.fy = d.y
+        })
+      }
     })
 
     // Cleanup on unmount
     return () => {
-      tooltip.remove()
+      simulation.stop()
+      if (tooltipRef.current) {
+        tooltipRef.current.remove()
+        tooltipRef.current = null
+      }
     }
   }, [impacts])
-
-  // Calculate total impact
-  const totalImpact = impacts.reduce((sum, i) => sum + i.tariffImpact, 0)
 
   return (
     <div className="anticipated-tariff-impact">
@@ -220,33 +279,13 @@ function AnticipatedTariffImpact() {
       <div className="current-view">
         <h3>Current View</h3>
         <p className="view-subtitle">Tariff Exposure & Rate</p>
-        <p className="date-display">Sep 2025</p>
+        <p className="date-display">
+          {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+        </p>
       </div>
 
       <div className="visualization-container">
         <svg ref={svgRef}></svg>
-
-        <div className="legend">
-          <h4>Legend</h4>
-          <div className="legend-items">
-            <div className="legend-item">
-              <span className="legend-color" style={{ backgroundColor: '#82ca9d' }}></span>
-              <span>Low Impact (0-5%)</span>
-            </div>
-            <div className="legend-item">
-              <span className="legend-color" style={{ backgroundColor: '#FFA500' }}></span>
-              <span>Medium Impact (5-10%)</span>
-            </div>
-            <div className="legend-item">
-              <span className="legend-color" style={{ backgroundColor: '#DC143C' }}></span>
-              <span>High Impact (10%+)</span>
-            </div>
-          </div>
-          <div className="total-impact">
-            <strong>Total Impact: </strong>
-            <span style={{ color: '#DC143C' }}>{formatCurrency(totalImpact)}</span>
-          </div>
-        </div>
       </div>
 
       <div className="timeline-container">
@@ -271,7 +310,7 @@ function AnticipatedTariffImpact() {
           </div>
         </div>
         <div className="timeline-date">
-          Legend - {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+          {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
         </div>
       </div>
     </div>
