@@ -309,6 +309,10 @@ charles/
 4. **Wrap Suspense in ErrorBoundary** - Always handle errors
 5. **Export reset functions** - For test cleanup
 
+## Testing Suspense Components
+
+See [docs/TESTING_SUSPENSE.md](./docs/TESTING_SUSPENSE.md) for comprehensive guidance on testing Suspense and async components without polluting production code.
+
 ## Adding D3 Visualizations
 
 1. Create a class to encapsulate D3 logic
