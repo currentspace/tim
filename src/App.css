@@ -140,7 +140,14 @@
 
 /* No sidebar layout */
 .app-no-sidebar {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-height: 100vh;
   background: var(--color-paper);
+}
+
+.app-content {
+  flex: 1;
+  overflow: auto;
 }

@@ -1,46 +1,49 @@
-import { useState } from 'react'
+import { Outlet, Link } from '@tanstack/react-router'
+import TopNavigation from './components/TopNavigation'
 import './App.css'
-import AnticipatedTariffImpact from './components/AnticipatedTariffImpact'
-import CountryExposure from './components/CountryExposure'
-import TariffRateTimeline from './components/TariffRateTimeline'
-import NotificationSettings from './components/NotificationSettings'
-import CountryTariffTimeline from './components/CountryTariffTimeline'
-import StartupUniverse from './components/StartupUniverse'
-
-export type ViewType = 
-  | 'anticipated-tariff'
-  | 'country-exposure' 
-  | 'company-timeline'
-  | 'country-timeline'
-  | 'startup-universe'
-  | 'notifications'
 
 function App() {
-  // Default to the anticipated tariff impact view
-  const [currentView, setCurrentView] = useState<ViewType>('anticipated-tariff')
-
-  const renderView = () => {
-    switch (currentView) {
-      case 'anticipated-tariff':
-        return <AnticipatedTariffImpact />
-      case 'country-exposure':
-        return <CountryExposure />
-      case 'company-timeline':
-        return <TariffRateTimeline />
-      case 'country-timeline':
-        return <CountryTariffTimeline />
-      case 'startup-universe':
-        return <StartupUniverse />
-      case 'notifications':
-        return <NotificationSettings />
-      default:
-        return <AnticipatedTariffImpact />
-    }
-  }
-
   return (
     <div className="app-no-sidebar">
-      {renderView()}
+      <TopNavigation
+        leftSection={
+          <div className="toggle-group">
+            <span className="toggle-label">Company View</span>
+            <label className="toggle-switch">
+              <input type="checkbox" />
+              <span className="toggle-slider"></span>
+            </label>
+          </div>
+        }
+        centerSection={
+          <nav className="tab-navigation">
+            <Link to="/" className="tab-button" activeProps={{ className: 'active' }}>
+              Anticipated Tariff
+            </Link>
+            <Link to="/country-exposure" className="tab-button" activeProps={{ className: 'active' }}>
+              Country Exposure
+            </Link>
+            <Link to="/company-timeline" className="tab-button" activeProps={{ className: 'active' }}>
+              Company Timeline
+            </Link>
+            <Link to="/country-timeline" className="tab-button" activeProps={{ className: 'active' }}>
+              Country Timeline
+            </Link>
+            <Link to="/startup-universe" className="tab-button" activeProps={{ className: 'active' }}>
+              Startup Universe
+            </Link>
+          </nav>
+        }
+        rightSection={
+          <div className="company-branding">
+            <h1 className="company-name">CHARLES</h1>
+            <p className="company-subtitle">Tariff Impact Analysis</p>
+          </div>
+        }
+      />
+      <main className="app-content">
+        <Outlet />
+      </main>
     </div>
   )
 }

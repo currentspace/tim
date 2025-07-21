@@ -28,3 +28,9 @@ coverage
 
 # TypeScript buildinfo
 *.tsbuildinfo
+
+# Screenshot artifacts
+screenshots
+screenshot-comparisons
+playwright-report
+test-results
