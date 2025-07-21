@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   const location = useLocation()
-  
+
   // Determine the current view name for the badge
   const getViewName = () => {
     switch (location.pathname) {
@@ -40,12 +40,14 @@ function App() {
               <input type="checkbox" />
               <span className="toggle-slider"></span>
             </label>
-            <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>Dollar Volume</span>
+            <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>
+              Dollar Volume
+            </span>
           </div>
         </div>
       )
     }
-    
+
     // For company timeline, show Timeline/Chart toggle
     if (location.pathname === '/company-timeline') {
       return (
@@ -55,12 +57,11 @@ function App() {
         </div>
       )
     }
-    
+
     // For most views, show the value toggle
-    const toggleConfig = location.pathname === '/'
-      ? { label: 'Dollar Volume' }
-      : { label: 'Percentage' }
-    
+    const toggleConfig =
+      location.pathname === '/' ? { label: 'Dollar Volume' } : { label: 'Percentage' }
+
     return (
       <div className="toggle-group">
         <span className="toggle-label">{toggleConfig.label}</span>
@@ -69,7 +70,9 @@ function App() {
           <span className="toggle-slider"></span>
         </label>
         {location.pathname === '/' && (
-          <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>Tariff Exposure & Rate</span>
+          <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>
+            Tariff Exposure & Rate
+          </span>
         )}
       </div>
     )
@@ -82,60 +85,56 @@ function App() {
         centerSection={
           <div className="navigation-center">
             <nav className="main-navigation">
-              <Link 
-                to="/" 
-                className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-              >
+              <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
                 Anticipated Tariff
               </Link>
-              <Link 
-                to="/country-exposure" 
+              <Link
+                to="/country-exposure"
                 className={`nav-link ${location.pathname === '/country-exposure' ? 'active' : ''}`}
               >
                 Country Exposure
               </Link>
-              <Link 
-                to="/company-timeline" 
+              <Link
+                to="/company-timeline"
                 className={`nav-link ${location.pathname === '/company-timeline' ? 'active' : ''}`}
               >
                 Company Timeline
               </Link>
-              <Link 
-                to="/country-timeline" 
+              <Link
+                to="/country-timeline"
                 className={`nav-link ${location.pathname === '/country-timeline' ? 'active' : ''}`}
               >
                 Country Timeline
               </Link>
-              <Link 
-                to="/startup-universe" 
+              <Link
+                to="/startup-universe"
                 className={`nav-link ${location.pathname === '/startup-universe' ? 'active' : ''}`}
               >
                 Startup Universe
               </Link>
-              <Link 
-                to="/notifications" 
+              <Link
+                to="/notifications"
                 className={`nav-link ${location.pathname === '/notifications' ? 'active' : ''}`}
               >
                 Notifications
               </Link>
             </nav>
-            <div className="tab-badge">
-              {getViewName()}
-            </div>
+            <div className="tab-badge">{getViewName()}</div>
           </div>
         }
         rightSection={
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            {(location.pathname === '/country-timeline' || location.pathname === '/company-timeline') && (
+            {(location.pathname === '/country-timeline' ||
+              location.pathname === '/company-timeline') && (
               <div className="view-toggle">
-                <Link 
-                  to="/country-timeline" 
+                <Link
+                  to="/country-timeline"
                   className={`view-toggle-button ${location.pathname === '/country-timeline' ? 'active' : ''}`}
                 >
                   Country
                 </Link>
-                <Link 
-                  to="/company-timeline" 
+                <Link
+                  to="/company-timeline"
                   className={`view-toggle-button ${location.pathname === '/company-timeline' ? 'active' : ''}`}
                 >
                   Company

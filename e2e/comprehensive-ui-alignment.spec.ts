@@ -11,8 +11,8 @@ test.describe('Comprehensive UI Alignment', () => {
         header: ['Dollar Volume', 'Tariff Exposure & Rate', 'ANTICIPATED'],
         subheader: ['Timeline', 'Chart'],
         content: ['Current View', 'Canon', 'HP', 'Apple'],
-        timeline: ['Jun 2025', 'Aug 2025', 'Oct 2025', 'Dec 2025']
-      }
+        timeline: ['Jun 2025', 'Aug 2025', 'Oct 2025', 'Dec 2025'],
+      },
     },
     {
       name: 'Country Exposure',
@@ -21,8 +21,8 @@ test.describe('Comprehensive UI Alignment', () => {
       elements: {
         header: ['Back to Tariff View', 'Percentage', 'Dollar Volume'],
         content: ['Current View', 'Dollar Volume Exposure', 'HP', 'China', 'Vietnam', 'Mexico'],
-        timeline: ['Jan 2025', 'Jul 2025', 'Jan 2026', 'Dec 2026']
-      }
+        timeline: ['Jan 2025', 'Jul 2025', 'Jan 2026', 'Dec 2026'],
+      },
     },
     {
       name: 'Company Timeline',
@@ -30,8 +30,8 @@ test.describe('Comprehensive UI Alignment', () => {
       designFile: 'Screenshot 2025-07-21 at 12.06.20 PM.png',
       elements: {
         header: ['Timeline', 'Chart', 'Country', 'Company'],
-        content: ['Tariff Rate Increases Over Time', 'AMD', 'Apple', 'Canon', 'Dell']
-      }
+        content: ['Tariff Rate Increases Over Time', 'AMD', 'Apple', 'Canon', 'Dell'],
+      },
     },
     {
       name: 'Country Timeline',
@@ -39,25 +39,25 @@ test.describe('Comprehensive UI Alignment', () => {
       designFile: 'Screenshot 2025-07-21 at 12.07.07 PM.png',
       elements: {
         header: ['Percentage', 'Dollar Volume'],
-        content: ['Vietnam', 'Mexico', 'China', 'Import Value']
-      }
-    }
+        content: ['Vietnam', 'Mexico', 'China', 'Import Value'],
+      },
+    },
   ]
 
   for (const mockup of mockups) {
     test(`analyze ${mockup.name}`, async ({ page }) => {
       console.log(`\n=== Analyzing ${mockup.name} ===`)
-      
+
       await page.goto(`http://localhost:5173${mockup.route}`)
       await page.setViewportSize({ width: 1440, height: 900 })
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(1000) // Wait for animations
-      
+
       // Capture current implementation
       await page.screenshot({
-        path: `ui-alignment/${mockup.name.toLowerCase().replace(/ /g, '-')}-current.png`
+        path: `ui-alignment/${mockup.name.toLowerCase().replace(/ /g, '-')}-current.png`,
       })
-      
+
       // Check for expected elements
       console.log('\nChecking for expected elements:')
       for (const [category, items] of Object.entries(mockup.elements)) {
@@ -72,24 +72,24 @@ test.describe('Comprehensive UI Alignment', () => {
           }
         }
       }
-      
+
       // Analyze layout structure
       console.log('\nLayout Analysis:')
-      
+
       // Check header
       const header = await page.locator('.top-navigation')
       if (await header.isVisible()) {
-        const headerHeight = await header.evaluate(el => el.offsetHeight)
+        const headerHeight = await header.evaluate((el) => el.offsetHeight)
         console.log(`- Header height: ${headerHeight}px`)
       }
-      
+
       // Check main content area
       const mainContent = await page.locator('.app-content > div').first()
       if (await mainContent.isVisible()) {
         const contentClass = await mainContent.getAttribute('class')
         console.log(`- Main content class: ${contentClass}`)
       }
-      
+
       // Check for visualization
       const svg = await page.locator('svg').first()
       if (await svg.isVisible()) {
@@ -101,12 +101,12 @@ test.describe('Comprehensive UI Alignment', () => {
 
   test('create side-by-side comparisons', async ({ browser }) => {
     const context = await browser.newContext({
-      viewport: { width: 2880, height: 900 }
+      viewport: { width: 2880, height: 900 },
     })
-    
+
     for (const mockup of mockups) {
       const page = await context.newPage()
-      
+
       const html = `
         <!DOCTYPE html>
         <html>
@@ -212,30 +212,30 @@ test.describe('Comprehensive UI Alignment', () => {
         </body>
         </html>
       `
-      
+
       await page.setContent(html)
       await page.waitForTimeout(3000)
-      
+
       await page.screenshot({
         path: `ui-alignment/comparison-${mockup.name.toLowerCase().replace(/ /g, '-')}.png`,
-        fullPage: false
+        fullPage: false,
       })
-      
+
       await page.close()
     }
-    
+
     await context.close()
   })
 
   test('identify key differences', async ({ page }) => {
     console.log('\n=== KEY DIFFERENCES SUMMARY ===\n')
-    
+
     for (const mockup of mockups) {
       await page.goto(`http://localhost:5173${mockup.route}`)
       await page.waitForLoadState('networkidle')
-      
+
       console.log(`\n${mockup.name}:`)
-      
+
       // Route-specific analysis
       if (mockup.route === '/') {
         console.log('- ✓ Header structure matches design')
@@ -244,28 +244,28 @@ test.describe('Comprehensive UI Alignment', () => {
         console.log('- ✓ Timeline at bottom')
         console.log('- ⚠️  Layout differences in bubble positioning')
       }
-      
+
       if (mockup.route === '/country-exposure') {
         console.log('- ✓ Concentric circles visualization')
         console.log('- ✓ Country list with revenue values')
         console.log('- ✗ Missing "Back to Tariff View" button')
         console.log('- ⚠️  Legend positioning different')
       }
-      
+
       if (mockup.route === '/company-timeline') {
         console.log('- ✓ Multi-line chart present')
         console.log('- ✓ Timeline/Chart toggle in header')
         console.log('- ⚠️  Legend layout differs from design')
         console.log('- ⚠️  Y-axis scale formatting')
       }
-      
+
       if (mockup.route === '/country-timeline') {
         console.log('- ✓ Timeline chart present')
         console.log('- ⚠️  Missing country flags/indicators')
         console.log('- ⚠️  Chart styling needs adjustment')
       }
     }
-    
+
     console.log('\n\n=== PRIORITY FIXES ===')
     console.log('1. Add "Back to Tariff View" button for Country Exposure')
     console.log('2. Adjust bubble positioning in Anticipated Tariff Impact')
@@ -276,35 +276,35 @@ test.describe('Comprehensive UI Alignment', () => {
 
   test('measure specific dimensions', async ({ page }) => {
     console.log('\n=== DIMENSION ANALYSIS ===\n')
-    
+
     for (const mockup of mockups) {
       await page.goto(`http://localhost:5173${mockup.route}`)
       await page.waitForLoadState('networkidle')
-      
+
       console.log(`\n${mockup.name}:`)
-      
+
       // Measure key elements
       const measurements = await page.evaluate(() => {
         const results: any = {}
-        
+
         // Header
         const header = document.querySelector('.top-navigation')
         if (header) {
           results.header = {
             height: (header as HTMLElement).offsetHeight,
-            padding: window.getComputedStyle(header).padding
+            padding: window.getComputedStyle(header).padding,
           }
         }
-        
+
         // Main content
         const content = document.querySelector('.app-content > div')
         if (content) {
           results.content = {
             className: content.className,
-            padding: window.getComputedStyle(content).padding
+            padding: window.getComputedStyle(content).padding,
           }
         }
-        
+
         // SVG/Chart area
         const svg = document.querySelector('svg')
         if (svg) {
@@ -312,13 +312,13 @@ test.describe('Comprehensive UI Alignment', () => {
           results.svg = {
             width: box.width,
             height: box.height,
-            viewBox: svg.getAttribute('viewBox')
+            viewBox: svg.getAttribute('viewBox'),
           }
         }
-        
+
         return results
       })
-      
+
       console.log('Measurements:', JSON.stringify(measurements, null, 2))
     }
   })

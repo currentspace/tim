@@ -13,28 +13,28 @@ const comparisonMap = [
   {
     captured: 'anticipated-tariff-impact-component.png',
     design: 'anticipated.png',
-    name: 'Anticipated Tariff Impact'
+    name: 'Anticipated Tariff Impact',
   },
   {
     captured: 'country-exposure-component.png',
     design: 'exposure.png',
-    name: 'Country Exposure'
+    name: 'Country Exposure',
   },
   {
     captured: 'tariff-rate-timeline-component.png',
     design: 'Screenshot 2025-07-21 at 12.06.07 PM.png',
-    name: 'Tariff Rate Timeline'
+    name: 'Tariff Rate Timeline',
   },
   {
     captured: 'country-tariff-timeline-component.png',
     design: 'company_timeline.png',
-    name: 'Country Tariff Timeline'
+    name: 'Country Tariff Timeline',
   },
   {
     captured: 'startup-universe-component.png',
     design: 'Screenshot 2025-07-21 at 12.05.50 PM.png',
-    name: 'Startup Universe'
-  }
+    name: 'Startup Universe',
+  },
 ]
 
 async function organizeScreenshots() {
@@ -105,9 +105,10 @@ async function organizeScreenshots() {
 </head>
 <body>
   <h1>Visualization Screenshot Comparisons</h1>
-  ${comparisonMap.map(item => {
-    const vizDir = item.name.toLowerCase().replace(/\s+/g, '-')
-    return `
+  ${comparisonMap
+    .map((item) => {
+      const vizDir = item.name.toLowerCase().replace(/\s+/g, '-')
+      return `
     <div class="comparison">
       <h2>${item.name}</h2>
       <div class="images">
@@ -122,7 +123,8 @@ async function organizeScreenshots() {
       </div>
     </div>
     `
-  }).join('')}
+    })
+    .join('')}
 </body>
 </html>
   `

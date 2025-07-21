@@ -61,7 +61,7 @@ function AnticipatedTariffImpact() {
         netRevenue: impact.netRevenue,
         impactPercentage: (impact.tariffImpact / impact.baseRevenue) * 100,
       }))
-      // Don't sort - maintain specific order for positioning
+    // Don't sort - maintain specific order for positioning
   }, [allImpacts])
 
   // Create visualization
@@ -123,13 +123,10 @@ function AnticipatedTariffImpact() {
       .enter()
       .append('g')
       .attr('class', 'company-bubble')
-      .attr(
-        'transform',
-        (d) => {
-          const pos = getPosition(d.company)
-          return `translate(${String(pos.x)},${String(pos.y)})`
-        }
-      )
+      .attr('transform', (d) => {
+        const pos = getPosition(d.company)
+        return `translate(${String(pos.x)},${String(pos.y)})`
+      })
 
     // Add circles
     companyGroups

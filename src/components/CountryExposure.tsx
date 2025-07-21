@@ -41,7 +41,10 @@ class CountryExposureVisualization {
       .attr('viewBox', `0 0 ${String(this.width)} ${String(this.height)}`)
   }
 
-  update(exposureData: Omit<ArcData, 'startAngle' | 'endAngle' | 'midAngle'>[], selectedCompany: string) {
+  update(
+    exposureData: Omit<ArcData, 'startAngle' | 'endAngle' | 'midAngle'>[],
+    selectedCompany: string,
+  ) {
     // Clear previous content
     this.svg.selectAll('*').remove()
 
@@ -55,13 +58,13 @@ class CountryExposureVisualization {
     // Create concentric circles for each country
     const radiusScale = d3
       .scaleSqrt()
-      .domain([0, d3.max(sortedData, d => d.percentage) || 0])
+      .domain([0, d3.max(sortedData, (d) => d.percentage) || 0])
       .range([30, this.outerRadius])
 
     // Add circles from largest to smallest
     sortedData.forEach((d, i) => {
       const radius = radiusScale(d.percentage)
-      
+
       g.append('circle')
         .attr('r', radius)
         .attr('fill', COUNTRY_COLORS[d.country] ?? '#888888')
@@ -194,8 +197,8 @@ function CountryExposure() {
         { country: 'Philippines', revenue: 35000000, percentage: 2.1 },
         { country: 'Thailand', revenue: 25000000, percentage: 1.5 },
       ]
-      
-      return mockData.map(d => ({
+
+      return mockData.map((d) => ({
         country: d.country,
         totalRevenue: d.revenue,
         percentage: d.percentage,
@@ -203,7 +206,7 @@ function CountryExposure() {
         currentTariff: activeTariff?.rates[d.country] ?? 0,
       }))
     }
-    
+
     // Original calculation for other companies
     const companies =
       selectedCompany === 'all'

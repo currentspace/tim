@@ -9,7 +9,7 @@ function createTestRouter(initialPath = '/') {
   const memoryHistory = createMemoryHistory({
     initialEntries: [initialPath],
   })
-  
+
   return createRouter({
     routeTree,
     history: memoryHistory,
@@ -20,7 +20,7 @@ describe('App', () => {
   it('renders the app container', async () => {
     const router = createTestRouter()
     const { container } = render(<RouterProvider router={router} />)
-    
+
     await waitFor(() => {
       expect(container.querySelector('.app-no-sidebar')).toBeInTheDocument()
     })
@@ -41,7 +41,7 @@ describe('App', () => {
   it('has the correct initial view', async () => {
     const router = createTestRouter()
     render(<RouterProvider router={router} />)
-    
+
     await waitFor(() => {
       // Check for elements specific to AnticipatedTariffImpact
       // Multiple elements have this text due to header and component content

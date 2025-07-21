@@ -16,7 +16,7 @@ test.describe('Visual regression tests', () => {
   test('list available design images', async () => {
     const designImages = await readdir('src/images')
     console.log('Available design images:')
-    designImages.forEach(img => console.log(`  - ${img}`))
+    designImages.forEach((img) => console.log(`  - ${img}`))
   })
 
   for (const [vizName, designImages] of Object.entries(designImageMap)) {
@@ -25,11 +25,11 @@ test.describe('Visual regression tests', () => {
         // This test assumes screenshots have already been captured
         // You can use Playwright's visual comparison features here
         // For now, we'll just log what would be compared
-        
+
         console.log(`Would compare:`)
         console.log(`  Captured: screenshots/${vizName}-component.png`)
         console.log(`  Design: src/images/${designImages[0]}`)
-        
+
         // Example of how to do visual comparison (requires reference images):
         // await expect(page).toHaveScreenshot(`${vizName}.png`, {
         //   maxDiffPixels: 100,

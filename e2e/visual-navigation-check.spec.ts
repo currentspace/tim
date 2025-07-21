@@ -6,37 +6,37 @@ test.describe('Visual Navigation Check', () => {
     await page.goto('http://localhost:5173')
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.waitForLoadState('networkidle')
-    
+
     // Design mockup mappings
     const designMockups = [
       {
         file: 'Screenshot 2025-07-21 at 12.05.50 PM.png',
         route: '/',
-        name: 'anticipated-tariff'
+        name: 'anticipated-tariff',
       },
       {
         file: 'Screenshot 2025-07-21 at 12.07.16 PM.png',
         route: '/country-exposure',
-        name: 'country-exposure'
+        name: 'country-exposure',
       },
       {
         file: 'Screenshot 2025-07-21 at 12.06.20 PM.png',
         route: '/company-timeline',
-        name: 'company-timeline'
+        name: 'company-timeline',
       },
       {
         file: 'Screenshot 2025-07-21 at 12.07.07 PM.png',
         route: '/country-timeline',
-        name: 'country-timeline'
-      }
+        name: 'country-timeline',
+      },
     ]
-    
+
     for (const mockup of designMockups) {
       // Navigate to the route
       await page.goto(`http://localhost:5173${mockup.route}`)
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(500) // Wait for any animations
-      
+
       // Create side-by-side comparison
       const comparisonHtml = `
         <!DOCTYPE html>
@@ -119,47 +119,47 @@ test.describe('Visual Navigation Check', () => {
         </body>
         </html>
       `
-      
+
       // Create new page for comparison
       const comparisonPage = await page.context().newPage()
       await comparisonPage.setViewportSize({ width: 2880, height: 900 })
       await comparisonPage.setContent(comparisonHtml)
       await comparisonPage.waitForTimeout(2000)
-      
+
       // Take screenshot
       await comparisonPage.screenshot({
         path: `navigation-comparison/comparison-${mockup.name}.png`,
-        fullPage: false
+        fullPage: false,
       })
-      
+
       await comparisonPage.close()
     }
-    
+
     console.log('Visual comparisons saved to navigation-comparison/')
   })
-  
+
   test('analyze navigation differences', async ({ page }) => {
     await page.goto('http://localhost:5173')
     await page.setViewportSize({ width: 1440, height: 900 })
-    
+
     const navigation = page.locator('.top-navigation')
-    
+
     console.log('\n=== Navigation Analysis ===')
-    
+
     // Check current implementation details
-    const navHeight = await navigation.evaluate(el => el.offsetHeight)
+    const navHeight = await navigation.evaluate((el) => el.offsetHeight)
     console.log(`Navigation height: ${navHeight}px (Design: ~80px)`)
-    
+
     // Check badge
     const badge = navigation.locator('.tab-badge')
     const badgeText = await badge.textContent()
-    const badgeStyles = await badge.evaluate(el => {
+    const badgeStyles = await badge.evaluate((el) => {
       const styles = window.getComputedStyle(el)
       return {
         background: styles.backgroundColor,
         padding: styles.padding,
         fontSize: styles.fontSize,
-        borderRadius: styles.borderRadius
+        borderRadius: styles.borderRadius,
       }
     })
     console.log('\nBadge details:')
@@ -168,14 +168,14 @@ test.describe('Visual Navigation Check', () => {
     console.log(`- Padding: ${badgeStyles.padding}`)
     console.log(`- Font size: ${badgeStyles.fontSize}`)
     console.log(`- Border radius: ${badgeStyles.borderRadius}`)
-    
+
     // Check company branding
     const companyName = await navigation.locator('.company-name').textContent()
     const companySubtitle = await navigation.locator('.company-subtitle').textContent()
     console.log('\nCompany branding:')
     console.log(`- Name: "${companyName}"`)
     console.log(`- Subtitle: "${companySubtitle}"`)
-    
+
     // Differences from design
     console.log('\n=== Key Differences from Design ===')
     console.log('1. Navigation has menu button (not in design)')

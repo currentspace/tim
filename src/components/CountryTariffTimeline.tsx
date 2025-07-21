@@ -88,14 +88,16 @@ class CountryTariffVisualization {
       .tickFormat(() => '')
       .ticks(d3.timeMonth.every(1))
 
-    this.g.append('g')
+    this.g
+      .append('g')
       .attr('class', 'grid y-grid')
       .call(yAxisGrid)
       .style('stroke', '#e0e0e0')
       .style('stroke-dasharray', '1,1')
       .style('opacity', 0.5)
 
-    this.g.append('g')
+    this.g
+      .append('g')
       .attr('class', 'grid x-grid')
       .attr('transform', `translate(0,${String(this.innerHeight)})`)
       .call(xAxisGrid)
@@ -120,7 +122,8 @@ class CountryTariffVisualization {
       return ''
     })
 
-    this.g.append('g')
+    this.g
+      .append('g')
       .attr('transform', `translate(0,${String(this.innerHeight)})`)
       .call(xAxis)
       .style('font-family', 'var(--font-data)')
@@ -131,13 +134,15 @@ class CountryTariffVisualization {
       .attr('dx', '-0.8em')
       .attr('dy', '0.15em')
 
-    this.g.append('g')
+    this.g
+      .append('g')
       .call(yAxis)
       .style('font-family', 'var(--font-data)')
       .style('font-size', '12px')
 
     // Add Y-axis label
-    this.g.append('text')
+    this.g
+      .append('text')
       .attr('transform', 'rotate(-90)')
       .attr('y', -45)
       .attr('x', -this.innerHeight / 2)
@@ -171,7 +176,8 @@ class CountryTariffVisualization {
 
     // Add dots at data points
     timeSeriesData.forEach((series) => {
-      this.g.selectAll(`.dot-${series.countryId}`)
+      this.g
+        .selectAll(`.dot-${series.countryId}`)
         .data(series.values)
         .enter()
         .append('circle')
@@ -253,7 +259,10 @@ class CountryTariffVisualization {
     const legend = this.svg
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', `translate(${String(this.width - this.margin.right + 20)},${String(this.margin.top)})`)
+      .attr(
+        'transform',
+        `translate(${String(this.width - this.margin.right + 20)},${String(this.margin.top)})`,
+      )
 
     // Add legend title
     legend
@@ -342,7 +351,7 @@ class CountryTariffVisualization {
 
   private updateLegend(date: Date) {
     if (!this.legendItems) return
-    
+
     this.legendItems.select('.legend-value').text((d) => {
       // Find the closest data point
       const closestValue = d.values.reduce((prev, curr) => {

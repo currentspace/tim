@@ -5,7 +5,7 @@ import CountryExposure from './CountryExposure'
 // Mock D3 to avoid issues with JSDOM
 vi.mock('d3', async () => {
   const actual = await vi.importActual<typeof import('d3')>('d3')
-  
+
   const createMockSelection = () => ({
     attr: vi.fn().mockReturnThis(),
     style: vi.fn().mockReturnThis(),
@@ -51,17 +51,17 @@ describe('CountryExposure', () => {
 
   it('displays the main components', () => {
     render(<CountryExposure />)
-    
+
     // Check main header elements
     expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
     expect(screen.getByText('HP TIM Dashboard')).toBeInTheDocument()
-    
+
     // Check current view section
     expect(screen.getByText('Current View')).toBeInTheDocument()
     // Use getAllByText since "Percentage Share" appears multiple times
     const percentageShareElements = screen.getAllByText('Percentage Share')
     expect(percentageShareElements.length).toBeGreaterThan(0)
-    
+
     // Check timeline section
     expect(screen.getByText('Timeline')).toBeInTheDocument()
   })
@@ -73,7 +73,7 @@ describe('CountryExposure', () => {
     expect(dollarVolumeButtons.length).toBeGreaterThan(0)
     // Check for active button
     const buttons = screen.getAllByRole('button')
-    const activeButton = buttons.find(btn => btn.classList.contains('active'))
+    const activeButton = buttons.find((btn) => btn.classList.contains('active'))
     expect(activeButton).toBeInTheDocument()
   })
 
@@ -93,10 +93,10 @@ describe('CountryExposure', () => {
   it('allows company selection', async () => {
     render(<CountryExposure />)
     const selector = screen.getByRole('combobox') as HTMLSelectElement
-    
+
     // Change to Apple
     fireEvent.change(selector, { target: { value: 'apple' } })
-    
+
     await waitFor(() => {
       expect(selector.value).toBe('apple')
     })
@@ -120,14 +120,14 @@ describe('CountryExposure', () => {
   it('updates date when slider is moved', async () => {
     render(<CountryExposure />)
     const slider = screen.getByRole('slider', { name: /date slider/i })
-    
+
     // Get initial value
     const initialValue = slider.getAttribute('value')
-    
+
     // Change the slider value
     const newDate = new Date('2025-10-01').getTime()
     fireEvent.change(slider, { target: { value: newDate.toString() } })
-    
+
     // Check that the value has changed
     await waitFor(() => {
       expect(slider.getAttribute('value')).not.toBe(initialValue)
@@ -143,7 +143,7 @@ describe('CountryExposure', () => {
 
   it('has correct CSS classes applied', () => {
     const { container } = render(<CountryExposure />)
-    
+
     expect(container.querySelector('.country-exposure')).toBeInTheDocument()
     expect(container.querySelector('.header')).toBeInTheDocument()
     expect(container.querySelector('.current-view')).toBeInTheDocument()
@@ -162,22 +162,22 @@ describe('CountryExposure', () => {
   it('shows company options in selector', () => {
     render(<CountryExposure />)
     const selector = screen.getByRole('combobox')
-    
+
     // Check for options
     const options = selector.querySelectorAll('option')
     expect(options.length).toBeGreaterThan(1)
-    
+
     // Check for specific companies
-    const optionTexts = Array.from(options).map(opt => opt.textContent)
+    const optionTexts = Array.from(options).map((opt) => opt.textContent)
     expect(optionTexts).toContain('All Companies')
-    expect(optionTexts.some(text => text?.includes('HP'))).toBe(true)
-    expect(optionTexts.some(text => text?.includes('Apple'))).toBe(true)
-    expect(optionTexts.some(text => text?.includes('Dell'))).toBe(true)
+    expect(optionTexts.some((text) => text?.includes('HP'))).toBe(true)
+    expect(optionTexts.some((text) => text?.includes('Apple'))).toBe(true)
+    expect(optionTexts.some((text) => text?.includes('Dell'))).toBe(true)
   })
 
   it('has proper accessibility attributes', () => {
     render(<CountryExposure />)
-    
+
     const slider = screen.getByRole('slider', { name: /date slider/i })
     expect(slider).toHaveAttribute('id', 'date-slider')
   })
@@ -206,7 +206,7 @@ describe('CountryExposure', () => {
     const { container } = render(<CountryExposure />)
     const navControls = container.querySelector('.navigation-controls')
     expect(navControls).toBeInTheDocument()
-    
+
     // Should have multiple buttons
     const buttons = navControls?.querySelectorAll('.nav-button')
     expect(buttons?.length).toBeGreaterThan(0)

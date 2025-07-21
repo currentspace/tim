@@ -5,7 +5,7 @@ import TariffRateTimeline from './TariffRateTimeline'
 // Mock D3 to avoid issues with JSDOM
 vi.mock('d3', async () => {
   const actual = await vi.importActual<typeof import('d3')>('d3')
-  
+
   const createMockSelection = () => ({
     attr: vi.fn().mockReturnThis(),
     style: vi.fn().mockReturnThis(),
@@ -49,11 +49,11 @@ describe('TariffRateTimeline', () => {
 
   it('displays the main components', () => {
     render(<TariffRateTimeline />)
-    
+
     // Check main header elements
     expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
     expect(screen.getByText('TIM Dashboard')).toBeInTheDocument()
-    
+
     // Check timeline section
     expect(screen.getByText('Timeline')).toBeInTheDocument()
   })
@@ -87,14 +87,14 @@ describe('TariffRateTimeline', () => {
   it('updates date when slider is moved', async () => {
     render(<TariffRateTimeline />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     // Get initial value
     const initialValue = slider.getAttribute('value')
-    
+
     // Change the slider value
     const newDate = new Date('2025-10-01').getTime()
     fireEvent.change(slider, { target: { value: newDate.toString() } })
-    
+
     // Check that the value has changed
     await waitFor(() => {
       expect(slider.getAttribute('value')).not.toBe(initialValue)
@@ -110,7 +110,7 @@ describe('TariffRateTimeline', () => {
 
   it('has correct CSS classes applied', () => {
     const { container } = render(<TariffRateTimeline />)
-    
+
     expect(container.querySelector('.tariff-rate-timeline')).toBeInTheDocument()
     expect(container.querySelector('.header')).toBeInTheDocument()
     expect(container.querySelector('.chart-header')).toBeInTheDocument()
@@ -121,10 +121,10 @@ describe('TariffRateTimeline', () => {
   it('timeline slider has correct date range', () => {
     render(<TariffRateTimeline />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     const minDate = new Date('2025-01-01').getTime()
     const maxDate = new Date('2026-01-01').getTime()
-    
+
     expect(slider).toHaveAttribute('min', minDate.toString())
     expect(slider).toHaveAttribute('max', maxDate.toString())
   })
@@ -143,7 +143,7 @@ describe('TariffRateTimeline', () => {
   it('company tab is active by default', () => {
     const { container } = render(<TariffRateTimeline />)
     const companyTab = Array.from(container.querySelectorAll('.nav-item')).find(
-      el => el.textContent === 'Company'
+      (el) => el.textContent === 'Company',
     )
     expect(companyTab).toHaveClass('active')
   })
@@ -157,7 +157,7 @@ describe('TariffRateTimeline', () => {
 
   it('has proper accessibility attributes', () => {
     render(<TariffRateTimeline />)
-    
+
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toHaveAttribute('aria-label')
   })

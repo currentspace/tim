@@ -91,14 +91,14 @@ describe('AnticipatedTariffImpact', () => {
   it('updates selected quarter when slider is moved', async () => {
     render(<AnticipatedTariffImpact />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     // Get initial value (should be 1 for Aug 2025)
     const initialValue = slider.getAttribute('value')
     expect(initialValue).toBe('1')
-    
+
     // Change to October quarter (index 2)
     fireEvent.change(slider, { target: { value: '2' } })
-    
+
     // Check that the value has changed
     await waitFor(() => {
       expect(slider.getAttribute('value')).toBe('2')
@@ -114,7 +114,7 @@ describe('AnticipatedTariffImpact', () => {
 
   it('has correct CSS classes applied', () => {
     const { container } = render(<AnticipatedTariffImpact />)
-    
+
     expect(container.querySelector('.anticipated-tariff-impact')).toBeInTheDocument()
     expect(container.querySelector('.current-view')).toBeInTheDocument()
     expect(container.querySelector('.visualization-container')).toBeInTheDocument()
@@ -124,7 +124,7 @@ describe('AnticipatedTariffImpact', () => {
   it('timeline slider has correct quarter range', () => {
     render(<AnticipatedTariffImpact />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     // The slider uses indices 0-3 for the 4 quarters
     expect(slider).toHaveAttribute('min', '0')
     expect(slider).toHaveAttribute('max', '3')
@@ -134,7 +134,7 @@ describe('AnticipatedTariffImpact', () => {
   it('renders with white background', () => {
     const { container } = render(<AnticipatedTariffImpact />)
     const vizContainer = container.querySelector('.visualization-container')
-    
+
     expect(vizContainer).toBeInTheDocument()
     // Note: In a real test environment, you might want to check computed styles
     // but that requires more setup with JSDOM
@@ -142,7 +142,7 @@ describe('AnticipatedTariffImpact', () => {
 
   it('displays company names in visualization', () => {
     render(<AnticipatedTariffImpact />)
-    
+
     // Check for Staples branding
     expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
     expect(screen.getByText('TIM Dashboard')).toBeInTheDocument()
@@ -154,7 +154,9 @@ describe('AnticipatedTariffImpact', () => {
     const elements = screen.getAllByText('Tariff Exposure & Rate')
     expect(elements.length).toBeGreaterThan(0)
     // Check that at least one is the subtitle
-    const subtitle = elements.find(el => el.classList.contains('view-subtitle') || el.classList.contains('exposure-rate'))
+    const subtitle = elements.find(
+      (el) => el.classList.contains('view-subtitle') || el.classList.contains('exposure-rate'),
+    )
     expect(subtitle).toBeInTheDocument()
   })
 

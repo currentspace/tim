@@ -43,7 +43,7 @@ function NavigationMenu({ currentView }: NavigationMenuProps) {
     { path: '/company-timeline', label: 'Company Timeline' },
     { path: '/country-timeline', label: 'Country Timeline' },
     { path: '/startup-universe', label: 'Startup Universe' },
-    { path: '/notifications', label: 'Notification Settings' }
+    { path: '/notifications', label: 'Notification Settings' },
   ]
 
   return (
@@ -52,15 +52,17 @@ function NavigationMenu({ currentView }: NavigationMenuProps) {
         <span className="menu-icon">☰</span>
         <span className="menu-label">Menu</span>
       </button>
-      
+
       {isOpen && (
         <div className="menu-dropdown">
           <div className="menu-header">
             <h3>Navigation</h3>
-            <button className="menu-close" onClick={closeMenu}>×</button>
+            <button className="menu-close" onClick={closeMenu}>
+              ×
+            </button>
           </div>
           <nav className="menu-items">
-            {menuItems.map(item => (
+            {menuItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}

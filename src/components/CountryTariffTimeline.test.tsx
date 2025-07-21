@@ -5,7 +5,7 @@ import CountryTariffTimeline from './CountryTariffTimeline'
 // Mock D3 to avoid issues with JSDOM
 vi.mock('d3', async () => {
   const actual = await vi.importActual<typeof import('d3')>('d3')
-  
+
   const createMockSelection = () => ({
     attr: vi.fn().mockReturnThis(),
     style: vi.fn().mockReturnThis(),
@@ -51,14 +51,14 @@ describe('CountryTariffTimeline', () => {
 
   it('displays the main components', () => {
     render(<CountryTariffTimeline />)
-    
+
     // Check main header elements
     expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
     expect(screen.getByText('TIM Dashboard')).toBeInTheDocument()
-    
+
     // Check chart header
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
-    
+
     // Check timeline section
     expect(screen.getByText('Timeline')).toBeInTheDocument()
   })
@@ -80,7 +80,7 @@ describe('CountryTariffTimeline', () => {
   it('country tab is active by default', () => {
     const { container } = render(<CountryTariffTimeline />)
     const tabs = container.querySelectorAll('.nav-item')
-    const countryTab = Array.from(tabs).find(el => el.textContent === 'Country')
+    const countryTab = Array.from(tabs).find((el) => el.textContent === 'Country')
     expect(countryTab).toHaveClass('active')
   })
 
@@ -101,14 +101,14 @@ describe('CountryTariffTimeline', () => {
   it('updates date when slider is moved', async () => {
     render(<CountryTariffTimeline />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     // Get initial value
     const initialValue = slider.getAttribute('value')
-    
+
     // Change the slider value
     const newDate = new Date('2025-10-01').getTime()
     fireEvent.change(slider, { target: { value: newDate.toString() } })
-    
+
     // Check that the value has changed
     await waitFor(() => {
       expect(slider.getAttribute('value')).not.toBe(initialValue)
@@ -124,7 +124,7 @@ describe('CountryTariffTimeline', () => {
 
   it('has correct CSS classes applied', () => {
     const { container } = render(<CountryTariffTimeline />)
-    
+
     expect(container.querySelector('.country-tariff-timeline')).toBeInTheDocument()
     expect(container.querySelector('.header')).toBeInTheDocument()
     expect(container.querySelector('.chart-header')).toBeInTheDocument()
@@ -135,10 +135,10 @@ describe('CountryTariffTimeline', () => {
   it('timeline slider has correct date range', () => {
     render(<CountryTariffTimeline />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     const minDate = new Date('2025-01-01').getTime()
     const maxDate = new Date('2026-01-01').getTime()
-    
+
     expect(slider).toHaveAttribute('min', minDate.toString())
     expect(slider).toHaveAttribute('max', maxDate.toString())
   })
@@ -157,7 +157,7 @@ describe('CountryTariffTimeline', () => {
 
   it('has proper accessibility attributes', () => {
     render(<CountryTariffTimeline />)
-    
+
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toHaveAttribute('aria-label')
   })
@@ -166,7 +166,7 @@ describe('CountryTariffTimeline', () => {
     const { container } = render(<CountryTariffTimeline />)
     const timelineContainer = container.querySelector('.timeline-container')
     expect(timelineContainer).toBeInTheDocument()
-    
+
     // Check that date labels exist
     const timelineLabels = container.querySelector('.timeline-labels')
     expect(timelineLabels).toBeInTheDocument()
@@ -174,17 +174,17 @@ describe('CountryTariffTimeline', () => {
 
   it('has proper header structure', () => {
     const { container } = render(<CountryTariffTimeline />)
-    
+
     // Check header structure
     const header = container.querySelector('.header')
     expect(header).toBeInTheDocument()
-    
+
     const headerContent = container.querySelector('.header-content')
     expect(headerContent).toBeInTheDocument()
-    
+
     const titleSection = container.querySelector('.title-section')
     expect(titleSection).toBeInTheDocument()
-    
+
     const companyTitle = container.querySelector('.company-title')
     expect(companyTitle).toBeInTheDocument()
   })
@@ -192,7 +192,7 @@ describe('CountryTariffTimeline', () => {
   it('initializes with correct selected date', () => {
     render(<CountryTariffTimeline />)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
-    
+
     // Should start with June 2025
     const expectedDate = new Date('2025-06-01').getTime()
     expect(slider.getAttribute('value')).toBe(expectedDate.toString())

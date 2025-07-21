@@ -111,7 +111,7 @@ input:checked + .slider:before {
 
 .anticipated-badge {
   font-family: var(--font-heading);
-  background: #FF8A00;
+  background: #ff8a00;
   color: white;
   padding: 0.5rem 2rem;
   display: inline-block;

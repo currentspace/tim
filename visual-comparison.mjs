@@ -1,81 +1,80 @@
-import { chromium } from '@playwright/test';
-import { existsSync, mkdirSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { chromium } from '@playwright/test'
+import { existsSync, mkdirSync, readdirSync } from 'fs'
+import { join } from 'path'
 
 // Create directories
 const dirs = {
   current: join(process.cwd(), 'visual-comparison', 'current'),
   design: join(process.cwd(), 'src', 'images'),
-  comparison: join(process.cwd(), 'visual-comparison', 'side-by-side')
-};
+  comparison: join(process.cwd(), 'visual-comparison', 'side-by-side'),
+}
 
-Object.values(dirs).forEach(dir => {
+Object.values(dirs).forEach((dir) => {
   if (!existsSync(dir) && dir !== dirs.design) {
-    mkdirSync(dir, { recursive: true });
+    mkdirSync(dir, { recursive: true })
   }
-});
+})
 
 // Map design images to visualization types
 const designToVisualization = {
   'Screenshot 2025-07-21 at 12.05.50 PM.png': 'anticipated-tariff',
-  'Screenshot 2025-07-21 at 12.06.20 PM.png': 'company-timeline', 
+  'Screenshot 2025-07-21 at 12.06.20 PM.png': 'company-timeline',
   'Screenshot 2025-07-21 at 12.06.36 PM.png': 'notifications',
   'Screenshot 2025-07-21 at 12.07.07 PM.png': 'country-timeline',
-  'Screenshot 2025-07-21 at 12.07.16 PM.png': 'country-exposure'
-};
+  'Screenshot 2025-07-21 at 12.07.16 PM.png': 'country-exposure',
+}
 
 async function captureCurrentImplementation() {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch()
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 }
-  });
-  const page = await context.newPage();
-  
+    viewport: { width: 1440, height: 900 },
+  })
+  const page = await context.newPage()
+
   try {
-    console.log('Capturing current implementation screenshots...\n');
-    
+    console.log('Capturing current implementation screenshots...\n')
+
     // Since we removed navigation, we need to manually change views
     // For now, we'll capture the default view (anticipated-tariff)
-    await page.goto('http://localhost:5173');
-    await page.waitForTimeout(3000);
-    
+    await page.goto('http://localhost:5173')
+    await page.waitForTimeout(3000)
+
     // Capture the current view
     await page.screenshot({
       path: join(dirs.current, 'anticipated-tariff.png'),
-      fullPage: false
-    });
-    console.log('✓ Captured: Anticipated Tariff Impact');
-    
+      fullPage: false,
+    })
+    console.log('✓ Captured: Anticipated Tariff Impact')
+
     // To capture other views, we would need to implement navigation
     // or modify the App component to accept URL parameters
-    
+
     // For now, let's just capture what we can see
-    console.log('\nNote: To capture other views, we need to implement navigation controls.');
-    console.log('Currently showing: Anticipated Tariff Impact (default view)');
-    
+    console.log('\nNote: To capture other views, we need to implement navigation controls.')
+    console.log('Currently showing: Anticipated Tariff Impact (default view)')
   } catch (error) {
-    console.error('Error capturing screenshots:', error);
+    console.error('Error capturing screenshots:', error)
   } finally {
-    await browser.close();
+    await browser.close()
   }
 }
 
 async function createSideBySideComparison() {
-  console.log('\n\nCreating side-by-side comparisons...\n');
-  
-  const browser = await chromium.launch({ headless: false });
+  console.log('\n\nCreating side-by-side comparisons...\n')
+
+  const browser = await chromium.launch({ headless: false })
   const context = await browser.newContext({
-    viewport: { width: 2880, height: 900 } // Double width for side-by-side
-  });
-  
+    viewport: { width: 2880, height: 900 }, // Double width for side-by-side
+  })
+
   try {
     // List design images
-    const designImages = readdirSync(dirs.design).filter(f => f.endsWith('.png'));
-    console.log(`Found ${designImages.length} design images\n`);
-    
+    const designImages = readdirSync(dirs.design).filter((f) => f.endsWith('.png'))
+    console.log(`Found ${designImages.length} design images\n`)
+
     for (const designImage of Object.keys(designToVisualization)) {
-      const page = await context.newPage();
-      
+      const page = await context.newPage()
+
       // Create HTML for side-by-side comparison
       const html = `
         <!DOCTYPE html>
@@ -148,55 +147,56 @@ async function createSideBySideComparison() {
           </div>
         </body>
         </html>
-      `;
-      
-      await page.setContent(html);
-      await page.waitForTimeout(2000);
-      
-      console.log(`Viewing comparison: ${designImage}`);
-      console.log('Browser window is open for visual comparison');
-      console.log('Press Enter to continue to the next comparison...\n');
-      
+      `
+
+      await page.setContent(html)
+      await page.waitForTimeout(2000)
+
+      console.log(`Viewing comparison: ${designImage}`)
+      console.log('Browser window is open for visual comparison')
+      console.log('Press Enter to continue to the next comparison...\n')
+
       // Wait for user input
-      await new Promise(resolve => {
-        process.stdin.once('data', resolve);
-      });
-      
-      await page.close();
+      await new Promise((resolve) => {
+        process.stdin.once('data', resolve)
+      })
+
+      await page.close()
     }
-    
   } catch (error) {
-    console.error('Error creating comparisons:', error);
+    console.error('Error creating comparisons:', error)
   } finally {
-    await browser.close();
+    await browser.close()
   }
 }
 
 async function main() {
-  console.log('Visual Comparison Tool');
-  console.log('======================\n');
-  console.log('This tool will help compare design mockups with current implementation.\n');
-  
+  console.log('Visual Comparison Tool')
+  console.log('======================\n')
+  console.log('This tool will help compare design mockups with current implementation.\n')
+
   // Capture current implementation
-  await captureCurrentImplementation();
-  
+  await captureCurrentImplementation()
+
   // Create side-by-side comparisons
-  console.log('\nPress Enter to start side-by-side comparison...');
-  await new Promise(resolve => {
-    process.stdin.once('data', resolve);
-  });
-  
-  await createSideBySideComparison();
-  
-  console.log('\nComparison complete!');
+  console.log('\nPress Enter to start side-by-side comparison...')
+  await new Promise((resolve) => {
+    process.stdin.once('data', resolve)
+  })
+
+  await createSideBySideComparison()
+
+  console.log('\nComparison complete!')
 }
 
 // Enable stdin for user input
-process.stdin.setRawMode(true);
-process.stdin.resume();
+process.stdin.setRawMode(true)
+process.stdin.resume()
 
-main().catch(console.error).finally(() => {
-  process.stdin.setRawMode(false);
-  process.stdin.pause();
-  process.exit(0);
-});
+main()
+  .catch(console.error)
+  .finally(() => {
+    process.stdin.setRawMode(false)
+    process.stdin.pause()
+    process.exit(0)
+  })

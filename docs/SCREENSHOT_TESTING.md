@@ -1,10 +1,12 @@
 # Screenshot Testing Guide
 
-This project uses Playwright to capture screenshots of visualization components and compare them with design images.
+This project uses Playwright to capture screenshots of visualization components and compare them
+with design images.
 
 ## Prerequisites
 
 All required dependencies are already installed in the project:
+
 - Playwright test runner
 - Playwright Chromium browser
 - tsx for running TypeScript scripts
@@ -18,6 +20,7 @@ pnpm screenshots
 ```
 
 This will:
+
 1. Start the development server automatically
 2. Navigate to each visualization component
 3. Capture full-page and component-specific screenshots
@@ -40,6 +43,7 @@ pnpm screenshots:compare
 ```
 
 This will:
+
 1. Create a `screenshot-comparisons/` directory
 2. Organize captured screenshots alongside design images
 3. Generate an HTML comparison page at `screenshot-comparisons/index.html`
@@ -54,13 +58,13 @@ This will:
 
 The following visualizations are captured and compared:
 
-| Component | Design Image |
-|-----------|--------------|
-| Anticipated Tariff Impact | `anticipated.png` |
-| Country Exposure | `exposure.png` |
-| Tariff Rate Timeline | `Screenshot 2025-07-21 at 12.06.07 PM.png` |
-| Country Tariff Timeline | `company_timeline.png` |
-| Startup Universe | `Screenshot 2025-07-21 at 12.05.50 PM.png` |
+| Component                 | Design Image                               |
+| ------------------------- | ------------------------------------------ |
+| Anticipated Tariff Impact | `anticipated.png`                          |
+| Country Exposure          | `exposure.png`                             |
+| Tariff Rate Timeline      | `Screenshot 2025-07-21 at 12.06.07 PM.png` |
+| Country Tariff Timeline   | `company_timeline.png`                     |
+| Startup Universe          | `Screenshot 2025-07-21 at 12.05.50 PM.png` |
 
 ## Directory Structure
 

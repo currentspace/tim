@@ -102,7 +102,7 @@
 
 .menu-item.active {
   background: rgba(255, 138, 0, 0.1);
-  color: #FF8A00;
+  color: #ff8a00;
   font-weight: var(--weight-semibold);
 }
 
