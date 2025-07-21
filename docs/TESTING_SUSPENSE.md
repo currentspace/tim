@@ -79,6 +79,9 @@ it('shows loading then data', async () => {
 - If you want even more control and flexibility, allow your component to accept a loader as a prop,
   defaulting to the real one.
 - In tests, pass a controlled loader; in production, nothing changes.
+- **Note**: If this pattern becomes common across multiple components, consider defining a convention
+  (e.g., always allowing a `dataLoader` prop for testability). Otherwise, prefer module mocking for
+  legacy code or where prop injection would pollute the API.
 
 Example:
 
@@ -148,12 +151,46 @@ In practice, testing Suspense with React 19.1's `use()` hook can be challenging:
 3. **Timing Issues**: Even with controllable promises, React's internal scheduling can make it
    difficult to reliably test transitions between loading and loaded states.
 
+4. **No External Reset**: As noted in the React RFC:
+   > "There is no mechanism for retrying or resetting a Suspense boundary's state from outside the
+   > React tree, unless you explicitly reset/remount the boundary."
+
 For these reasons, consider:
 
 - Testing loading states with never-resolving promises
 - Testing success states with immediately-resolved promises
 - Testing error states with immediately-rejected promises
 - Using integration tests or E2E tests for complex loading sequences
+- Force remounting components (e.g., using a `key` prop) to reset Suspense boundaries
+
+## FAQ
+
+**Q: Why does my Suspense test only ever see the loaded state?**
+A: If your loader's promise resolves before React can render, Suspense never shows the fallback.
+Delay the promise in tests to reliably see the loading UI.
+
+**Q: How do I reset Suspense between tests?**
+A: Remount the component (change the key or rerender) to reset its boundary and internal promise
+state.
+
+**Q: Can I test loading → loaded transitions in one test?**
+A: Only if you control the promise (deferred) and force React to rerender after resolving it, as
+shown in the dependency injection/module mocking examples.
+
+**Q: How do I test error states with Suspense?**
+A: Use the `reject` method of your deferred promise and wrap your Suspense in an ErrorBoundary:
+```javascript
+const { promise, reject } = createDeferredPromise()
+render(
+  <ErrorBoundary>
+    <Suspense fallback={<div>Loading...</div>}>
+      <MyComponent dataLoader={() => promise} />
+    </Suspense>
+  </ErrorBoundary>
+)
+reject(new Error('Network error'))
+await screen.findByText(/Something went wrong/)
+```
 
 ## NEED HELP?
 

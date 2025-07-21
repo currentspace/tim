@@ -128,4 +128,38 @@ describe('StartupUniverse', () => {
       expect(screen.getByText(/Link Distance:/)).toBeInTheDocument()
     })
   })
+
+  it('shows error state when data loading fails', async () => {
+    // Using dependency injection pattern with error scenario
+    const { promise, reject } = createDeferredPromise<NetworkData>()
+    
+    // Create a loader that returns our controlled promise
+    const testLoader = () => promise
+    
+    // Render within act
+    // eslint-disable-next-line @typescript-eslint/require-await
+    await act(async () => {
+      render(<StartupUniverse dataLoader={testLoader} />)
+    })
+    
+    // Verify loading state is shown initially
+    expect(screen.getByText('Loading visualization data...')).toBeInTheDocument()
+    
+    // Simulate error after a delay
+    await act(async () => {
+      await new Promise<void>((resolveTimeout) => {
+        setTimeout(() => {
+          reject(new Error('Failed to load network data'))
+          resolveTimeout()
+        }, 100)
+      })
+    })
+    
+    // Verify error state is shown
+    await waitFor(() => {
+      expect(screen.queryByText('Loading visualization data...')).not.toBeInTheDocument()
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument()
+      expect(screen.getByText(/Failed to load network data/)).toBeInTheDocument()
+    })
+  })
 })
