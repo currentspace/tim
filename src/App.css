@@ -1,90 +1,182 @@
-/* Main App Title with "novel edge" styling */
-#root > h1 {
-  font-family: var(--font-editorial);
-  font-size: clamp(var(--type-2xl), 5vw, var(--type-4xl));
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-tight);
-  text-transform: uppercase;
-  background: linear-gradient(
-    135deg,
-    var(--color-accent) 0%,
-    var(--color-data) 50%,
-    var(--color-alert) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 2rem;
-  position: relative;
-  display: inline-block;
-  padding: 0 1rem;
-  /* Add a subtle animation for the "speculative tech" feel */
-  animation: textGlow 3s ease-in-out infinite alternate;
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
 }
 
-#root > h1::after {
+.app {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.navigation-wrapper {
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+.view-container {
+  width: 100%;
+  height: 100%;
+  background: white;
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-toggle:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hamburger-icon {
+  position: relative;
+  width: 24px;
+  height: 2px;
+  background: var(--color-ink);
+  display: block;
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
   content: '';
   position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  width: 24px;
+  height: 2px;
+  background: var(--color-ink);
+  left: 0;
 }
 
-@keyframes textGlow {
-  0% {
-    filter: brightness(1) contrast(1);
+.hamburger-icon::before {
+  top: -8px;
+}
+
+.hamburger-icon::after {
+  top: 8px;
+}
+
+.navigation-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .app {
+    position: relative;
   }
-  100% {
-    filter: brightness(1.1) contrast(1.1);
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .navigation-wrapper {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .navigation-wrapper.open {
+    left: 0;
+  }
+
+  .navigation-overlay {
+    display: block;
+  }
+
+  .main-content {
+    width: 100%;
+    padding-left: 0;
   }
 }
 
-.card {
-  padding: 2em;
+/* Desktop styles */
+@media (min-width: 1025px) {
+  .navigation-wrapper {
+    position: relative;
+  }
 }
 
-.chart-container {
-  margin-top: 2rem;
-  padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+/* Ensure visualizations don't have their own conflicting backgrounds */
+.anticipated-tariff-impact,
+.tariff-rate-timeline,
+.country-tariff-timeline,
+.country-exposure,
+.notification-settings {
+  min-height: 100vh;
+  margin: 0;
 }
 
-.nav-buttons {
+/* No sidebar layout */
+.app-no-sidebar {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-paper);
+}
+
+.app-content {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Secondary Navigation */
+.secondary-navigation {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
+  gap: 3rem;
+  padding: 1rem 3rem;
+  background: var(--color-paper);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.nav-buttons button {
-  padding: 0.8rem 1.5rem;
-  border: 2px solid var(--color-accent);
-  background: transparent;
-  color: var(--color-accent);
-  border-radius: 8px;
+.nav-link {
   font-family: var(--font-data);
-  font-weight: var(--weight-medium);
-  transition: all 0.3s ease;
-}
-
-.nav-buttons button:hover {
-  background: var(--color-accent);
-  color: var(--color-paper);
-}
-
-.nav-buttons button.active {
-  background: var(--color-accent);
-  color: var(--color-paper);
-}
-
-.coming-soon {
-  text-align: center;
-  padding: 4rem;
+  font-size: var(--type-sm);
   color: var(--color-ink-muted);
-  font-family: var(--font-data);
-  font-size: var(--type-lg);
+  text-decoration: none;
+  font-weight: var(--weight-medium);
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-ink);
+}
+
+.nav-link.active {
+  color: var(--color-ink);
+  font-weight: var(--weight-semibold);
 }

@@ -1,78 +1,57 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import { userEvent } from '@testing-library/user-event'
-import { act } from 'react'
-import App from './App'
+import { RouterProvider } from '@tanstack/react-router'
+import { createRouter, createMemoryHistory } from '@tanstack/react-router'
+import { routeTree } from './routes'
+
+// Create a test router with the route tree
+function createTestRouter(initialPath = '/') {
+  const memoryHistory = createMemoryHistory({
+    initialEntries: [initialPath],
+  })
+
+  return createRouter({
+    routeTree,
+    history: memoryHistory,
+  })
+}
 
 describe('App', () => {
-  it('renders headline', async () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<App />)
-    })
+  it('renders the app container', async () => {
+    const router = createTestRouter()
+    const { container } = render(<RouterProvider router={router} />)
 
     await waitFor(() => {
-      expect(screen.getByText('Data Visualization App')).toBeInTheDocument()
+      expect(container.querySelector('.app-no-sidebar')).toBeInTheDocument()
     })
   })
 
-  it('shows navigation buttons', async () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<App />)
-    })
+  it('renders default view (Anticipated Tariff Impact)', async () => {
+    const router = createTestRouter()
+    render(<RouterProvider router={router} />)
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Startup Universe/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Tariff Impact/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Country Exposure/i })).toBeInTheDocument()
+      // There are multiple ANTICIPATED elements, check for at least one
+      expect(screen.getAllByText('ANTICIPATED').length).toBeGreaterThan(0)
+      // Also multiple Staples Technology Solutions elements
+      expect(screen.getAllByText('Staples Technology Solutions').length).toBeGreaterThan(0)
     })
   })
 
-  it('switches between views on button click', async () => {
-    const user = userEvent.setup()
+  it('has the correct initial view', async () => {
+    const router = createTestRouter()
+    render(<RouterProvider router={router} />)
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<App />)
-    })
-
-    // Initially shows Tariff Impact
     await waitFor(() => {
-      expect(screen.getByText('ANTICIPATED')).toBeInTheDocument()
+      // Check for elements specific to AnticipatedTariffImpact
+      // Multiple elements have this text due to header and component content
+      expect(screen.getAllByText('Dollar Volume').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('Tariff Exposure & Rate').length).toBeGreaterThan(0)
     })
+  })
 
-    // Click Startup Universe
-    const startupUniverseButton = screen.getByRole('button', { name: /Startup Universe/i })
-    await act(async () => {
-      await user.click(startupUniverseButton)
-    })
-
-    // Should show Startup Universe (wait for it to load)
-    await waitFor(() => {
-      expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
-    })
-
-    // Click Country Exposure
-    const countryExposureButton = screen.getByRole('button', { name: /Country Exposure/i })
-    await act(async () => {
-      await user.click(countryExposureButton)
-    })
-
-    // Should show Country Exposure
-    await waitFor(() => {
-      expect(screen.getByText('HP TIM Dashboard')).toBeInTheDocument()
-    })
-
-    // Click back to Tariff Impact
-    const tariffImpactButton = screen.getByRole('button', { name: /Tariff Impact/i })
-    await act(async () => {
-      await user.click(tariffImpactButton)
-    })
-
-    // Should show Tariff Impact again
-    await waitFor(() => {
-      expect(screen.getByText('ANTICIPATED')).toBeInTheDocument()
-    })
+  it('renders without errors', () => {
+    const router = createTestRouter()
+    expect(() => render(<RouterProvider router={router} />)).not.toThrow()
   })
 })

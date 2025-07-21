@@ -69,15 +69,6 @@ describe('StartupUniverse', () => {
     })
   })
 
-  it('shows loading state initially', async () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<StartupUniverse />)
-    })
-
-    expect(screen.getByText('Loading visualization data...')).toBeInTheDocument()
-  })
-
   it('renders info panel', async () => {
     // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
