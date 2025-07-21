@@ -1,15 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import { act } from 'react'
 import App from './App'
 
 describe('App', () => {
   it('renders headline', async () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<App />)
-    })
+    render(<App />)
 
     await waitFor(() => {
       expect(screen.getByText('Data Visualization App')).toBeInTheDocument()
@@ -17,10 +13,7 @@ describe('App', () => {
   })
 
   it('shows navigation buttons', async () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<App />)
-    })
+    render(<App />)
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /Startup Universe/i })).toBeInTheDocument()
@@ -31,11 +24,7 @@ describe('App', () => {
 
   it('switches between views on button click', async () => {
     const user = userEvent.setup()
-
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
-      render(<App />)
-    })
+    render(<App />)
 
     // Initially shows Tariff Impact
     await waitFor(() => {
@@ -44,9 +33,7 @@ describe('App', () => {
 
     // Click Startup Universe
     const startupUniverseButton = screen.getByRole('button', { name: /Startup Universe/i })
-    await act(async () => {
-      await user.click(startupUniverseButton)
-    })
+    await user.click(startupUniverseButton)
 
     // Should show Startup Universe (wait for it to load)
     await waitFor(() => {
@@ -55,9 +42,7 @@ describe('App', () => {
 
     // Click Country Exposure
     const countryExposureButton = screen.getByRole('button', { name: /Country Exposure/i })
-    await act(async () => {
-      await user.click(countryExposureButton)
-    })
+    await user.click(countryExposureButton)
 
     // Should show Country Exposure
     await waitFor(() => {
@@ -66,9 +51,7 @@ describe('App', () => {
 
     // Click back to Tariff Impact
     const tariffImpactButton = screen.getByRole('button', { name: /Tariff Impact/i })
-    await act(async () => {
-      await user.click(tariffImpactButton)
-    })
+    await user.click(tariffImpactButton)
 
     // Should show Tariff Impact again
     await waitFor(() => {
