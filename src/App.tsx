@@ -11,23 +11,29 @@ function App() {
 
   return (
     <>
-      <h1>Charles - Data Visualization App</h1>
+      <h1>Data Visualization App</h1>
       <div className="nav-buttons">
         <button
           className={currentView === 'startup' ? 'active' : ''}
-          onClick={() => { setCurrentView('startup') }}
+          onClick={() => {
+            setCurrentView('startup')
+          }}
         >
           Startup Universe
         </button>
         <button
           className={currentView === 'tariff' ? 'active' : ''}
-          onClick={() => { setCurrentView('tariff') }}
+          onClick={() => {
+            setCurrentView('tariff')
+          }}
         >
           Tariff Impact
         </button>
         <button
           className={currentView === 'exposure' ? 'active' : ''}
-          onClick={() => { setCurrentView('exposure') }}
+          onClick={() => {
+            setCurrentView('exposure')
+          }}
         >
           Country Exposure
         </button>

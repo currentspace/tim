@@ -8,41 +8,41 @@ import type { NetworkData } from '../types/network'
 // Mock network data for testing
 const mockNetworkData: NetworkData = {
   nodes: [
-    { 
-      id: '1', 
-      name: 'Test Startup', 
-      type: 'startup', 
+    {
+      id: '1',
+      name: 'Test Startup',
+      type: 'startup',
       fundingAmount: 5000000,
       founded: 2020,
-      category: 'Technology'
+      category: 'Technology',
     },
-    { 
-      id: '2', 
-      name: 'Test VC', 
+    {
+      id: '2',
+      name: 'Test VC',
       type: 'vc',
-      investments: 25
+      investments: 25,
     },
-    { 
-      id: '3', 
-      name: 'Test Founder', 
+    {
+      id: '3',
+      name: 'Test Founder',
       type: 'founder',
-      companies: 3
-    }
+      companies: 3,
+    },
   ],
   links: [
-    { 
-      source: '1', 
+    {
+      source: '1',
       target: '2',
       value: 5000000,
-      type: 'investment'
+      type: 'investment',
     },
-    { 
-      source: '1', 
+    {
+      source: '1',
       target: '3',
       value: 1,
-      type: 'founded'
-    }
-  ]
+      type: 'founded',
+    },
+  ],
 }
 
 describe('StartupUniverse', () => {
@@ -50,11 +50,11 @@ describe('StartupUniverse', () => {
   // For comprehensive Suspense state testing (loading/error states),
   // see docs/TESTING_SUSPENSE.md for recommended patterns using
   // dependency injection or module mocking without polluting production code.
-  
+
   afterEach(() => {
     vi.restoreAllMocks()
   })
-  
+
   it('renders title and subtitle', async () => {
     // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
@@ -92,23 +92,23 @@ describe('StartupUniverse', () => {
   it('shows loading state and then content with deferred data', async () => {
     // Using dependency injection pattern as recommended in docs/TESTING_SUSPENSE.md
     const { promise, resolve } = createDeferredPromise<NetworkData>()
-    
+
     // Create a loader that returns our controlled promise
     const testLoader = () => promise
-    
+
     // Render within act but don't await the promise resolution
     // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       render(<StartupUniverse dataLoader={testLoader} />)
     })
-    
+
     // Verify loading state is shown immediately
     expect(screen.getByText('Loading visualization data...')).toBeInTheDocument()
     // The info panel is outside Suspense boundary, so it's always visible
     expect(screen.getByText(/Hover over nodes to see connections/)).toBeInTheDocument()
     // But the controls should not be visible yet
     expect(screen.queryByText(/Link Distance:/)).not.toBeInTheDocument()
-    
+
     // Simulate data loading after a delay
     await act(async () => {
       // Use setTimeout to simulate network delay
@@ -119,12 +119,12 @@ describe('StartupUniverse', () => {
         }, 100)
       })
     })
-    
+
     // Verify content is shown after data loads
     await waitFor(() => {
       expect(screen.queryByText('Loading visualization data...')).not.toBeInTheDocument()
       expect(screen.getByText('The Startup Universe')).toBeInTheDocument()
-      // Controls should now be visible  
+      // Controls should now be visible
       expect(screen.getByText(/Link Distance:/)).toBeInTheDocument()
     })
   })

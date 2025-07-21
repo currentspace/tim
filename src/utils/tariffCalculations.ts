@@ -9,11 +9,11 @@ export function getQuarterFromDate(date: string): string {
 
 export function getActiveTariffForDate(
   date: Date,
-  tariffSchedules: TariffSchedule[]
+  tariffSchedules: TariffSchedule[],
 ): TariffSchedule | null {
   // Sort schedules by date
   const sorted = [...tariffSchedules].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   )
 
   // Find the most recent schedule before or on the given date
@@ -30,7 +30,7 @@ export function getActiveTariffForDate(
 export function calculateCompanyImpact(
   company: TechCompany,
   tariffSchedule: TariffSchedule | null,
-  quarter: string
+  quarter: string,
 ): QuarterlyImpact {
   const quarterlyRevenue = company.revenue / 4 // Simplified: assume equal quarters
 
@@ -41,24 +41,22 @@ export function calculateCompanyImpact(
       baseRevenue: quarterlyRevenue,
       tariffImpact: 0,
       netRevenue: quarterlyRevenue,
-      impactByCountry: []
+      impactByCountry: [],
     }
   }
 
-  const impactByCountry = Object.entries(company.revenueByCountry).map(
-    ([country, percentage]) => {
-      const countryRevenue = (quarterlyRevenue * percentage) / 100
-      const tariffRate = tariffSchedule.rates[country] || 0
-      const impact = (countryRevenue * tariffRate) / 100
+  const impactByCountry = Object.entries(company.revenueByCountry).map(([country, percentage]) => {
+    const countryRevenue = (quarterlyRevenue * percentage) / 100
+    const tariffRate = tariffSchedule.rates[country] || 0
+    const impact = (countryRevenue * tariffRate) / 100
 
-      return {
-        country,
-        revenue: countryRevenue,
-        tariffRate,
-        impact
-      }
+    return {
+      country,
+      revenue: countryRevenue,
+      tariffRate,
+      impact,
     }
-  )
+  })
 
   const totalImpact = impactByCountry.reduce((sum, c) => sum + c.impact, 0)
 
@@ -68,31 +66,29 @@ export function calculateCompanyImpact(
     baseRevenue: quarterlyRevenue,
     tariffImpact: totalImpact,
     netRevenue: quarterlyRevenue - totalImpact,
-    impactByCountry
+    impactByCountry,
   }
 }
 
 export function calculateAllCompaniesImpact(
   companies: TechCompany[],
   date: Date,
-  tariffSchedules: TariffSchedule[]
+  tariffSchedules: TariffSchedule[],
 ): QuarterlyImpact[] {
   const activeTariff = getActiveTariffForDate(date, tariffSchedules)
   const quarter = getQuarterFromDate(date.toISOString())
 
-  return companies.map(company =>
-    calculateCompanyImpact(company, activeTariff, quarter)
-  )
+  return companies.map((company) => calculateCompanyImpact(company, activeTariff, quarter))
 }
 
 export function getDateRange(schedules: TariffSchedule[]): {
   start: Date
   end: Date
 } {
-  const dates = schedules.map(s => new Date(s.date))
+  const dates = schedules.map((s) => new Date(s.date))
   return {
-    start: new Date(Math.min(...dates.map(d => d.getTime()))),
-    end: new Date(Math.max(...dates.map(d => d.getTime())))
+    start: new Date(Math.min(...dates.map((d) => d.getTime()))),
+    end: new Date(Math.max(...dates.map((d) => d.getTime()))),
   }
 }
 

@@ -57,19 +57,19 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 30px;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 22px;
   width: 22px;
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
@@ -299,21 +299,31 @@ input:checked + .slider:before {
 }
 
 /* Company-specific circle colors to match the image */
-.company-samsung { fill: #6366F1; }
-.company-amd { fill: #EC4899; }
-.company-zebra { fill: #10B981; }
-.company-epson { fill: #3B82F6; }
-.company-apple { fill: #EF4444; }
+.company-samsung {
+  fill: #6366f1;
+}
+.company-amd {
+  fill: #ec4899;
+}
+.company-zebra {
+  fill: #10b981;
+}
+.company-epson {
+  fill: #3b82f6;
+}
+.company-apple {
+  fill: #ef4444;
+}
 
 @media (max-width: 768px) {
   .visualization-container {
     flex-direction: column;
   }
-  
+
   .legend {
     width: 100%;
   }
-  
+
   .header-top {
     flex-direction: column;
     gap: 1rem;

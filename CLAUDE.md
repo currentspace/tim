@@ -1,4 +1,4 @@
-# Charles - React 19.1 Data Visualization App
+# React 19.1 Data Visualization App
 
 ## Project Setup Summary
 
@@ -268,7 +268,7 @@ afterEach(() => {
 ## Project Structure
 
 ```
-charles/
+./
 ├── src/
 │   ├── components/         # React components
 │   │   ├── NetworkGraph.tsx      # D3 network visualization
@@ -311,7 +311,8 @@ charles/
 
 ## Testing Suspense Components
 
-See [docs/TESTING_SUSPENSE.md](./docs/TESTING_SUSPENSE.md) for comprehensive guidance on testing Suspense and async components without polluting production code.
+See [docs/TESTING_SUSPENSE.md](./docs/TESTING_SUSPENSE.md) for comprehensive guidance on testing
+Suspense and async components without polluting production code.
 
 ## Adding D3 Visualizations
 

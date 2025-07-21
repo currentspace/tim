@@ -276,17 +276,17 @@
   .visualization-container {
     flex-direction: column;
   }
-  
+
   .country-legend {
     width: 100%;
   }
-  
+
   .header-top {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .navigation-controls {
     flex-wrap: wrap;
   }

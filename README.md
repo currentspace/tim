@@ -1,4 +1,4 @@
-# Charles - Interactive Network Visualization
+# Interactive Network Visualization
 
 A React 19.1 web application featuring interactive D3.js network visualizations of the startup
 ecosystem.

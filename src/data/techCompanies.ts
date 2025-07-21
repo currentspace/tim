@@ -12,9 +12,9 @@ export const techCompanies: TechCompany[] = [
       Vietnam: 15,
       India: 5,
       Taiwan: 10,
-      USA: 25
+      USA: 25,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'amazon',
@@ -26,9 +26,9 @@ export const techCompanies: TechCompany[] = [
       China: 30,
       USA: 50,
       Mexico: 10,
-      EU: 10
+      EU: 10,
     },
-    category: 'services'
+    category: 'services',
   },
   {
     id: 'microsoft',
@@ -40,9 +40,9 @@ export const techCompanies: TechCompany[] = [
       China: 15,
       USA: 60,
       EU: 15,
-      Taiwan: 10
+      Taiwan: 10,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'alphabet',
@@ -54,9 +54,9 @@ export const techCompanies: TechCompany[] = [
       China: 20,
       USA: 55,
       Taiwan: 15,
-      EU: 10
+      EU: 10,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'samsung',
@@ -68,9 +68,9 @@ export const techCompanies: TechCompany[] = [
       'South Korea': 40,
       China: 30,
       Vietnam: 20,
-      USA: 10
+      USA: 10,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'tsmc',
@@ -81,9 +81,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       Taiwan: 85,
       China: 10,
-      USA: 5
+      USA: 5,
     },
-    category: 'semiconductor'
+    category: 'semiconductor',
   },
   {
     id: 'foxconn',
@@ -96,9 +96,9 @@ export const techCompanies: TechCompany[] = [
       Vietnam: 10,
       India: 10,
       Mexico: 5,
-      Taiwan: 5
+      Taiwan: 5,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'nvidia',
@@ -109,9 +109,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       Taiwan: 70, // TSMC manufacturing
       China: 20,
-      USA: 10
+      USA: 10,
     },
-    category: 'semiconductor'
+    category: 'semiconductor',
   },
   {
     id: 'intel',
@@ -124,9 +124,9 @@ export const techCompanies: TechCompany[] = [
       China: 25,
       Israel: 15,
       Ireland: 10,
-      Malaysia: 10
+      Malaysia: 10,
     },
-    category: 'semiconductor'
+    category: 'semiconductor',
   },
   {
     id: 'oracle',
@@ -137,9 +137,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       USA: 70,
       India: 20,
-      EU: 10
+      EU: 10,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'meta',
@@ -150,9 +150,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       China: 25, // VR hardware
       USA: 65,
-      EU: 10
+      EU: 10,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'tencent',
@@ -163,9 +163,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       China: 90,
       USA: 5,
-      EU: 5
+      EU: 5,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'dell',
@@ -177,9 +177,9 @@ export const techCompanies: TechCompany[] = [
       China: 60,
       Mexico: 20,
       Malaysia: 10,
-      USA: 10
+      USA: 10,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'hp',
@@ -197,9 +197,9 @@ export const techCompanies: TechCompany[] = [
       Malaysia: 4.4,
       'South Korea': 3.9,
       Philippines: 2.1,
-      Thailand: 1.5
+      Thailand: 1.5,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'lenovo',
@@ -211,9 +211,9 @@ export const techCompanies: TechCompany[] = [
       China: 65,
       Mexico: 15,
       India: 10,
-      USA: 10
+      USA: 10,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'cisco',
@@ -225,9 +225,9 @@ export const techCompanies: TechCompany[] = [
       China: 40,
       Mexico: 25,
       USA: 25,
-      Malaysia: 10
+      Malaysia: 10,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'ibm',
@@ -239,9 +239,9 @@ export const techCompanies: TechCompany[] = [
       USA: 50,
       India: 30,
       China: 10,
-      EU: 10
+      EU: 10,
     },
-    category: 'services'
+    category: 'services',
   },
   {
     id: 'qualcomm',
@@ -253,9 +253,9 @@ export const techCompanies: TechCompany[] = [
       Taiwan: 40,
       China: 35,
       'South Korea': 15,
-      USA: 10
+      USA: 10,
     },
-    category: 'semiconductor'
+    category: 'semiconductor',
   },
   {
     id: 'broadcom',
@@ -267,9 +267,9 @@ export const techCompanies: TechCompany[] = [
       Taiwan: 45,
       China: 30,
       Singapore: 15,
-      USA: 10
+      USA: 10,
     },
-    category: 'semiconductor'
+    category: 'semiconductor',
   },
   {
     id: 'amd',
@@ -280,9 +280,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       Taiwan: 65, // TSMC
       China: 25,
-      USA: 10
+      USA: 10,
     },
-    category: 'semiconductor'
+    category: 'semiconductor',
   },
   {
     id: 'salesforce',
@@ -292,9 +292,9 @@ export const techCompanies: TechCompany[] = [
     primaryManufacturing: ['USA'],
     revenueByCountry: {
       USA: 90,
-      EU: 10
+      EU: 10,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'sap',
@@ -305,9 +305,9 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       Germany: 60,
       India: 30,
-      USA: 10
+      USA: 10,
     },
-    category: 'software'
+    category: 'software',
   },
   {
     id: 'accenture',
@@ -319,9 +319,9 @@ export const techCompanies: TechCompany[] = [
       India: 40,
       Philippines: 20,
       USA: 30,
-      EU: 10
+      EU: 10,
     },
-    category: 'services'
+    category: 'services',
   },
   {
     id: 'sony',
@@ -334,9 +334,9 @@ export const techCompanies: TechCompany[] = [
       Japan: 25,
       Thailand: 15,
       Malaysia: 10,
-      USA: 10
+      USA: 10,
     },
-    category: 'hardware'
+    category: 'hardware',
   },
   {
     id: 'panasonic',
@@ -347,8 +347,8 @@ export const techCompanies: TechCompany[] = [
     revenueByCountry: {
       China: 45,
       Japan: 35,
-      USA: 20
+      USA: 20,
     },
-    category: 'hardware'
-  }
+    category: 'hardware',
+  },
 ]

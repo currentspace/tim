@@ -5,7 +5,7 @@ import { tariffTimeline } from '../data/tariffSchedules'
 import {
   calculateAllCompaniesImpact,
   formatCurrency,
-  getDateRange
+  getDateRange,
 } from '../utils/tariffCalculations'
 import './AnticipatedTariffImpact.css'
 
@@ -25,13 +25,13 @@ interface SimulationNode extends d3.SimulationNodeDatum {
 function AnticipatedTariffImpact() {
   const svgRef = useRef<SVGSVGElement>(null)
   const dateRange = useMemo(() => getDateRange(tariffTimeline), [])
-  
+
   // Start with current date (Sep 2025)
   const [selectedDate, setSelectedDate] = useState(new Date('2025-09-01'))
-  
+
   const impacts = useMemo(
     () => calculateAllCompaniesImpact(techCompanies, selectedDate, tariffTimeline),
-    [selectedDate]
+    [selectedDate],
   )
 
   // Create visualization
@@ -45,13 +45,15 @@ function AnticipatedTariffImpact() {
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
 
-    const svg = d3.select(svgRef.current)
+    const svg = d3
+      .select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', `0 0 ${width.toString()} ${height.toString()}`)
 
     // Create main group
-    const g = svg.append('g')
+    const g = svg
+      .append('g')
       .attr('transform', `translate(${margin.left.toString()},${margin.top.toString()})`)
 
     const innerWidth = width - margin.left - margin.right
@@ -62,13 +64,15 @@ function AnticipatedTariffImpact() {
     const topCompanies = sortedImpacts.slice(0, 10)
 
     // Create scales
-    const radiusScale = d3.scaleSqrt()
-      .domain([0, d3.max(topCompanies, d => d.tariffImpact) ?? 0])
+    const radiusScale = d3
+      .scaleSqrt()
+      .domain([0, d3.max(topCompanies, (d) => d.tariffImpact) ?? 0])
       .range([20, 80])
 
-    const colorScale = d3.scaleSequential()
+    const colorScale = d3
+      .scaleSequential()
       .domain([0, 20]) // 0% to 20% impact
-      .interpolator(t => {
+      .interpolator((t) => {
         // Custom interpolation: green -> orange -> red
         if (t < 0.5) {
           return d3.interpolateRgb('#82ca9d', '#FFA500')(t * 2)
@@ -79,25 +83,31 @@ function AnticipatedTariffImpact() {
 
     // Create force simulation
     const simulationData = topCompanies as SimulationNode[]
-    const simulation = d3.forceSimulation(simulationData)
+    const simulation = d3
+      .forceSimulation(simulationData)
       .force('x', d3.forceX(innerWidth / 2).strength(0.1))
       .force('y', d3.forceY(innerHeight / 2).strength(0.1))
-      .force('collide', d3.forceCollide((d: SimulationNode) => {
-        return radiusScale(d.tariffImpact) + 5
-      }))
+      .force(
+        'collide',
+        d3.forceCollide((d: SimulationNode) => {
+          return radiusScale(d.tariffImpact) + 5
+        }),
+      )
       .force('charge', d3.forceManyBody().strength(-100))
 
     // Create company groups
-    const companyGroups = g.selectAll('.company-bubble')
+    const companyGroups = g
+      .selectAll('.company-bubble')
       .data(simulationData)
       .enter()
       .append('g')
       .attr('class', 'company-bubble')
 
     // Add circles
-    companyGroups.append('circle')
-      .attr('r', d => radiusScale(d.tariffImpact))
-      .attr('fill', d => {
+    companyGroups
+      .append('circle')
+      .attr('r', (d) => radiusScale(d.tariffImpact))
+      .attr('fill', (d) => {
         const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
         return colorScale(impactPercentage)
       })
@@ -106,7 +116,8 @@ function AnticipatedTariffImpact() {
       .style('cursor', 'pointer')
 
     // Add company names
-    companyGroups.append('text')
+    companyGroups
+      .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '-0.3em')
       .style('font-family', 'ABC Monument Grotesk, Inter, system-ui, -apple-system, sans-serif')
@@ -114,13 +125,14 @@ function AnticipatedTariffImpact() {
       .style('font-weight', '700')
       .style('letter-spacing', '-0.01em')
       .style('fill', '#fff')
-      .text(d => {
-        const company = techCompanies.find(c => c.name === d.company)
+      .text((d) => {
+        const company = techCompanies.find((c) => c.name === d.company)
         return company?.name ?? ''
       })
 
     // Add impact amount
-    companyGroups.append('text')
+    companyGroups
+      .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '1em')
       .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
@@ -128,13 +140,15 @@ function AnticipatedTariffImpact() {
       .style('font-weight', '600')
       .style('font-variant-numeric', 'tabular-nums')
       .style('fill', '#fff')
-      .text(d => {
+      .text((d) => {
         const impactPercentage = (d.tariffImpact / d.baseRevenue) * 100
         return `${impactPercentage.toFixed(1)}%`
       })
 
     // Add tooltip
-    const tooltip = d3.select('body').append('div')
+    const tooltip = d3
+      .select('body')
+      .append('div')
       .attr('class', 'd3-tooltip')
       .style('opacity', 0)
       .style('position', 'absolute')
@@ -145,27 +159,26 @@ function AnticipatedTariffImpact() {
       .style('pointer-events', 'none')
 
     companyGroups
-      .on('mouseover', function(event, d) {
-        const company = techCompanies.find(c => c.name === d.company)
+      .on('mouseover', function (event, d) {
+        const company = techCompanies.find((c) => c.name === d.company)
         if (!company) return
 
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', .9)
+        tooltip.transition().duration(200).style('opacity', 0.9)
 
-        tooltip.html(`
+        tooltip
+          .html(
+            `
           <strong style="font-family: ABC Monument Grotesk, Inter, system-ui, -apple-system, sans-serif; font-weight: 700;">${company.name}</strong><br/>
           <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Base Revenue: ${formatCurrency(d.baseRevenue)}</span><br/>
           <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Tariff Impact: ${formatCurrency(d.tariffImpact)}</span><br/>
           <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Net Revenue: ${formatCurrency(d.netRevenue)}</span>
-        `)
+        `,
+          )
           .style('left', `${((event as MouseEvent).pageX + 10).toString()}px`)
           .style('top', `${((event as MouseEvent).pageY - 28).toString()}px`)
       })
-      .on('mouseout', function() {
-        tooltip.transition()
-          .duration(500)
-          .style('opacity', 0)
+      .on('mouseout', function () {
+        tooltip.transition().duration(500).style('opacity', 0)
       })
 
     // Run simulation
@@ -180,7 +193,6 @@ function AnticipatedTariffImpact() {
       tooltip.remove()
     }
   }, [impacts])
-
 
   // Calculate total impact
   const totalImpact = impacts.reduce((sum, i) => sum + i.tariffImpact, 0)
@@ -213,7 +225,7 @@ function AnticipatedTariffImpact() {
 
       <div className="visualization-container">
         <svg ref={svgRef}></svg>
-        
+
         <div className="legend">
           <h4>Legend</h4>
           <div className="legend-items">
@@ -246,7 +258,9 @@ function AnticipatedTariffImpact() {
             min={dateRange.start.getTime()}
             max={dateRange.end.getTime()}
             value={selectedDate.getTime()}
-            onChange={(e) => { setSelectedDate(new Date(parseInt(e.target.value))) }}
+            onChange={(e) => {
+              setSelectedDate(new Date(parseInt(e.target.value)))
+            }}
             className="timeline-slider"
           />
           <div className="timeline-labels">

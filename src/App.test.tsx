@@ -12,7 +12,7 @@ describe('App', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Charles - Data Visualization App')).toBeInTheDocument()
+      expect(screen.getByText('Data Visualization App')).toBeInTheDocument()
     })
   })
 

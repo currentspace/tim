@@ -7,9 +7,9 @@ export const tariffTimeline: TariffSchedule[] = [
     rates: {
       China: 10,
       Mexico: 25,
-      Canada: 25
+      Canada: 25,
     },
-    status: 'active'
+    status: 'active',
   },
   {
     date: '2025-03-04',
@@ -17,9 +17,9 @@ export const tariffTimeline: TariffSchedule[] = [
     rates: {
       China: 20,
       Mexico: 25,
-      Canada: 25
+      Canada: 25,
     },
-    status: 'active'
+    status: 'active',
   },
   {
     date: '2025-04-05',
@@ -40,9 +40,9 @@ export const tariffTimeline: TariffSchedule[] = [
       Israel: 10,
       Ireland: 10,
       Germany: 10,
-      Singapore: 10
+      Singapore: 10,
     },
-    status: 'active'
+    status: 'active',
   },
   {
     date: '2025-04-09',
@@ -63,9 +63,9 @@ export const tariffTimeline: TariffSchedule[] = [
       Israel: 0,
       Ireland: 0,
       Germany: 0,
-      Singapore: 0
+      Singapore: 0,
     },
-    status: 'paused'
+    status: 'paused',
   },
   {
     date: '2025-05-14',
@@ -86,9 +86,9 @@ export const tariffTimeline: TariffSchedule[] = [
       Israel: 0,
       Ireland: 0,
       Germany: 0,
-      Singapore: 0
+      Singapore: 0,
     },
-    status: 'active'
+    status: 'active',
   },
   {
     date: '2025-05-28',
@@ -109,9 +109,9 @@ export const tariffTimeline: TariffSchedule[] = [
       Israel: 0,
       Ireland: 0,
       Germany: 0,
-      Singapore: 0
+      Singapore: 0,
     },
-    status: 'blocked'
+    status: 'blocked',
   },
   {
     date: '2025-07-09',
@@ -132,9 +132,9 @@ export const tariffTimeline: TariffSchedule[] = [
       Israel: 10,
       Ireland: 10,
       Germany: 10,
-      Singapore: 10
+      Singapore: 10,
     },
-    status: 'proposed'
+    status: 'proposed',
   },
   {
     date: '2025-08-01',
@@ -155,17 +155,17 @@ export const tariffTimeline: TariffSchedule[] = [
       Israel: 10,
       Ireland: 10,
       Germany: 10,
-      Singapore: 10
+      Singapore: 10,
     },
-    status: 'proposed'
-  }
+    status: 'proposed',
+  },
 ]
 
 export const scenarios: TariffScenario[] = [
   {
     name: 'Current Timeline',
     description: 'Actual tariff implementation as of July 2025',
-    timeline: tariffTimeline
+    timeline: tariffTimeline,
   },
   {
     name: 'Escalation Scenario',
@@ -191,11 +191,11 @@ export const scenarios: TariffScenario[] = [
           Israel: 10,
           Ireland: 10,
           Germany: 15,
-          Singapore: 10
+          Singapore: 10,
         },
-        status: 'proposed'
-      }
-    ]
+        status: 'proposed',
+      },
+    ],
   },
   {
     name: 'De-escalation Scenario',
@@ -221,10 +221,10 @@ export const scenarios: TariffScenario[] = [
           Israel: 0,
           Ireland: 0,
           Germany: 0,
-          Singapore: 0
+          Singapore: 0,
         },
-        status: 'proposed'
-      }
-    ]
-  }
+        status: 'proposed',
+      },
+    ],
+  },
 ]

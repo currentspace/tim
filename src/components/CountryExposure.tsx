@@ -33,50 +33,51 @@ const COUNTRY_COLORS: Record<string, string> = {
   Israel: '#0066cc',
   Ireland: '#009900',
   Germany: '#ffcc00',
-  Singapore: '#ff0000'
+  Singapore: '#ff0000',
 }
 
 function CountryExposure() {
   const svgRef = useRef<SVGSVGElement>(null)
   const [selectedCompany, setSelectedCompany] = useState<string>('hp') // Default to HP like in the image
   const [selectedDate, setSelectedDate] = useState(new Date('2025-01-01'))
-  
+
   const activeTariff = useMemo(
     () => getActiveTariffForDate(selectedDate, tariffTimeline),
-    [selectedDate]
+    [selectedDate],
   )
 
   const exposureData = useMemo(() => {
-    const companies = selectedCompany === 'all' 
-      ? techCompanies 
-      : techCompanies.filter(c => c.id === selectedCompany)
-    
+    const companies =
+      selectedCompany === 'all'
+        ? techCompanies
+        : techCompanies.filter((c) => c.id === selectedCompany)
+
     const countryRevenue: Record<string, { revenue: number; companies: Set<string> }> = {}
     let totalRevenue = 0
-    
-    companies.forEach(company => {
+
+    companies.forEach((company) => {
       const quarterlyRevenue = company.revenue / 4
       totalRevenue += quarterlyRevenue
-      
+
       Object.entries(company.revenueByCountry).forEach(([country, percentage]) => {
         const revenue = (quarterlyRevenue * percentage) / 100
-        
+
         if (!(country in countryRevenue)) {
           countryRevenue[country] = { revenue: 0, companies: new Set() }
         }
-        
+
         countryRevenue[country].revenue += revenue
         countryRevenue[country].companies.add(company.name)
       })
     })
-    
+
     return Object.entries(countryRevenue)
       .map(([country, data]) => ({
         country,
         totalRevenue: data.revenue,
         percentage: (data.revenue / totalRevenue) * 100,
         affectedCompanies: Array.from(data.companies),
-        currentTariff: activeTariff?.rates[country] ?? 0
+        currentTariff: activeTariff?.rates[country] ?? 0,
       }))
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
   }, [selectedCompany, activeTariff])
@@ -95,18 +96,20 @@ function CountryExposure() {
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
 
-    const svg = d3.select(svgRef.current)
+    const svg = d3
+      .select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', `0 0 ${width.toString()} ${height.toString()}`)
 
     // Create main group
-    const g = svg.append('g')
+    const g = svg
+      .append('g')
       .attr('transform', `translate(${centerX.toString()},${centerY.toString()})`)
 
     // Create concentric circles (like in the image)
     const circles = [1, 0.8, 0.6, 0.4, 0.2]
-    circles.forEach(scale => {
+    circles.forEach((scale) => {
       g.append('circle')
         .attr('r', outerRadius * scale)
         .attr('fill', 'none')
@@ -115,11 +118,11 @@ function CountryExposure() {
     })
 
     // Calculate angles for each country
-    const totalPercentage = d3.sum(exposureData, d => d.percentage)
+    const totalPercentage = d3.sum(exposureData, (d) => d.percentage)
     let currentAngle = -Math.PI / 2 // Start at top
 
     // Create arcs for each country
-    const arcs: ArcData[] = exposureData.map(d => {
+    const arcs: ArcData[] = exposureData.map((d) => {
       const angleSize = (d.percentage / totalPercentage) * 2 * Math.PI
       const startAngle = currentAngle
       const endAngle = currentAngle + angleSize
@@ -129,12 +132,13 @@ function CountryExposure() {
         ...d,
         startAngle,
         endAngle,
-        midAngle: (startAngle + endAngle) / 2
+        midAngle: (startAngle + endAngle) / 2,
       }
     })
 
     // Create arc generator
-    const arcGenerator = d3.arc<ArcData>()
+    const arcGenerator = d3
+      .arc<ArcData>()
       .startAngle((d) => d.startAngle)
       .endAngle((d) => d.endAngle)
       .innerRadius(innerRadius)
@@ -150,15 +154,17 @@ function CountryExposure() {
       .append('path')
       .attr('class', 'country-arc')
       .attr('d', arcGenerator)
-      .attr('fill', d => COUNTRY_COLORS[d.country] || '#888888')
+      .attr('fill', (d) => COUNTRY_COLORS[d.country] || '#888888')
       .attr('stroke', 'white')
       .attr('stroke-width', 2)
       .style('opacity', 0.8)
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).style('opacity', 1)
-        
+
         // Show tooltip
-        const tooltip = d3.select('body').append('div')
+        const tooltip = d3
+          .select('body')
+          .append('div')
           .attr('class', 'd3-tooltip')
           .style('opacity', 0)
           .style('position', 'absolute')
@@ -168,20 +174,21 @@ function CountryExposure() {
           .style('border-radius', '5px')
           .style('pointer-events', 'none')
 
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', .9)
+        tooltip.transition().duration(200).style('opacity', 0.9)
 
-        tooltip.html(`
+        tooltip
+          .html(
+            `
           <strong class="d3-title">${d.country}</strong><br/>
           <span class="d3-value">Revenue: ${formatCurrency(d.totalRevenue)}</span><br/>
           <span class="d3-value">Share: ${d.percentage.toFixed(1).toString()}%</span><br/>
           <span class="d3-value">Tariff: ${d.currentTariff.toString()}%</span>
-        `)
+        `,
+          )
           .style('left', `${((event as MouseEvent).pageX + 10).toString()}px`)
           .style('top', `${((event as MouseEvent).pageY - 28).toString()}px`)
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).style('opacity', 0.8)
         d3.selectAll('.d3-tooltip').remove()
       })
@@ -189,11 +196,11 @@ function CountryExposure() {
     // Add lines and labels
     const labelRadius = outerRadius + 50
 
-    arcs.forEach(d => {
+    arcs.forEach((d) => {
       // Calculate label position
       const labelX = Math.cos(d.midAngle) * labelRadius
       const labelY = Math.sin(d.midAngle) * labelRadius
-      
+
       // Draw line from arc to label
       g.append('line')
         .attr('x1', Math.cos(d.midAngle) * outerRadius)
@@ -206,11 +213,13 @@ function CountryExposure() {
 
       // Add country label with percentage
       const textAnchor = Math.cos(d.midAngle) > 0 ? 'start' : 'end'
-      const labelGroup = g.append('g')
+      const labelGroup = g
+        .append('g')
         .attr('transform', `translate(${labelX.toString()},${labelY.toString()})`)
 
       // Country name
-      labelGroup.append('text')
+      labelGroup
+        .append('text')
         .attr('text-anchor', textAnchor)
         .attr('dy', '-0.3em')
         .attr('class', 'd3-title')
@@ -218,7 +227,8 @@ function CountryExposure() {
         .text(d.country)
 
       // Percentage
-      labelGroup.append('text')
+      labelGroup
+        .append('text')
         .attr('text-anchor', textAnchor)
         .attr('dy', '1em')
         .attr('class', 'd3-label')
@@ -227,7 +237,7 @@ function CountryExposure() {
 
     // Add center company name
     if (selectedCompany !== 'all') {
-      const company = techCompanies.find(c => c.id === selectedCompany)
+      const company = techCompanies.find((c) => c.id === selectedCompany)
       if (company) {
         g.append('text')
           .attr('text-anchor', 'middle')
@@ -237,15 +247,13 @@ function CountryExposure() {
           .text(company.name)
       }
     }
-
   }, [exposureData, selectedCompany])
 
-
   const dateRange = useMemo(() => {
-    const dates = tariffTimeline.map(s => new Date(s.date))
+    const dates = tariffTimeline.map((s) => new Date(s.date))
     return {
-      start: new Date(Math.min(...dates.map(d => d.getTime()))),
-      end: new Date(Math.max(...dates.map(d => d.getTime())))
+      start: new Date(Math.min(...dates.map((d) => d.getTime()))),
+      end: new Date(Math.max(...dates.map((d) => d.getTime()))),
     }
   }, [])
 
@@ -272,11 +280,13 @@ function CountryExposure() {
           <span>Company: </span>
           <select
             value={selectedCompany}
-            onChange={(e) => { setSelectedCompany(e.target.value) }}
+            onChange={(e) => {
+              setSelectedCompany(e.target.value)
+            }}
             className="company-select-inline"
           >
             <option value="all">All Companies</option>
-            {techCompanies.map(company => (
+            {techCompanies.map((company) => (
               <option key={company.id} value={company.id}>
                 {company.name}
               </option>
@@ -288,14 +298,14 @@ function CountryExposure() {
 
       <div className="visualization-container">
         <svg ref={svgRef}></svg>
-        
+
         <div className="country-legend">
           <h4>Countries</h4>
           <div className="legend-items">
-            {exposureData.slice(0, 10).map(country => (
+            {exposureData.slice(0, 10).map((country) => (
               <div key={country.country} className="legend-item">
-                <span 
-                  className="color-indicator" 
+                <span
+                  className="color-indicator"
                   style={{ backgroundColor: COUNTRY_COLORS[country.country] || '#888' }}
                 ></span>
                 <span className="country-name">{country.country}</span>
@@ -315,7 +325,9 @@ function CountryExposure() {
             min={dateRange.start.getTime()}
             max={dateRange.end.getTime()}
             value={selectedDate.getTime()}
-            onChange={(e) => { setSelectedDate(new Date(parseInt(e.target.value))) }}
+            onChange={(e) => {
+              setSelectedDate(new Date(parseInt(e.target.value)))
+            }}
             className="timeline-slider"
           />
           <div className="timeline-labels">

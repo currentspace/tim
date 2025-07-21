@@ -8,18 +8,19 @@
 
 ## WHY THIS MATTERS:
 
-React 19.1 with Suspense and use() means your components may suspend (throw a Promise)
-while loading data. To test fallbacks, you need to control when the Promise resolves.
-But you *should not* add test flags or conditional logic to your components for this!
+React 19.1 with Suspense and use() means your components may suspend (throw a Promise) while loading
+data. To test fallbacks, you need to control when the Promise resolves. But you _should not_ add
+test flags or conditional logic to your components for this!
 
 ## KEY POINTS FROM REACT TEAM AND TESTING COMMUNITY:
 
-1. "When using Suspense and async functions, if the promise resolves synchronously or too quickly, you may never see the fallback rendered in a test. For test coverage of loading states, inject a way to delay data resolution."
-   (React RFC: Suspense for Data Fetching)
+1. "When using Suspense and async functions, if the promise resolves synchronously or too quickly,
+   you may never see the fallback rendered in a test. For test coverage of loading states, inject a
+   way to delay data resolution." (React RFC: Suspense for Data Fetching)
    [https://github.com/reactjs/rfcs/pull/263#testing-suspense-and-async-rendering](https://github.com/reactjs/rfcs/pull/263#testing-suspense-and-async-rendering)
 
-2. "Don't use act unnecessarily. Use dependency injection or mocks to control async timing."
-   (Kent C. Dodds, Testing Suspense)
+2. "Don't use act unnecessarily. Use dependency injection or mocks to control async timing." (Kent
+   C. Dodds, Testing Suspense)
    [https://kentcdodds.com/blog/stop-using-act-more-often-than-not](https://kentcdodds.com/blog/stop-using-act-more-often-than-not)
 
 3. "You rarely need to use act directly. The async utilities already wrap things in act for you."
@@ -39,41 +40,44 @@ Example:
 ```javascript
 // data/networkDataProvider.js
 export default function getNetworkData() {
-  return fetch('/api/network').then(r => r.json());
+  return fetch('/api/network').then((r) => r.json())
 }
 
 // In StartupUniverse or NetworkVisualization:
-const data = use(getNetworkData());
+const data = use(getNetworkData())
 
 // -- TEST FILE --
-import { vi } from 'vitest';
-import getNetworkData from '../data/networkDataProvider';
+import { vi } from 'vitest'
+import getNetworkData from '../data/networkDataProvider'
 
 it('shows loading then data', async () => {
-  let resolver;
-  const deferred = new Promise(res => { resolver = res; });
+  let resolver
+  const deferred = new Promise((res) => {
+    resolver = res
+  })
   vi.mock('../data/networkDataProvider', () => ({
-    default: () => deferred
-  }));
+    default: () => deferred,
+  }))
 
   render(
     <Suspense fallback={<div>Loading...</div>}>
       <StartupUniverse />
-    </Suspense>
-  );
+    </Suspense>,
+  )
 
   // Check fallback
-  expect(screen.getByText('Loading...')).toBeInTheDocument();
+  expect(screen.getByText('Loading...')).toBeInTheDocument()
 
   // Resolve data
-  resolver(mockData);
-  await screen.findByText('The Startup Universe');
-});
+  resolver(mockData)
+  await screen.findByText('The Startup Universe')
+})
 ```
 
 ### APPROACH 2: DEPENDENCY INJECTION (AS A PROP)
 
-- If you want even more control and flexibility, allow your component to accept a loader as a prop, defaulting to the real one.
+- If you want even more control and flexibility, allow your component to accept a loader as a prop,
+  defaulting to the real one.
 - In tests, pass a controlled loader; in production, nothing changes.
 
 Example:
@@ -102,19 +106,21 @@ This keeps test logic out of production code, and lets you verify the loading UI
 
 ## USING act:
 
-React Testing Library's async functions (waitFor, findBy*) automatically wrap updates in act.
-You generally do NOT need to call act() manually unless you're writing low-level or timing-sensitive tests.
+React Testing Library's async functions (waitFor, findBy\*) automatically wrap updates in act. You
+generally do NOT need to call act() manually unless you're writing low-level or timing-sensitive
+tests.
 
-From Kent C. Dodds:
-"With modern React Testing Library, act is wrapped for you, so avoid using it directly except in very specific situations."
+From Kent C. Dodds: "With modern React Testing Library, act is wrapped for you, so avoid using it
+directly except in very specific situations."
 [https://kentcdodds.com/blog/stop-using-act-more-often-than-not](https://kentcdodds.com/blog/stop-using-act-more-often-than-not)
 
 ## SUMMARY CHECKLIST:
 
 - [ ] NO test-only code, props, or flags in production component files.
 - [ ] Data loading utilities are always imported from a separate module.
-- [ ] Tests mock those modules (or inject via prop) to control promise resolution and test both fallback and loaded states.
-- [ ] All async assertions use waitFor or findBy* (no manual act required).
+- [ ] Tests mock those modules (or inject via prop) to control promise resolution and test both
+      fallback and loaded states.
+- [ ] All async assertions use waitFor or findBy\* (no manual act required).
 
 ## REFERENCES:
 
@@ -124,8 +130,7 @@ React RFC (Suspense for Data Fetching, see 'Testing Suspense and async rendering
 Kent C. Dodds: Stop Using act So Much
 [https://kentcdodds.com/blog/stop-using-act-more-often-than-not](https://kentcdodds.com/blog/stop-using-act-more-often-than-not)
 
-Vitest Module Mocking
-[https://vitest.dev/guide/mocking.html](https://vitest.dev/guide/mocking.html)
+Vitest Module Mocking [https://vitest.dev/guide/mocking.html](https://vitest.dev/guide/mocking.html)
 
 React Testing Library: Async Utilities
 [https://testing-library.com/docs/dom-testing-library/api-async/](https://testing-library.com/docs/dom-testing-library/api-async/)
@@ -134,13 +139,17 @@ React Testing Library: Async Utilities
 
 In practice, testing Suspense with React 19.1's `use()` hook can be challenging:
 
-1. **Promise Caching**: React caches the promise result internally. Once a component suspends with a promise, it won't re-render until React itself decides to retry.
+1. **Promise Caching**: React caches the promise result internally. Once a component suspends with a
+   promise, it won't re-render until React itself decides to retry.
 
-2. **Module State**: If your data provider module maintains internal state (like a cached promise), you need to reset it between tests.
+2. **Module State**: If your data provider module maintains internal state (like a cached promise),
+   you need to reset it between tests.
 
-3. **Timing Issues**: Even with controllable promises, React's internal scheduling can make it difficult to reliably test transitions between loading and loaded states.
+3. **Timing Issues**: Even with controllable promises, React's internal scheduling can make it
+   difficult to reliably test transitions between loading and loaded states.
 
 For these reasons, consider:
+
 - Testing loading states with never-resolving promises
 - Testing success states with immediately-resolved promises
 - Testing error states with immediately-rejected promises
@@ -148,8 +157,10 @@ For these reasons, consider:
 
 ## NEED HELP?
 
-If you want, ask for an example PR using your StartupUniverse/getNetworkData, or for a more complex multi-component scenario.
+If you want, ask for an example PR using your StartupUniverse/getNetworkData, or for a more complex
+multi-component scenario.
 
 ---
 
-This ensures our async UI is testable without introducing *any* test overhead or logic into production code.
+This ensures our async UI is testable without introducing _any_ test overhead or logic into
+production code.
