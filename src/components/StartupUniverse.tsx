@@ -6,9 +6,13 @@ import getNetworkData from '../data/networkDataProvider'
 import './StartupUniverse.css'
 
 // NetworkVisualization component that uses React 19's use hook
-function NetworkVisualization() {
+interface NetworkVisualizationProps {
+  dataLoader?: () => Promise<import('../types/network').NetworkData>
+}
+
+function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizationProps) {
   // React 19's use hook automatically handles Suspense
-  const data = use(getNetworkData())
+  const data = use(dataLoader())
 
   const [linkDistance, setLinkDistance] = useState(150)
   const [chargeStrength, setChargeStrength] = useState(-300)
@@ -106,7 +110,11 @@ function NetworkVisualization() {
   )
 }
 
-function StartupUniverse() {
+interface StartupUniverseProps {
+  dataLoader?: () => Promise<import('../types/network').NetworkData>
+}
+
+function StartupUniverse({ dataLoader }: StartupUniverseProps = {}) {
   return (
     <div className="startup-universe">
       <h2>The Startup Universe</h2>
@@ -114,7 +122,7 @@ function StartupUniverse() {
 
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
-          <NetworkVisualization />
+          <NetworkVisualization dataLoader={dataLoader} />
         </Suspense>
       </ErrorBoundary>
 
