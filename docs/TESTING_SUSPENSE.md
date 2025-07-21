@@ -79,9 +79,9 @@ it('shows loading then data', async () => {
 - If you want even more control and flexibility, allow your component to accept a loader as a prop,
   defaulting to the real one.
 - In tests, pass a controlled loader; in production, nothing changes.
-- **Note**: If this pattern becomes common across multiple components, consider defining a convention
-  (e.g., always allowing a `dataLoader` prop for testability). Otherwise, prefer module mocking for
-  legacy code or where prop injection would pollute the API.
+- **Note**: If this pattern becomes common across multiple components, consider defining a
+  convention (e.g., always allowing a `dataLoader` prop for testability). Otherwise, prefer module
+  mocking for legacy code or where prop injection would pollute the API.
 
 Example:
 
@@ -165,20 +165,20 @@ For these reasons, consider:
 
 ## FAQ
 
-**Q: Why does my Suspense test only ever see the loaded state?**
-A: If your loader's promise resolves before React can render, Suspense never shows the fallback.
-Delay the promise in tests to reliably see the loading UI.
+**Q: Why does my Suspense test only ever see the loaded state?** A: If your loader's promise
+resolves before React can render, Suspense never shows the fallback. Delay the promise in tests to
+reliably see the loading UI.
 
-**Q: How do I reset Suspense between tests?**
-A: Remount the component (change the key or rerender) to reset its boundary and internal promise
-state.
+**Q: How do I reset Suspense between tests?** A: Remount the component (change the key or rerender)
+to reset its boundary and internal promise state.
 
-**Q: Can I test loading → loaded transitions in one test?**
-A: Only if you control the promise (deferred) and force React to rerender after resolving it, as
-shown in the dependency injection/module mocking examples.
+**Q: Can I test loading → loaded transitions in one test?** A: Only if you control the promise
+(deferred) and force React to rerender after resolving it, as shown in the dependency
+injection/module mocking examples.
 
-**Q: How do I test error states with Suspense?**
-A: Use the `reject` method of your deferred promise and wrap your Suspense in an ErrorBoundary:
+**Q: How do I test error states with Suspense?** A: Use the `reject` method of your deferred promise
+and wrap your Suspense in an ErrorBoundary:
+
 ```javascript
 const { promise, reject } = createDeferredPromise()
 render(
@@ -186,7 +186,7 @@ render(
     <Suspense fallback={<div>Loading...</div>}>
       <MyComponent dataLoader={() => promise} />
     </Suspense>
-  </ErrorBoundary>
+  </ErrorBoundary>,
 )
 reject(new Error('Network error'))
 await screen.findByText(/Something went wrong/)
