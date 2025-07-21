@@ -1,3 +1,6 @@
+/* Import additional font styles */
+@import './styles/fonts.css';
+
 /* ABC Monument Grotesk Font Face Declarations */
 @font-face {
   font-family: 'ABC Monument Grotesk';
