@@ -1,10 +1,11 @@
 /* Main App Title with "novel edge" styling */
 #root > h1 {
-  font-size: var(--font-size-5xl);
-  font-weight: var(--font-weight-black);
-  letter-spacing: var(--letter-spacing-tight);
+  font-family: var(--font-editorial);
+  font-size: clamp(var(--type-2xl), 5vw, var(--type-4xl));
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
   text-transform: uppercase;
-  background: linear-gradient(135deg, #646cff 0%, #ff8800 50%, #ff4d4d 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-data) 50%, var(--color-alert) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -12,6 +13,8 @@
   position: relative;
   display: inline-block;
   padding: 0 1rem;
+  /* Add a subtle animation for the "speculative tech" feel */
+  animation: textGlow 3s ease-in-out infinite alternate;
 }
 
 #root > h1::after {
@@ -22,7 +25,16 @@
   transform: translateX(-50%);
   width: 50%;
   height: 3px;
-  background: linear-gradient(90deg, transparent, #646cff, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+}
+
+@keyframes textGlow {
+  0% {
+    filter: brightness(1) contrast(1);
+  }
+  100% {
+    filter: brightness(1.1) contrast(1.1);
+  }
 }
 
 .card {
@@ -45,27 +57,29 @@
 
 .nav-buttons button {
   padding: 0.8rem 1.5rem;
-  border: 2px solid #646cff;
+  border: 2px solid var(--color-accent);
   background: transparent;
-  color: #646cff;
+  color: var(--color-accent);
   border-radius: 8px;
-  font-weight: 500;
+  font-family: var(--font-data);
+  font-weight: var(--weight-medium);
   transition: all 0.3s ease;
 }
 
 .nav-buttons button:hover {
-  background: #646cff;
-  color: white;
+  background: var(--color-accent);
+  color: var(--color-paper);
 }
 
 .nav-buttons button.active {
-  background: #646cff;
-  color: white;
+  background: var(--color-accent);
+  color: var(--color-paper);
 }
 
 .coming-soon {
   text-align: center;
   padding: 4rem;
-  color: #666;
-  font-size: 1.2rem;
+  color: var(--color-ink-muted);
+  font-family: var(--font-data);
+  font-size: var(--type-lg);
 }

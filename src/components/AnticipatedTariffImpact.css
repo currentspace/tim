@@ -25,13 +25,15 @@
 }
 
 .dollar-volume {
-  font-size: 0.9rem;
-  color: #666;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
 }
 
 .exposure-rate {
-  font-size: 0.9rem;
-  color: #666;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
 }
 
 .toggle-switch {
@@ -72,7 +74,7 @@
 }
 
 input:checked + .slider {
-  background-color: #646cff;
+  background-color: var(--color-accent);
 }
 
 input:checked + .slider:before {
@@ -80,30 +82,33 @@ input:checked + .slider:before {
 }
 
 .company-title h2 {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-extrabold);
-  letter-spacing: var(--letter-spacing-tight);
+  font-family: var(--font-editorial);
+  font-size: var(--type-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-snug);
   margin: 0;
-  color: #333;
+  color: var(--color-ink);
   text-transform: uppercase;
 }
 
 .company-title p {
   margin: 0;
-  color: #666;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-ink-muted);
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wider);
 }
 
 .anticipated-badge {
-  background: #ff8800;
-  color: white;
+  font-family: var(--font-editorial);
+  background: var(--color-data);
+  color: var(--color-paper);
   padding: 0.75rem 2.5rem;
   display: inline-block;
-  font-weight: var(--font-weight-black);
-  font-size: var(--font-size-xl);
-  letter-spacing: var(--letter-spacing-tight);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-xl);
+  letter-spacing: var(--tracking-snug);
   border-radius: 5px;
   margin: 0 auto;
   text-align: center;
@@ -119,25 +124,28 @@ input:checked + .slider:before {
 
 .current-view h3 {
   margin: 0 0 0.5rem 0;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-family: var(--font-editorial);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .view-subtitle {
   margin: 0 0 0.5rem 0;
-  color: #666;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+  color: var(--color-ink-muted);
+  font-family: var(--font-data);
+  font-size: var(--type-base);
+  font-weight: var(--weight-medium);
 }
 
 .date-display {
   margin: 0;
-  color: #999;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-regular);
+  color: var(--color-ink-muted);
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-regular);
 }
 
 .visualization-container {
@@ -162,10 +170,11 @@ input:checked + .slider:before {
 
 .legend h4 {
   margin: 0 0 1rem 0;
-  color: #333;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-ink);
+  font-family: var(--font-editorial);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
 }
 
@@ -180,6 +189,8 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
 }
 
 .legend-color {
@@ -192,7 +203,9 @@ input:checked + .slider:before {
 .total-impact {
   padding-top: 1rem;
   border-top: 1px solid #e0e0e0;
-  font-size: 1.1rem;
+  font-family: var(--font-data);
+  font-size: var(--type-lg);
+  font-weight: var(--weight-semibold);
 }
 
 .company-bubble {
@@ -211,11 +224,12 @@ input:checked + .slider:before {
 
 .timeline-container h3 {
   margin: 0 0 1rem 0;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-family: var(--font-editorial);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .timeline-wrapper {
@@ -265,19 +279,22 @@ input:checked + .slider:before {
   display: flex;
   justify-content: space-between;
   margin-top: 0.5rem;
-  font-size: 0.85rem;
-  color: #666;
+  font-family: var(--font-data);
+  font-size: var(--type-xs);
+  color: var(--color-ink-muted);
 }
 
 .timeline-date {
   margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #333;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink);
 }
 
 /* D3 Tooltip Styles */
 .d3-tooltip {
-  font-size: 0.9rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
   z-index: 1000;
 }
 

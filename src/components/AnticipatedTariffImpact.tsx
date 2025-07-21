@@ -109,10 +109,10 @@ function AnticipatedTariffImpact() {
     companyGroups.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '-0.3em')
-      .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
+      .style('font-family', 'ABC Monument Grotesk, Inter, system-ui, -apple-system, sans-serif')
       .style('font-size', '14px')
       .style('font-weight', '700')
-      .style('letter-spacing', '-0.025em')
+      .style('letter-spacing', '-0.01em')
       .style('fill', '#fff')
       .text(d => {
         const company = techCompanies.find(c => c.name === d.company)
@@ -154,7 +154,7 @@ function AnticipatedTariffImpact() {
           .style('opacity', .9)
 
         tooltip.html(`
-          <strong style="font-family: Inter, system-ui, -apple-system, sans-serif; font-weight: 700;">${company.name}</strong><br/>
+          <strong style="font-family: ABC Monument Grotesk, Inter, system-ui, -apple-system, sans-serif; font-weight: 700;">${company.name}</strong><br/>
           <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Base Revenue: ${formatCurrency(d.baseRevenue)}</span><br/>
           <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Tariff Impact: ${formatCurrency(d.tariffImpact)}</span><br/>
           <span style="font-family: Inter, system-ui, -apple-system, sans-serif;">Net Revenue: ${formatCurrency(d.netRevenue)}</span>

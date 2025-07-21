@@ -25,11 +25,13 @@
 
 .nav-button {
   padding: 0.5rem 1rem;
-  background: white;
+  background: var(--color-paper);
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-family: var(--font-data);
+  font-size: var(--type-base);
+  font-weight: var(--weight-medium);
   transition: all 0.2s;
 }
 
@@ -38,33 +40,36 @@
 }
 
 .nav-button.active {
-  background: #646cff;
-  color: white;
-  border-color: #646cff;
+  background: var(--color-accent);
+  color: var(--color-paper);
+  border-color: var(--color-accent);
 }
 
 .percentage-share {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: #666;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-muted);
   padding: 0 1rem;
 }
 
 .company-title h2 {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-extrabold);
-  letter-spacing: var(--letter-spacing-tight);
+  font-family: var(--font-editorial);
+  font-size: var(--type-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-snug);
   margin: 0;
-  color: #333;
+  color: var(--color-ink);
   text-transform: uppercase;
 }
 
 .company-title p {
   margin: 0;
-  color: #666;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-ink-muted);
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wider);
 }
 
 .current-view {
@@ -75,24 +80,27 @@
 
 .current-view h3 {
   margin: 0 0 0.5rem 0;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-family: var(--font-editorial);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .view-subtitle {
   margin: 0 0 0.5rem 0;
-  color: #666;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+  color: var(--color-ink-muted);
+  font-family: var(--font-data);
+  font-size: var(--type-base);
+  font-weight: var(--weight-medium);
 }
 
 .company-info {
   margin: 0.5rem 0;
-  font-size: 0.9rem;
-  color: #666;
+  font-family: var(--font-data);
+  font-size: var(--type-base);
+  color: var(--color-ink-muted);
 }
 
 .company-select-inline {
@@ -100,13 +108,16 @@
   padding: 0.25rem 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-regular);
 }
 
 .total-display {
   margin: 0.5rem 0 0 0;
-  font-size: 0.85rem;
-  color: #999;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink-muted);
 }
 
 .visualization-container {
@@ -132,11 +143,12 @@
 
 .country-legend h4 {
   margin: 0 0 1rem 0;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-family: var(--font-editorial);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .legend-items {
@@ -149,7 +161,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
 }
 
 .color-indicator {
@@ -161,12 +174,15 @@
 
 .country-name {
   flex: 1;
-  color: #333;
+  color: var(--color-ink);
+  font-weight: var(--weight-regular);
 }
 
 .percentage {
-  color: #666;
-  font-size: 0.85rem;
+  color: var(--color-ink-muted);
+  font-size: var(--type-xs);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-medium);
 }
 
 .country-arc {
@@ -182,11 +198,12 @@
 
 .timeline-container h3 {
   margin: 0 0 1rem 0;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-family: var(--font-editorial);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .timeline-wrapper {
@@ -236,19 +253,22 @@
   display: flex;
   justify-content: space-between;
   margin-top: 0.5rem;
-  font-size: 0.85rem;
-  color: #666;
+  font-family: var(--font-data);
+  font-size: var(--type-xs);
+  color: var(--color-ink-muted);
 }
 
 .timeline-info {
   margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #333;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  color: var(--color-ink);
 }
 
 /* D3 Tooltip Styles */
 .d3-tooltip {
-  font-size: 0.9rem;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
   z-index: 1000;
 }
 
