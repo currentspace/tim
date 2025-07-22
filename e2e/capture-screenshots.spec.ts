@@ -5,7 +5,7 @@ import { join } from 'path'
 const visualizations = [
   {
     name: 'anticipated-tariff-impact',
-    navText: 'Anticipated Tariff Impact',
+    navText: 'Anticipated Tariff',
     selector: '.anticipated-tariff-impact',
   },
   {
@@ -15,12 +15,12 @@ const visualizations = [
   },
   {
     name: 'tariff-rate-timeline',
-    navText: 'Tariff Rate Timeline',
+    navText: 'Company Timeline',
     selector: '.tariff-rate-timeline',
   },
   {
     name: 'country-tariff-timeline',
-    navText: 'Country Tariff Timeline',
+    navText: 'Country Timeline',
     selector: '.country-tariff-timeline',
   },
   {
@@ -30,7 +30,7 @@ const visualizations = [
   },
   {
     name: 'notification-settings',
-    navText: 'Notification Settings',
+    navText: 'Notifications',
     selector: '.notification-settings',
   },
 ]
@@ -86,8 +86,7 @@ test.describe('Capture visualization screenshots', () => {
 
     // Capture navigation on mobile
     await page.setViewportSize({ width: 375, height: 667 })
-    await page.click('.mobile-menu-toggle')
-    await page.waitForSelector('.navigation-wrapper.open')
+    await page.waitForTimeout(1000) // Wait for responsive layout to adjust
     await page.screenshot({
       path: join('screenshots', 'navigation-mobile.png'),
     })

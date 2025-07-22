@@ -101,7 +101,7 @@ function AnticipatedTariffImpact() {
     const getPosition = (index: number) => {
       return {
         x: leftMargin,
-        y: topMargin + (index * bubbleSpacing)
+        y: topMargin + index * bubbleSpacing,
       }
     }
 
@@ -217,9 +217,7 @@ function AnticipatedTariffImpact() {
           .style('opacity', 1)
 
         // Update popup background size
-        popupBg
-          .attr('width', popupWidth)
-          .attr('height', popupHeight)
+        popupBg.attr('width', popupWidth).attr('height', popupHeight)
 
         // Clear existing popup content
         popupContent.selectAll('*').remove()
@@ -240,12 +238,12 @@ function AnticipatedTariffImpact() {
           { label: 'Base Revenue:', value: `$${(d.baseRevenue / 1000000).toFixed(1)}M` },
           { label: 'Tariff Impact:', value: `$${(d.tariffImpact / 1000000).toFixed(1)}M` },
           { label: 'Net Revenue:', value: `$${(d.netRevenue / 1000000).toFixed(1)}M` },
-          { label: 'Impact Rate:', value: `${d.impactPercentage.toFixed(1)}%` }
+          { label: 'Impact Rate:', value: `${d.impactPercentage.toFixed(1)}%` },
         ]
 
         details.forEach((detail, idx) => {
-          const yPos = 25 + (idx * 25)
-          
+          const yPos = 25 + idx * 25
+
           popupContent
             .append('text')
             .attr('x', 0)
@@ -297,10 +295,7 @@ function AnticipatedTariffImpact() {
           .style('filter', 'none')
 
         // Hide popup
-        popup
-          .transition()
-          .duration(TRANSITION_DURATION)
-          .style('opacity', 0)
+        popup.transition().duration(TRANSITION_DURATION).style('opacity', 0)
 
         // Remove callout line
         svg
