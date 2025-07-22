@@ -1,13 +1,47 @@
 import { Outlet, useLocation, Link } from '@tanstack/react-router'
+import { startTransition, useOptimistic, useDeferredValue, Suspense } from 'react'
 import TopNavigation from './components/TopNavigation'
+import LoadingSpinner from './components/LoadingSpinner'
 import './App.css'
+
+// Custom Link component with concurrent features
+function OptimisticLink({
+  to,
+  className,
+  children,
+  onClick,
+  ...props
+}: React.ComponentProps<typeof Link>) {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Let the router handle the navigation, but wrap state updates in transition
+    startTransition(() => {
+      // Call original onClick if provided
+      onClick?.(e)
+    })
+  }
+
+  return (
+    <Link to={to} className={className} onClick={handleClick} {...props}>
+      {children}
+    </Link>
+  )
+}
 
 function App() {
   const location = useLocation()
 
+  // Use deferred value for smoother transitions during navigation
+  const deferredPathname = useDeferredValue(location.pathname)
+
+  // Optimistic state for navigation feedback
+  const [optimisticPath, setOptimisticPath] = useOptimistic(
+    location.pathname,
+    (_, newPath: string) => newPath,
+  )
+
   // Determine the current view name for the badge
   const getViewName = () => {
-    switch (location.pathname) {
+    switch (optimisticPath) {
       case '/':
         return 'ANTICIPATED'
       case '/country-exposure':
@@ -28,12 +62,18 @@ function App() {
   // Determine left section content based on current view
   const getLeftSection = () => {
     // For country exposure, show back button and toggle
-    if (location.pathname === '/country-exposure') {
+    if (deferredPathname === '/country-exposure') {
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Link to="/" className="back-button">
+          <OptimisticLink
+            to="/"
+            className="back-button"
+            onClick={() => {
+              setOptimisticPath('/')
+            }}
+          >
             ← Back to Tariff View
-          </Link>
+          </OptimisticLink>
           <div className="toggle-group">
             <span className="toggle-label">Percentage</span>
             <label className="toggle-switch">
@@ -49,7 +89,7 @@ function App() {
     }
 
     // For anticipated tariff, show the value toggle
-    if (location.pathname === '/') {
+    if (deferredPathname === '/') {
       return (
         <div className="toggle-group">
           <span className="toggle-label">Dollar Volume</span>
@@ -75,39 +115,60 @@ function App() {
         centerSection={
           <div className="navigation-center">
             <nav className="main-navigation">
-              <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+              <OptimisticLink
+                to="/"
+                className={`nav-link ${optimisticPath === '/' ? 'active' : ''}`}
+                onClick={() => {
+                  setOptimisticPath('/')
+                }}
+              >
                 Anticipated Tariff Impact
-              </Link>
-              <Link
+              </OptimisticLink>
+              <OptimisticLink
                 to="/country-exposure"
-                className={`nav-link ${location.pathname === '/country-exposure' ? 'active' : ''}`}
+                className={`nav-link ${optimisticPath === '/country-exposure' ? 'active' : ''}`}
+                onClick={() => {
+                  setOptimisticPath('/country-exposure')
+                }}
               >
                 Country Exposure
-              </Link>
-              <Link
+              </OptimisticLink>
+              <OptimisticLink
                 to="/company-timeline"
-                className={`nav-link ${location.pathname === '/company-timeline' ? 'active' : ''}`}
+                className={`nav-link ${optimisticPath === '/company-timeline' ? 'active' : ''}`}
+                onClick={() => {
+                  setOptimisticPath('/company-timeline')
+                }}
               >
                 Company Timeline
-              </Link>
-              <Link
+              </OptimisticLink>
+              <OptimisticLink
                 to="/country-timeline"
-                className={`nav-link ${location.pathname === '/country-timeline' ? 'active' : ''}`}
+                className={`nav-link ${optimisticPath === '/country-timeline' ? 'active' : ''}`}
+                onClick={() => {
+                  setOptimisticPath('/country-timeline')
+                }}
               >
                 Country Timeline
-              </Link>
-              <Link
+              </OptimisticLink>
+              <OptimisticLink
                 to="/startup-universe"
-                className={`nav-link ${location.pathname === '/startup-universe' ? 'active' : ''}`}
+                className={`nav-link ${optimisticPath === '/startup-universe' ? 'active' : ''}`}
+                onClick={() => {
+                  setOptimisticPath('/startup-universe')
+                }}
               >
                 Startup Universe
-              </Link>
-              <Link
+              </OptimisticLink>
+              <OptimisticLink
                 to="/notifications"
-                className={`nav-link ${location.pathname === '/notifications' ? 'active' : ''}`}
+                className={`nav-link ${optimisticPath === '/notifications' ? 'active' : ''}`}
+                onClick={() => {
+                  setOptimisticPath('/notifications')
+                }}
               >
                 Notifications
-              </Link>
+              </OptimisticLink>
             </nav>
             <div className="tab-badge">{getViewName()}</div>
           </div>
@@ -120,7 +181,9 @@ function App() {
         }
       />
       <main className="app-content">
-        <Outlet />
+        <Suspense fallback={<LoadingSpinner />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   )
