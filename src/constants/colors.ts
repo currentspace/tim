@@ -60,6 +60,45 @@ export const CHART_COLORS = {
   borderLight: '#eeeeee',
 }
 
+// D3 visualization colors - matching our design system
+export const D3_COLORS = {
+  // Text colors
+  TEXT_PRIMARY: '#213547', // --color-ink
+  TEXT_SECONDARY: 'rgba(33, 53, 71, 0.87)', // --color-ink-light
+  TEXT_MUTED: '#666', // --color-ink-muted
+
+  // Background colors
+  BG_PRIMARY: '#ffffff', // --color-paper
+  BG_SECONDARY: '#f5f5f5',
+  BG_HOVER: '#fafafa',
+
+  // Border colors
+  BORDER_DEFAULT: 'rgba(0, 0, 0, 0.08)',
+  BORDER_SUBTLE: 'rgba(0, 0, 0, 0.04)',
+  BORDER_STRONG: 'rgba(0, 0, 0, 0.15)',
+
+  // Grid and axis
+  GRID_LINE: '#e0e0e0',
+  AXIS_LINE: '#999',
+
+  // Brand colors
+  ACCENT: '#646cff', // --color-accent
+  DATA_ORANGE: '#ff8800', // --color-data
+  ALERT: '#ff4d4d', // --color-alert
+
+  // Chart colors
+  CHART_BLUE: '#646cff',
+  CHART_GREEN: '#82ca9d',
+  CHART_PURPLE: '#8884d8',
+
+  // Default fallback
+  DEFAULT_GRAY: '#888888',
+
+  // Tooltip and shadow
+  TOOLTIP_BG: 'rgba(0, 0, 0, 0.9)',
+  SHADOW: 'rgba(0, 0, 0, 0.1)',
+} as const
+
 // Status colors
 export const STATUS_COLORS = {
   active: '#4caf50',

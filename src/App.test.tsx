@@ -46,8 +46,9 @@ describe('App', () => {
 
     // Check for elements specific to AnticipatedTariffImpact
     expect(screen.getByText('Current View')).toBeInTheDocument()
-    // Use getAllByText since this text appears in multiple places
-    const tariffElements = screen.getAllByText('Tariff Exposure & Rate')
-    expect(tariffElements.length).toBeGreaterThan(0)
+    // Check for the toggle label "Exposure" which has title="Tariff Exposure & Rate"
+    const exposureElement = screen.getByText('Exposure')
+    expect(exposureElement).toBeInTheDocument()
+    expect(exposureElement).toHaveAttribute('title', 'Tariff Exposure & Rate')
   })
 })

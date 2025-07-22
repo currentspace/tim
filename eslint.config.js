@@ -18,6 +18,8 @@ export default tseslint.config(
       'scripts/**',
       'coverage/**',
       'src/__mocks__/**',
+      'styled-system/**',
+      'postcss.config.js',
     ],
   },
 
@@ -82,6 +84,12 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+
+      // Disable unsafe rules for Panda CSS generated functions
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
 
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },

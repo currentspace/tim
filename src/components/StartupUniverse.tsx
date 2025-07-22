@@ -3,7 +3,10 @@ import NetworkGraph from './NetworkGraph'
 import LoadingSpinner from './LoadingSpinner'
 import ErrorBoundary from './ErrorBoundary'
 import getNetworkData from '../data/networkDataProvider'
-import './StartupUniverse.css'
+import { css, cx } from '../../styled-system/css'
+import { typography, flexLayout, pageContainer, spacing } from '../../styled-system/recipes'
+import { formStyles } from '../styles/shared'
+import { D3_COLORS } from '../constants/colors'
 
 // NetworkVisualization component that uses React 19's use hook
 interface NetworkVisualizationProps {
@@ -29,9 +32,26 @@ function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizat
 
   return (
     <>
-      <div className="controls">
-        <div className="control-group">
-          <label>
+      <div
+        className={cx(
+          pageContainer({ background: 'gray', padding: 'md' }),
+          css({
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '1.5rem',
+            marginBottom: '2rem',
+            borderRadius: 'lg',
+          }),
+        )}
+      >
+        <div className={flexLayout({ direction: 'column' })}>
+          <label
+            className={cx(
+              typography({ variant: 'dataLabel', weight: 'medium' }),
+              flexLayout({ direction: 'column', gap: 'sm' }),
+              css({ fontSize: '0.9rem' }),
+            )}
+          >
             Link Distance: {linkDistance}
             <input
               type="range"
@@ -39,12 +59,19 @@ function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizat
               max="300"
               value={linkDistance}
               onChange={updateParam(setLinkDistance)}
+              className={formStyles.rangeSlider}
             />
           </label>
         </div>
 
-        <div className="control-group">
-          <label>
+        <div className={flexLayout({ direction: 'column' })}>
+          <label
+            className={cx(
+              typography({ variant: 'dataLabel', weight: 'medium' }),
+              flexLayout({ direction: 'column', gap: 'sm' }),
+              css({ fontSize: '0.9rem' }),
+            )}
+          >
             Force Strength: {chargeStrength}
             <input
               type="range"
@@ -52,12 +79,19 @@ function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizat
               max="-100"
               value={chargeStrength}
               onChange={updateParam(setChargeStrength)}
+              className={formStyles.rangeSlider}
             />
           </label>
         </div>
 
-        <div className="control-group">
-          <label>
+        <div className={flexLayout({ direction: 'column' })}>
+          <label
+            className={cx(
+              typography({ variant: 'dataLabel', weight: 'medium' }),
+              flexLayout({ direction: 'column', gap: 'sm' }),
+              css({ fontSize: '0.9rem' }),
+            )}
+          >
             Collision Radius: {collisionRadius}
             <input
               type="range"
@@ -65,12 +99,19 @@ function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizat
               max="50"
               value={collisionRadius}
               onChange={updateParam(setCollisionRadius)}
+              className={formStyles.rangeSlider}
             />
           </label>
         </div>
 
-        <div className="control-group">
-          <label>
+        <div className={flexLayout({ direction: 'column' })}>
+          <label
+            className={cx(
+              typography({ variant: 'dataLabel', weight: 'medium' }),
+              flexLayout({ direction: 'column', gap: 'sm' }),
+              css({ fontSize: '0.9rem' }),
+            )}
+          >
             Center Gravity: {centerStrength.toFixed(2)}
             <input
               type="range"
@@ -79,23 +120,50 @@ function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizat
               step="0.01"
               value={centerStrength}
               onChange={updateParam(setCenterStrength)}
+              className={formStyles.rangeSlider}
             />
           </label>
         </div>
       </div>
 
-      <div className="legend">
-        <div className="legend-item">
-          <span className="legend-dot vc"></span>
-          <span>Venture Capitalists</span>
+      <div className={flexLayout({ gap: 'xl', justify: 'center' })}>
+        <div className={flexLayout({ align: 'center', gap: 'sm' })}>
+          <span
+            className={css({
+              width: '12px',
+              height: '12px',
+              borderRadius: 'full',
+              display: 'inline-block',
+              backgroundColor: D3_COLORS.CHART_BLUE,
+            })}
+          ></span>
+          <span className={typography({ variant: 'dataLabel', color: 'muted' })}>
+            Venture Capitalists
+          </span>
         </div>
-        <div className="legend-item">
-          <span className="legend-dot startup"></span>
-          <span>Startups</span>
+        <div className={flexLayout({ align: 'center', gap: 'sm' })}>
+          <span
+            className={css({
+              width: '12px',
+              height: '12px',
+              borderRadius: 'full',
+              display: 'inline-block',
+              backgroundColor: D3_COLORS.CHART_PURPLE,
+            })}
+          ></span>
+          <span className={typography({ variant: 'dataLabel', color: 'muted' })}>Startups</span>
         </div>
-        <div className="legend-item">
-          <span className="legend-dot founder"></span>
-          <span>Founders</span>
+        <div className={flexLayout({ align: 'center', gap: 'sm' })}>
+          <span
+            className={css({
+              width: '12px',
+              height: '12px',
+              borderRadius: 'full',
+              display: 'inline-block',
+              backgroundColor: D3_COLORS.CHART_GREEN,
+            })}
+          ></span>
+          <span className={typography({ variant: 'dataLabel', color: 'muted' })}>Founders</span>
         </div>
       </div>
 
@@ -116,9 +184,34 @@ interface StartupUniverseProps {
 
 function StartupUniverse({ dataLoader }: StartupUniverseProps = {}) {
   return (
-    <div className="startup-universe">
-      <h2>The Startup Universe</h2>
-      <p className="subtitle">A Visual Guide to Startups, Founders & Venture Capitalists</p>
+    <div
+      className={cx(
+        pageContainer({ variant: 'section' }),
+        css({
+          maxWidth: '1400px',
+          margin: '0 auto',
+        }),
+      )}
+    >
+      <h2
+        className={typography({
+          variant: 'editorialDisplay',
+          size: '3xl',
+          mb: 'sm',
+          transform: 'none',
+        })}
+      >
+        The Startup Universe
+      </h2>
+      <p
+        className={typography({
+          variant: 'dataLabel',
+          size: 'lg',
+          mb: 'xl',
+        })}
+      >
+        A Visual Guide to Startups, Founders & Venture Capitalists
+      </p>
 
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
@@ -126,12 +219,37 @@ function StartupUniverse({ dataLoader }: StartupUniverseProps = {}) {
         </Suspense>
       </ErrorBoundary>
 
-      <div className="info-panel">
-        <p>
+      <div
+        className={cx(
+          pageContainer({ background: 'gray', padding: 'md' }),
+          spacing({ mt: 'xl' }),
+          css({
+            borderRadius: 'md',
+            textAlign: 'center',
+          }),
+        )}
+      >
+        <p
+          className={typography({
+            variant: 'dataLabel',
+            align: 'center',
+            mt: 'sm',
+            mb: 'sm',
+            size: 'sm',
+          })}
+        >
           Hover over nodes to see connections. Drag nodes to reposition them. Zoom and pan to
           explore.
         </p>
-        <p>
+        <p
+          className={typography({
+            variant: 'dataLabel',
+            align: 'center',
+            mt: 'sm',
+            mb: 'sm',
+            size: 'sm',
+          })}
+        >
           Node size represents: VCs (number of investments), Startups (funding amount), Founders
           (companies founded)
         </p>

@@ -10,3 +10,6 @@ yarn.lock
 .git
 .idea
 *.log
+
+# Generated files (Panda CSS)
+styled-system
