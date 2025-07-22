@@ -13,32 +13,33 @@ describe('AnticipatedTariffImpact', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders without crashing', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('renders without crashing', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+
     expect(screen.getByText('Current View')).toBeInTheDocument()
   })
 
-  it('displays the main heading', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('displays the main heading', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const heading = screen.getByText('Current View')
     expect(heading).toBeInTheDocument()
     expect(heading.tagName).toBe('H3')
   })
 
-  it('renders the timeline section', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('renders the timeline section', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('TIMELINE')).toBeInTheDocument()
   })
 
-  it('renders the timeline slider', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('renders the timeline slider', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toBeInTheDocument()
     expect(slider).toHaveAttribute('type', 'range')
   })
 
-  it('displays timeline labels', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('displays timeline labels', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('Jun 2025')).toBeInTheDocument()
     expect(screen.getAllByText('Aug 2025').length).toBeGreaterThan(0)
     expect(screen.getByText('Oct 2025')).toBeInTheDocument()
@@ -46,7 +47,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('updates selected quarter when slider is moved', async () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // Get initial value (should be 1 for Aug 2025)
@@ -62,15 +63,15 @@ describe('AnticipatedTariffImpact', () => {
     })
   })
 
-  it('renders SVG container for visualization', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('renders SVG container for visualization', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const svgContainer = screen.getByTestId('tariff-impact-svg')
     expect(svgContainer).toBeInTheDocument()
     expect(svgContainer.tagName).toBe('svg')
   })
 
-  it('has correct CSS classes applied', () => {
-    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('has correct CSS classes applied', async () => {
+    const { container } = await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     expect(container.querySelector('.anticipated-tariff-impact')).toBeInTheDocument()
     expect(container.querySelector('.current-view')).toBeInTheDocument()
@@ -78,8 +79,8 @@ describe('AnticipatedTariffImpact', () => {
     expect(container.querySelector('.timeline-container')).toBeInTheDocument()
   })
 
-  it('timeline slider has correct quarter range', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('timeline slider has correct quarter range', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // The slider uses indices 0-3 for the 4 quarters
@@ -88,8 +89,8 @@ describe('AnticipatedTariffImpact', () => {
     expect(slider).toHaveAttribute('step', '1')
   })
 
-  it('renders with white background', () => {
-    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('renders with white background', async () => {
+    const { container } = await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const vizContainer = container.querySelector('.visualization-container')
 
     expect(vizContainer).toBeInTheDocument()
@@ -97,8 +98,8 @@ describe('AnticipatedTariffImpact', () => {
     // but that requires more setup with JSDOM
   })
 
-  it('displays view title correctly', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('displays view title correctly', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     // Check for view title
     expect(screen.getByText('Current View')).toBeInTheDocument()
@@ -107,8 +108,8 @@ describe('AnticipatedTariffImpact', () => {
     expect(tariffTexts.length).toBeGreaterThan(0)
   })
 
-  it('displays tariff exposure view subtitle', () => {
-    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('displays tariff exposure view subtitle', async () => {
+    await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     // Check for view subtitle specifically
     const subtitles = screen.getAllByText('Tariff Exposure & Rate')
     // Find the one with view-subtitle class
@@ -116,8 +117,8 @@ describe('AnticipatedTariffImpact', () => {
     expect(viewSubtitle).toBeTruthy()
   })
 
-  it('shows current date display', () => {
-    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
+  it('shows current date display', async () => {
+    const { container } = await renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     // Find the date display element specifically
     const dateDisplay = container.querySelector('.date-display')
     expect(dateDisplay).toBeInTheDocument()

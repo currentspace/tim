@@ -14,6 +14,12 @@ export const rootRoute = createRootRoute({
 })
 
 // Create individual routes
+export const rootIndexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: AnticipatedTariffImpact,
+})
+
 export const anticipatedTariffRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: RoutePaths.ANTICIPATED_TARIFF,
@@ -52,6 +58,7 @@ export const notificationSettingsRoute = createRoute({
 
 // Create the route tree
 export const routeTree = rootRoute.addChildren([
+  rootIndexRoute,
   anticipatedTariffRoute,
   countryExposureRoute,
   companyTimelineRoute,

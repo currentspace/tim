@@ -14,16 +14,13 @@ describe('CountryExposure', () => {
   })
 
   it('renders without crashing', async () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
 
-    // Wait for content to load
-    await waitFor(() => {
-      expect(screen.getByText('Current View')).toBeInTheDocument()
-    })
+    expect(screen.getByText('Current View')).toBeInTheDocument()
   })
 
-  it('displays the main components', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('displays the main components', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
 
     // Check current view section
     expect(screen.getByText('Current View')).toBeInTheDocument()
@@ -35,28 +32,28 @@ describe('CountryExposure', () => {
     expect(screen.getByText('Timeline')).toBeInTheDocument()
   })
 
-  it('displays company selector', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('displays company selector', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     expect(screen.getByText('Company:')).toBeInTheDocument()
     const selector = screen.getByRole('combobox')
     expect(selector).toBeInTheDocument()
   })
 
-  it('renders company selector', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('renders company selector', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const selector = screen.getByRole('combobox')
     expect(selector).toBeInTheDocument()
     expect(selector.tagName).toBe('SELECT')
   })
 
-  it('has HP selected by default', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('has HP selected by default', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const selector = screen.getByRole('combobox')
     expect((selector as HTMLSelectElement).value).toBe('hp')
   })
 
   it('allows company selection', async () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const selector = screen.getByRole('combobox')
 
     // Change to Apple
@@ -67,15 +64,15 @@ describe('CountryExposure', () => {
     })
   })
 
-  it('renders the timeline slider', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('renders the timeline slider', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const slider = screen.getByRole('slider', { name: /date slider/i })
     expect(slider).toBeInTheDocument()
     expect(slider).toHaveAttribute('type', 'range')
   })
 
-  it('displays timeline labels', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('displays timeline labels', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     expect(screen.getByText('Jan 2025')).toBeInTheDocument()
     expect(screen.getByText('Jul 2025')).toBeInTheDocument()
     expect(screen.getByText('Jan 2026')).toBeInTheDocument()
@@ -83,7 +80,7 @@ describe('CountryExposure', () => {
   })
 
   it('updates date when slider is moved', async () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const slider = screen.getByRole('slider', { name: /date slider/i })
 
     // Get initial value
@@ -99,15 +96,15 @@ describe('CountryExposure', () => {
     })
   })
 
-  it('renders SVG container for visualization', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('renders SVG container for visualization', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const svgContainer = screen.getByTestId('country-exposure-svg')
     expect(svgContainer).toBeInTheDocument()
     expect(svgContainer.tagName).toBe('svg')
   })
 
-  it('has correct CSS classes applied', () => {
-    const { container } = renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('has correct CSS classes applied', async () => {
+    const { container } = await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
 
     expect(container.querySelector('.country-exposure')).toBeInTheDocument()
     expect(container.querySelector('.current-view')).toBeInTheDocument()
@@ -115,16 +112,16 @@ describe('CountryExposure', () => {
     expect(container.querySelector('.timeline-container')).toBeInTheDocument()
   })
 
-  it('displays total revenue', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('displays total revenue', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const totalText = screen.getByText(/Total:/i)
     expect(totalText).toBeInTheDocument()
     // Check that it shows a dollar amount with M suffix
     expect(totalText.textContent).toMatch(/Total: \$\d+M/)
   })
 
-  it('shows company options in selector', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('shows company options in selector', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const selector = screen.getByRole('combobox')
 
     // Check for options
@@ -139,37 +136,37 @@ describe('CountryExposure', () => {
     expect(optionTexts.some((text) => text?.includes('Dell'))).toBe(true)
   })
 
-  it('has proper accessibility attributes', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('has proper accessibility attributes', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
 
     const slider = screen.getByRole('slider', { name: /date slider/i })
     expect(slider).toHaveAttribute('id', 'date-slider')
   })
 
-  it('displays view subtitle', () => {
-    renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('displays view subtitle', async () => {
+    await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     // Get all instances and find the one with the right class
     const subtitles = screen.getAllByText('Percentage Share')
     const viewSubtitle = subtitles.find((el) => el.classList.contains('view-subtitle'))
     expect(viewSubtitle).toBeInTheDocument()
   })
 
-  it('shows company info section', () => {
-    const { container } = renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('shows company info section', async () => {
+    const { container } = await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const companyInfo = container.querySelector('.company-info')
     expect(companyInfo).toBeInTheDocument()
     expect(companyInfo?.textContent).toContain('Company:')
   })
 
-  it('has timeline info section', () => {
-    const { container } = renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('has timeline info section', async () => {
+    const { container } = await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const timelineInfo = container.querySelector('.timeline-info')
     expect(timelineInfo).toBeInTheDocument()
     expect(timelineInfo?.textContent).toContain('Legend')
   })
 
-  it('displays current view information', () => {
-    const { container } = renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
+  it('displays current view information', async () => {
+    const { container } = await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
     const currentView = container.querySelector('.current-view')
     expect(currentView).toBeInTheDocument()
   })

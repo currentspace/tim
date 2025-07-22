@@ -4,7 +4,7 @@ import { routeTree } from '../routes'
 import { isValidRoute } from '../types/RoutePaths'
 
 // For full app tests - uses the real route tree
-export function renderWithRouter(initialPath = '/') {
+export async function renderWithRouter(initialPath = '/') {
   if (!isValidRoute(initialPath)) {
     throw new Error(`Invalid route path ${initialPath}`)
   }
@@ -17,8 +17,13 @@ export function renderWithRouter(initialPath = '/') {
     history: memoryHistory,
   })
 
+  const result = render(<RouterProvider router={router} />)
+
+  // Wait for initial navigation to complete
+  await router.load()
+
   return {
-    ...render(<RouterProvider router={router} />),
+    ...result,
     router,
   }
 }
