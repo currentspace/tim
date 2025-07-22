@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef } from 'react'
-import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { getActiveTariffForDate } from '../utils/tariffCalculations'
@@ -9,6 +8,8 @@ import './CountryExposure.css'
 import '../styles/timeline-slider.css'
 import Layout from './Layout'
 import '../styles/timeline-slider.css'
+import { select, scaleSqrt, max } from 'd3'
+import type { Selection } from 'd3'
 
 interface ArcData {
   country: string
@@ -23,8 +24,8 @@ interface ArcData {
 
 // D3 visualization class
 class CountryExposureVisualization {
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined>
-  private tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown>
+  private svg: Selection<SVGSVGElement, unknown, null, undefined>
+  private tooltip: Selection<HTMLDivElement, unknown, HTMLElement, unknown>
   private width = 900
   private height = 600
   private centerX = 300
@@ -32,7 +33,7 @@ class CountryExposureVisualization {
   private outerRadius = 180
 
   constructor(svgElement: SVGSVGElement) {
-    this.svg = d3.select(svgElement)
+    this.svg = select(svgElement)
     this.tooltip = createTooltip()
     this.initializeSvg()
   }
@@ -59,9 +60,8 @@ class CountryExposureVisualization {
     const sortedData = [...exposureData].sort((a, b) => b.percentage - a.percentage)
 
     // Create concentric circles for each country
-    const radiusScale = d3
-      .scaleSqrt()
-      .domain([0, d3.max(sortedData, (d) => d.percentage) ?? 0])
+    const radiusScale = scaleSqrt()
+      .domain([0, max(sortedData, (d) => d.percentage) ?? 0])
       .range([30, this.outerRadius])
 
     // Add circles from largest to smallest
@@ -76,7 +76,7 @@ class CountryExposureVisualization {
         .style('opacity', 0.8)
         .style('cursor', 'pointer')
         .on('mouseenter', (event: MouseEvent) => {
-          d3.select(event.currentTarget as SVGCircleElement)
+          select(event.currentTarget as SVGCircleElement)
             .style('opacity', 1)
             .attr('stroke-width', 4)
 
@@ -90,7 +90,7 @@ class CountryExposureVisualization {
           showTooltip(this.tooltip, content, event)
         })
         .on('mouseleave', (event: MouseEvent) => {
-          d3.select(event.currentTarget as SVGCircleElement)
+          select(event.currentTarget as SVGCircleElement)
             .style('opacity', 0.8)
             .attr('stroke-width', 3)
           hideTooltip(this.tooltip)

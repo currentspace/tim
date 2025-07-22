@@ -1,5 +1,20 @@
 import { useRef, useState, useMemo } from 'react'
-import * as d3 from 'd3'
+import {
+  select,
+  max,
+  axisLeft,
+  curveMonotoneX,
+  min,
+  pointer,
+  scaleLinear,
+  scaleTime,
+  timeFormat,
+  timeMonth,
+  axisBottom,
+  line,
+} from 'd3'
+import type { Selection, ScaleTime, ScaleLinear } from 'd3'
+
 import { tariffTimeline } from '../data/tariffSchedules'
 import { COUNTRY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
@@ -19,23 +34,23 @@ interface CountryTimeSeries {
 
 // D3 visualization class
 class CountryTariffVisualization {
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined>
-  private tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown>
+  private svg: Selection<SVGSVGElement, unknown, null, undefined>
+  private tooltip: Selection<HTMLDivElement, unknown, HTMLElement, unknown>
   private width = 900
   private height = 500
   private margin = { top: 40, right: 200, bottom: 60, left: 60 }
   private innerWidth = this.width - this.margin.left - this.margin.right
   private innerHeight = this.height - this.margin.top - this.margin.bottom
-  private g!: d3.Selection<SVGGElement, unknown, null, undefined>
-  private selectedLine!: d3.Selection<SVGLineElement, unknown, null, undefined>
-  private xScale!: d3.ScaleTime<number, number>
-  private yScale!: d3.ScaleLinear<number, number>
-  private legendItems?: d3.Selection<SVGGElement, CountryTimeSeries, SVGGElement, unknown>
-  private lines!: d3.Selection<SVGPathElement, CountryTimeSeries, SVGGElement, unknown>
+  private g!: Selection<SVGGElement, unknown, null, undefined>
+  private selectedLine!: Selection<SVGLineElement, unknown, null, undefined>
+  private xScale!: ScaleTime<number, number>
+  private yScale!: ScaleLinear<number, number>
+  private legendItems?: Selection<SVGGElement, CountryTimeSeries, SVGGElement, unknown>
+  private lines!: Selection<SVGPathElement, CountryTimeSeries, SVGGElement, unknown>
   private onDateChange: (date: Date) => void
 
   constructor(svgElement: SVGSVGElement, onDateChange: (date: Date) => void) {
-    this.svg = d3.select(svgElement)
+    this.svg = select(svgElement)
     this.tooltip = createTooltip()
     this.onDateChange = onDateChange
     this.initializeSvg()
@@ -58,12 +73,12 @@ class CountryTariffVisualization {
 
     // Get date range
     const dates = tariffTimeline.map((t) => new Date(t.date))
-    const minDate = d3.min(dates) ?? new Date('2025-01-01')
-    const maxDate = d3.max(dates) ?? new Date('2026-01-01')
+    const minDate = min(dates) ?? new Date('2025-01-01')
+    const maxDate = max(dates) ?? new Date('2026-01-01')
 
     // Create scales
-    this.xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, this.innerWidth])
-    this.yScale = d3.scaleLinear().domain([0, 28]).range([this.innerHeight, 0])
+    this.xScale = scaleTime().domain([minDate, maxDate]).range([0, this.innerWidth])
+    this.yScale = scaleLinear().domain([0, 28]).range([this.innerHeight, 0])
 
     // Create grid lines
     this.createGridLines()
@@ -78,17 +93,15 @@ class CountryTariffVisualization {
   }
 
   private createGridLines() {
-    const yAxisGrid = d3
-      .axisLeft(this.yScale)
+    const yAxisGrid = axisLeft(this.yScale)
       .tickSize(-this.innerWidth)
       .tickFormat(() => '')
       .ticks(7)
 
-    const xAxisGrid = d3
-      .axisBottom(this.xScale)
+    const xAxisGrid = axisBottom(this.xScale)
       .tickSize(-this.innerHeight)
       .tickFormat(() => '')
-      .ticks(d3.timeMonth.every(1))
+      .ticks(timeMonth.every(1))
 
     this.g
       .append('g')
@@ -109,17 +122,16 @@ class CountryTariffVisualization {
   }
 
   private createAxes() {
-    const xAxis = d3
-      .axisBottom(this.xScale)
+    const xAxis = axisBottom(this.xScale)
       .tickFormat((domainValue) => {
         if (domainValue instanceof Date) {
-          return d3.timeFormat('%b %Y')(domainValue)
+          return timeFormat('%b %Y')(domainValue)
         }
         return ''
       })
-      .ticks(d3.timeMonth.every(2))
+      .ticks(timeMonth.every(2))
 
-    const yAxis = d3.axisLeft(this.yScale).tickFormat((d) => {
+    const yAxis = axisLeft(this.yScale).tickFormat((d) => {
       if (typeof d === 'number') return String(d)
       return ''
     })
@@ -157,11 +169,10 @@ class CountryTariffVisualization {
 
   private createLineChart(timeSeriesData: CountryTimeSeries[]) {
     // Create line generator
-    const line = d3
-      .line<{ date: Date; rate: number }>()
+    const myLine = line<{ date: Date; rate: number }>()
       .x((d) => this.xScale(d.date))
       .y((d) => this.yScale(d.rate))
-      .curve(d3.curveMonotoneX)
+      .curve(curveMonotoneX)
 
     // Draw lines
     this.lines = this.g
@@ -170,7 +181,7 @@ class CountryTariffVisualization {
       .enter()
       .append('path')
       .attr('class', 'line')
-      .attr('d', (d) => line(d.values))
+      .attr('d', (d) => myLine(d.values))
       .attr('fill', 'none')
       .attr('stroke', (d) => d.color)
       .attr('stroke-width', 2)
@@ -193,7 +204,7 @@ class CountryTariffVisualization {
         .style('cursor', 'pointer')
         .on('mouseenter', (event: MouseEvent, d) => {
           // Enlarge dot on hover
-          d3.select(event.currentTarget as SVGCircleElement)
+          select(event.currentTarget as SVGCircleElement)
             .transition()
             .duration(200)
             .attr('r', 6)
@@ -208,7 +219,7 @@ class CountryTariffVisualization {
         })
         .on('mouseleave', (event: MouseEvent) => {
           // Reset dot size
-          d3.select(event.currentTarget as SVGCircleElement)
+          select(event.currentTarget as SVGCircleElement)
             .transition()
             .duration(200)
             .attr('r', 4)
@@ -249,7 +260,7 @@ class CountryTariffVisualization {
       .style('cursor', 'crosshair')
 
     overlay.on('mousemove click', (event) => {
-      const [mouseX] = d3.pointer(event)
+      const [mouseX] = pointer(event)
       const date = this.xScale.invert(mouseX)
       this.onDateChange(date)
       this.updateSelectedDate(date)
