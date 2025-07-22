@@ -19,7 +19,7 @@ async function fixFigmaNames() {
     { from: 'country_timeline.png', to: 'country_timeline.png' },
     { from: 'tariff_rate_timeline.png', to: 'tariff_rate_timeline.png' },
   ]
-  
+
   for (const { from, to } of renamings) {
     if (from !== to) {
       try {
@@ -30,7 +30,7 @@ async function fixFigmaNames() {
       }
     }
   }
-  
+
   console.log('\nDone! Figma files have been renamed to match their actual content.')
 }
 

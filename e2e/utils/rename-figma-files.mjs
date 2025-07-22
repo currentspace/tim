@@ -7,7 +7,7 @@ const figmaDir = join(process.cwd(), 'figma')
 
 async function renameFigmaFiles() {
   const files = await readdir(figmaDir)
-  
+
   // Mapping based on the patterns we identified
   const renamings = [
     { pattern: '12.05.50', newName: 'startup_universe.png' },
@@ -19,13 +19,13 @@ async function renameFigmaFiles() {
     { pattern: '12.07.16', newName: 'screenshot_unused_2.png' },
     { pattern: '12.07.51', newName: 'screenshot_unused_3.png' },
   ]
-  
+
   for (const { pattern, newName } of renamings) {
-    const oldFile = files.find(f => f.includes(pattern))
+    const oldFile = files.find((f) => f.includes(pattern))
     if (oldFile && oldFile !== newName) {
       const oldPath = join(figmaDir, oldFile)
       const newPath = join(figmaDir, newName)
-      
+
       try {
         await rename(oldPath, newPath)
         console.log(`✓ Renamed: ${oldFile} → ${newName}`)
@@ -34,10 +34,10 @@ async function renameFigmaFiles() {
       }
     }
   }
-  
+
   console.log('\nFinal file listing:')
   const finalFiles = await readdir(figmaDir)
-  finalFiles.forEach(f => console.log(`  - ${f}`))
+  finalFiles.forEach((f) => console.log(`  - ${f}`))
 }
 
 renameFigmaFiles().catch(console.error)

@@ -64,7 +64,7 @@ export async function organizeScreenshots() {
       // Create a placeholder text file for missing designs
       await writeFile(
         join(vizDir, 'design-missing.txt'),
-        `No Figma design available for ${item.name}\nExpected file: ${item.design}`
+        `No Figma design available for ${item.name}\nExpected file: ${item.design}`,
       )
     }
 

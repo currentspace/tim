@@ -99,14 +99,17 @@ test.describe('Visual Regression Tests', () => {
       const figmaPath = join(process.cwd(), 'figma', route.figmaFile)
 
       // Check if both files exist
-      expect(existsSync(capturedPath), `Captured screenshot not found: ${capturedPath}`).toBeTruthy()
+      expect(
+        existsSync(capturedPath),
+        `Captured screenshot not found: ${capturedPath}`,
+      ).toBeTruthy()
       expect(existsSync(figmaPath), `Figma design not found: ${figmaPath}`).toBeTruthy()
 
       // Note: For actual visual comparison, you would need to:
       // 1. Use Playwright's built-in visual comparison: expect(screenshot).toMatchSnapshot()
       // 2. Or integrate with a visual regression testing service
       // 3. Or use a library like pixelmatch for pixel-by-pixel comparison
-      
+
       console.log(`Comparison ready for ${route.name}:`)
       console.log(`  - Captured: ${capturedPath}`)
       console.log(`  - Figma: ${figmaPath}`)

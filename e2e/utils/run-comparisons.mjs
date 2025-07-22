@@ -30,7 +30,7 @@ async function runComparisons() {
     console.log('📸 Capturing screenshots from all routes...')
     const { stdout: captureOutput } = await execAsync(
       'pnpm playwright test e2e/capture-and-compare.spec.ts --grep "should capture screenshots"',
-      { cwd: projectRoot }
+      { cwd: projectRoot },
     )
     console.log(captureOutput)
 
@@ -45,7 +45,7 @@ async function runComparisons() {
     console.log('\n📁 Organizing screenshots for comparison...')
     const { stdout: organizeOutput } = await execAsync(
       'pnpm tsx e2e/utils/organize-comparisons.ts',
-      { cwd: projectRoot }
+      { cwd: projectRoot },
     )
     console.log(organizeOutput)
 
@@ -53,13 +53,12 @@ async function runComparisons() {
     console.log('\n🔍 Running visual regression tests...')
     const { stdout: testOutput } = await execAsync(
       'pnpm playwright test e2e/capture-and-compare.spec.ts --grep "should match Figma design"',
-      { cwd: projectRoot }
+      { cwd: projectRoot },
     )
     console.log(testOutput)
 
     console.log('\n✨ Workflow completed successfully!')
     console.log('📄 Open screenshot-comparisons/index.html to view the results\n')
-
   } catch (error) {
     console.error('❌ Error during workflow:', error.message)
     process.exit(1)
