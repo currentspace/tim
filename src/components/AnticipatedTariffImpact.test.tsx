@@ -1,50 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import AnticipatedTariffImpact from './AnticipatedTariffImpact'
-
-// Mock D3 to avoid issues with JSDOM
-vi.mock('d3', async () => {
-  const actual = await vi.importActual<typeof import('d3')>('d3')
-  return {
-    ...actual,
-    select: vi.fn(() => ({
-      attr: vi.fn().mockReturnThis(),
-      style: vi.fn().mockReturnThis(),
-      selectAll: vi.fn().mockReturnThis(),
-      data: vi.fn().mockReturnThis(),
-      enter: vi.fn().mockReturnThis(),
-      append: vi.fn().mockReturnThis(),
-      text: vi.fn().mockReturnThis(),
-      on: vi.fn().mockReturnThis(),
-      transition: vi.fn().mockReturnThis(),
-      duration: vi.fn().mockReturnThis(),
-      remove: vi.fn().mockReturnThis(),
-      call: vi.fn().mockReturnThis(),
-      node: vi.fn(() => document.createElement('svg')),
-    })),
-  }
-})
-
-// Mock the product breakdown data
-vi.mock('../data/productBreakdown', () => ({
-  productBreakdownData: {
-    hp: [
-      { product: 'Laptops', percentage: 45 },
-      { product: 'Desktops', percentage: 30 },
-      { product: 'Printers', percentage: 25 },
-    ],
-    apple: [
-      { product: 'iPhones', percentage: 60 },
-      { product: 'iPads', percentage: 25 },
-      { product: 'MacBooks', percentage: 15 },
-    ],
-    dell: [
-      { product: 'Servers', percentage: 40 },
-      { product: 'Laptops', percentage: 35 },
-      { product: 'Storage', percentage: 25 },
-    ],
-  },
-}))
+import { screen, fireEvent, waitFor } from '@testing-library/react'
+import { renderWithRouter } from '../test/testRouter'
+import { RoutePaths } from '../types/RoutePaths'
 
 describe('AnticipatedTariffImpact', () => {
   beforeEach(() => {
@@ -57,31 +14,31 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('renders without crashing', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('Current View')).toBeInTheDocument()
   })
 
   it('displays the main heading', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const heading = screen.getByText('Current View')
     expect(heading).toBeInTheDocument()
     expect(heading.tagName).toBe('H3')
   })
 
   it('renders the timeline section', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('TIMELINE')).toBeInTheDocument()
   })
 
   it('renders the timeline slider', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toBeInTheDocument()
     expect(slider).toHaveAttribute('type', 'range')
   })
 
   it('displays timeline labels', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('Jun 2025')).toBeInTheDocument()
     expect(screen.getAllByText('Aug 2025').length).toBeGreaterThan(0)
     expect(screen.getByText('Oct 2025')).toBeInTheDocument()
@@ -89,7 +46,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('updates selected quarter when slider is moved', async () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // Get initial value (should be 1 for Aug 2025)
@@ -106,14 +63,14 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('renders SVG container for visualization', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const svgContainer = screen.getByTestId('tariff-impact-svg')
     expect(svgContainer).toBeInTheDocument()
     expect(svgContainer.tagName).toBe('svg')
   })
 
   it('has correct CSS classes applied', () => {
-    const { container } = render(<AnticipatedTariffImpact />)
+    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     expect(container.querySelector('.anticipated-tariff-impact')).toBeInTheDocument()
     expect(container.querySelector('.current-view')).toBeInTheDocument()
@@ -122,7 +79,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('timeline slider has correct quarter range', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // The slider uses indices 0-3 for the 4 quarters
@@ -132,7 +89,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('renders with white background', () => {
-    const { container } = render(<AnticipatedTariffImpact />)
+    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const vizContainer = container.querySelector('.visualization-container')
 
     expect(vizContainer).toBeInTheDocument()
@@ -141,7 +98,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('displays view title correctly', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     // Check for view title
     expect(screen.getByText('Current View')).toBeInTheDocument()
@@ -151,7 +108,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('displays tariff exposure view subtitle', () => {
-    render(<AnticipatedTariffImpact />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     // Check for view subtitle specifically
     const subtitles = screen.getAllByText('Tariff Exposure & Rate')
     // Find the one with view-subtitle class
@@ -160,7 +117,7 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('shows current date display', () => {
-    const { container } = render(<AnticipatedTariffImpact />)
+    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     // Find the date display element specifically
     const dateDisplay = container.querySelector('.date-display')
     expect(dateDisplay).toBeInTheDocument()

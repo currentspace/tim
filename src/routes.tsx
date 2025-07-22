@@ -6,6 +6,7 @@ import TariffRateTimeline from './components/TariffRateTimeline'
 import CountryTariffTimeline from './components/CountryTariffTimeline'
 import StartupUniverse from './components/StartupUniverse'
 import NotificationSettings from './components/NotificationSettings'
+import { RoutePaths } from './types/RoutePaths'
 
 // Create the root route
 export const rootRoute = createRootRoute({
@@ -15,37 +16,37 @@ export const rootRoute = createRootRoute({
 // Create individual routes
 export const anticipatedTariffRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: RoutePaths.ANTICIPATED_TARIFF,
   component: AnticipatedTariffImpact,
 })
 
 export const countryExposureRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/country-exposure',
+  path: RoutePaths.COUNTRY_EXPOSURE,
   component: CountryExposure,
 })
 
 export const companyTimelineRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/company-timeline',
+  path: RoutePaths.COMPANY_TIMELINE,
   component: TariffRateTimeline,
 })
 
 export const countryTimelineRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/country-timeline',
+  path: RoutePaths.COUNTRY_TIMELINE,
   component: CountryTariffTimeline,
 })
 
 export const startupUniverseRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/startup-universe',
+  path: RoutePaths.STARTUP_UNIVERSE,
   component: StartupUniverse,
 })
 
 export const notificationSettingsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/notifications',
+  path: RoutePaths.NOTIFICATIONS,
   component: NotificationSettings,
 })
 

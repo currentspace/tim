@@ -1,38 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import CountryTariffTimeline from './CountryTariffTimeline'
-
-// Mock D3 to avoid issues with JSDOM
-vi.mock('d3', async () => {
-  const actual = await vi.importActual<typeof import('d3')>('d3')
-
-  const createMockSelection = () => ({
-    attr: vi.fn().mockReturnThis(),
-    style: vi.fn().mockReturnThis(),
-    selectAll: vi.fn(() => createMockSelection()),
-    select: vi.fn(() => createMockSelection()),
-    data: vi.fn().mockReturnThis(),
-    enter: vi.fn().mockReturnThis(),
-    append: vi.fn(() => createMockSelection()),
-    text: vi.fn().mockReturnThis(),
-    on: vi.fn().mockReturnThis(),
-    transition: vi.fn().mockReturnThis(),
-    duration: vi.fn().mockReturnThis(),
-    remove: vi.fn().mockReturnThis(),
-    call: vi.fn().mockReturnThis(),
-    node: vi.fn(() => document.createElement('svg')),
-    filter: vi.fn().mockReturnThis(),
-    each: vi.fn().mockReturnThis(),
-    invert: vi.fn(() => new Date()),
-    pointer: vi.fn(() => [100]),
-  })
-
-  return {
-    ...actual,
-    select: vi.fn(() => createMockSelection()),
-    selectAll: vi.fn(() => createMockSelection()),
-  }
-})
+import { screen, fireEvent, waitFor } from '@testing-library/react'
+import { renderWithRouter } from '../test/testRouter'
+import { RoutePaths } from '../types/RoutePaths'
 
 describe('CountryTariffTimeline', () => {
   beforeEach(() => {
@@ -45,12 +14,12 @@ describe('CountryTariffTimeline', () => {
   })
 
   it('renders without crashing', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
   })
 
   it('displays the main components', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
 
     // Check chart header
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
@@ -60,21 +29,21 @@ describe('CountryTariffTimeline', () => {
   })
 
   it('renders the timeline slider', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toBeInTheDocument()
     expect(slider).toHaveAttribute('type', 'range')
   })
 
   it('displays timeline labels', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     expect(screen.getByText('Jan 2025')).toBeInTheDocument()
     expect(screen.getByText('Jul 2025')).toBeInTheDocument()
     expect(screen.getByText('Jan 2026')).toBeInTheDocument()
   })
 
   it('updates date when slider is moved', async () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // Get initial value
@@ -91,14 +60,14 @@ describe('CountryTariffTimeline', () => {
   })
 
   it('renders SVG container for visualization', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     const svgContainer = screen.getByTestId('country-timeline-svg')
     expect(svgContainer).toBeInTheDocument()
     expect(svgContainer.tagName).toBe('svg')
   })
 
   it('has correct CSS classes applied', () => {
-    const { container } = render(<CountryTariffTimeline />)
+    const { container } = renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
 
     expect(container.querySelector('.country-tariff-timeline')).toBeInTheDocument()
     expect(container.querySelector('.chart-header')).toBeInTheDocument()
@@ -107,7 +76,7 @@ describe('CountryTariffTimeline', () => {
   })
 
   it('timeline slider has correct date range', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     const minDate = new Date('2025-01-01').getTime()
@@ -118,19 +87,19 @@ describe('CountryTariffTimeline', () => {
   })
 
   it('displays timeline heading', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     expect(screen.getByRole('heading', { name: 'Timeline' })).toBeInTheDocument()
   })
 
   it('has proper accessibility attributes', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
 
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toHaveAttribute('aria-label')
   })
 
   it('displays timeline date', () => {
-    const { container } = render(<CountryTariffTimeline />)
+    const { container } = renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     const timelineContainer = container.querySelector('.timeline-container')
     expect(timelineContainer).toBeInTheDocument()
 
@@ -140,7 +109,7 @@ describe('CountryTariffTimeline', () => {
   })
 
   it('initializes with correct selected date', () => {
-    render(<CountryTariffTimeline />)
+    renderWithRouter(RoutePaths.COUNTRY_TIMELINE)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // Should start with June 2025

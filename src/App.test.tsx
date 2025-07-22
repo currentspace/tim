@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { it, expect, describe } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
-import { renderApp } from './test/test-utils'
+import { renderWithRouter } from './test/testRouter'
 
 describe('App', () => {
   it('renders without crashing', async () => {
-    renderApp('/')
+    renderWithRouter()
 
     // Wait for the app to load
     await waitFor(() => {
@@ -14,7 +14,7 @@ describe('App', () => {
   })
 
   it('renders the navigation', async () => {
-    renderApp('/')
+    renderWithRouter()
 
     await waitFor(() => {
       // Check for company branding - there are multiple instances
@@ -26,7 +26,7 @@ describe('App', () => {
   })
 
   it('renders the main navigation links', async () => {
-    renderApp('/')
+    renderWithRouter()
 
     await waitFor(() => {
       // Check for navigation links
@@ -40,7 +40,7 @@ describe('App', () => {
   })
 
   it('renders the badge', async () => {
-    renderApp('/')
+    renderWithRouter()
 
     await waitFor(() => {
       // The default badge should be ANTICIPATED - appears multiple times
@@ -50,7 +50,7 @@ describe('App', () => {
   })
 
   it('renders the anticipated tariff view by default', async () => {
-    renderApp('/')
+    renderWithRouter()
 
     await waitFor(() => {
       // Check for elements specific to AnticipatedTariffImpact

@@ -1,36 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import TariffRateTimeline from './TariffRateTimeline'
-
-// Mock D3 to avoid issues with JSDOM
-vi.mock('d3', async () => {
-  const actual = await vi.importActual<typeof import('d3')>('d3')
-
-  const createMockSelection = () => ({
-    attr: vi.fn().mockReturnThis(),
-    style: vi.fn().mockReturnThis(),
-    selectAll: vi.fn(() => createMockSelection()),
-    select: vi.fn(() => createMockSelection()),
-    data: vi.fn().mockReturnThis(),
-    enter: vi.fn().mockReturnThis(),
-    append: vi.fn(() => createMockSelection()),
-    text: vi.fn().mockReturnThis(),
-    on: vi.fn().mockReturnThis(),
-    transition: vi.fn().mockReturnThis(),
-    duration: vi.fn().mockReturnThis(),
-    remove: vi.fn().mockReturnThis(),
-    call: vi.fn().mockReturnThis(),
-    node: vi.fn(() => document.createElement('svg')),
-    filter: vi.fn().mockReturnThis(),
-    each: vi.fn().mockReturnThis(),
-  })
-
-  return {
-    ...actual,
-    select: vi.fn(() => createMockSelection()),
-    selectAll: vi.fn(() => createMockSelection()),
-  }
-})
+import { screen, fireEvent, waitFor } from '@testing-library/react'
+import { renderWithRouter } from '../test/testRouter'
+import { RoutePaths } from '../types/RoutePaths'
 
 describe('TariffRateTimeline', () => {
   beforeEach(() => {
@@ -43,12 +14,12 @@ describe('TariffRateTimeline', () => {
   })
 
   it('renders without crashing', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
   })
 
   it('displays the main components', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     // Check chart header
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
@@ -59,21 +30,21 @@ describe('TariffRateTimeline', () => {
   })
 
   it('renders the timeline slider', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toBeInTheDocument()
     expect(slider).toHaveAttribute('type', 'range')
   })
 
   it('displays timeline labels', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     expect(screen.getByText('Jan 2025')).toBeInTheDocument()
     expect(screen.getByText('Jul 2025')).toBeInTheDocument()
     expect(screen.getByText('Jan 2026')).toBeInTheDocument()
   })
 
   it('updates date when slider is moved', async () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     // Get initial value
@@ -90,14 +61,14 @@ describe('TariffRateTimeline', () => {
   })
 
   it('renders SVG container for visualization', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const svgContainer = screen.getByTestId('tariff-timeline-svg')
     expect(svgContainer).toBeInTheDocument()
     expect(svgContainer.tagName).toBe('svg')
   })
 
   it('has correct CSS classes applied', () => {
-    const { container } = render(<TariffRateTimeline />)
+    const { container } = renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     expect(container.querySelector('.tariff-rate-timeline')).toBeInTheDocument()
     expect(container.querySelector('.chart-header')).toBeInTheDocument()
@@ -106,7 +77,7 @@ describe('TariffRateTimeline', () => {
   })
 
   it('timeline slider has correct date range', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
 
     const minDate = new Date('2025-01-01').getTime()
@@ -116,7 +87,7 @@ describe('TariffRateTimeline', () => {
     expect(slider).toHaveAttribute('max', maxDate.toString())
   })
   it('has proper accessibility attributes', () => {
-    render(<TariffRateTimeline />)
+    renderWithRouter(RoutePaths.ANTICIPATED_TARIFF)
 
     const slider = screen.getByRole('slider', { name: /timeline slider/i })
     expect(slider).toHaveAttribute('aria-label')
