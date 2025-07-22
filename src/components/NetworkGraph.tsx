@@ -279,10 +279,10 @@ class D3NetworkVisualization {
         return `${sourceId}-${targetId}-${String(i)}`
       })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(gradients.exit() as any).remove()
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const gradientsEnter = (gradients.enter() as any).append('linearGradient') as Selection<
       SVGLinearGradientElement,
       SimulationLink,
