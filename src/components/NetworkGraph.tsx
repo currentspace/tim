@@ -1,5 +1,25 @@
 import { useRef, useState, useEffect } from 'react'
-import * as d3 from 'd3'
+import {
+  select,
+  forceCenter,
+  forceCollide,
+  forceManyBody,
+  forceY,
+  zoom,
+  forceLink,
+  forceSimulation,
+  forceX,
+  drag,
+} from 'd3'
+import type {
+  Selection,
+  ZoomBehavior,
+  ZoomTransform,
+  Simulation,
+  D3DragEvent,
+  D3ZoomEvent,
+  ForceLink,
+} from 'd3'
 import { NetworkData } from '../types/network'
 import { SimulationNode, SimulationLink } from '../types/d3-network'
 import './NetworkGraph.css'
@@ -21,20 +41,19 @@ function isNode(value: SimulationNode | string): value is SimulationNode {
 
 // Initialize D3 visualization outside of component lifecycle
 class D3NetworkVisualization {
-  private simulation: d3.Simulation<SimulationNode, SimulationLink> | null = null
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null
-  private g: d3.Selection<SVGGElement, unknown, null, undefined> | null = null
+  private simulation: Simulation<SimulationNode, SimulationLink> | null = null
+  private svg: Selection<SVGSVGElement, unknown, null, undefined> | null = null
+  private g: Selection<SVGGElement, unknown, null, undefined> | null = null
   private nodes: SimulationNode[] = []
   private links: SimulationLink[] = []
-  private nodeElements: d3.Selection<SVGGElement, SimulationNode, SVGGElement, unknown> | null =
-    null
-  private linkElements: d3.Selection<SVGPathElement, SimulationLink, SVGGElement, unknown> | null =
+  private nodeElements: Selection<SVGGElement, SimulationNode, SVGGElement, unknown> | null = null
+  private linkElements: Selection<SVGPathElement, SimulationLink, SVGGElement, unknown> | null =
     null
   private width = 0
   private height = 0
   private callbacks: { onHover: (nodeId: string | null) => void } | null = null
-  private storedTransform: d3.ZoomTransform | null = null
-  private zoom: d3.ZoomBehavior<SVGSVGElement, unknown> | null = null
+  private storedTransform: ZoomTransform | null = null
+  private zoom: ZoomBehavior<SVGSVGElement, unknown> | null = null
 
   initialize(
     svgElement: SVGSVGElement,
@@ -57,16 +76,15 @@ class D3NetworkVisualization {
     this.height = height
     this.callbacks = callbacks
 
-    this.svg = d3.select(svgElement).attr('width', width).attr('height', height)
+    this.svg = select(svgElement).attr('width', width).attr('height', height)
 
     // Create main group for zoom/pan
     this.g = this.svg.append('g')
 
     // Add zoom behavior
-    this.zoom = d3
-      .zoom<SVGSVGElement, unknown>()
+    this.zoom = zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.5, 3])
-      .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+      .on('zoom', (event: D3ZoomEvent<SVGSVGElement, unknown>) => {
         this.storedTransform = event.transform
         this.g?.attr('transform', event.transform.toString())
       })
@@ -100,21 +118,18 @@ class D3NetworkVisualization {
     })
 
     // Create force simulation
-    this.simulation = d3
-      .forceSimulation(this.nodes)
+    this.simulation = forceSimulation(this.nodes)
       .force(
         'link',
-        d3
-          .forceLink<SimulationNode, SimulationLink>(this.links)
+        forceLink<SimulationNode, SimulationLink>(this.links)
           .id((d) => d.id)
           .distance(params.linkDistance)
           .strength(0.5),
       )
-      .force('charge', d3.forceManyBody<SimulationNode>().strength(params.chargeStrength))
+      .force('charge', forceManyBody<SimulationNode>().strength(params.chargeStrength))
       .force(
         'x',
-        d3
-          .forceX<SimulationNode>()
+        forceX<SimulationNode>()
           .x((d) => {
             const vcX = this.width * 0.15
             const startupX = this.width * 0.5
@@ -130,11 +145,11 @@ class D3NetworkVisualization {
           })
           .strength(0.2),
       )
-      .force('y', d3.forceY<SimulationNode>(height / 2).strength(0.05))
-      .force('collision', d3.forceCollide<SimulationNode>().radius(params.collisionRadius))
+      .force('y', forceY<SimulationNode>(height / 2).strength(0.05))
+      .force('collision', forceCollide<SimulationNode>().radius(params.collisionRadius))
       .force(
         'center',
-        d3.forceCenter<SimulationNode>(width / 2, height / 2).strength(params.centerStrength),
+        forceCenter<SimulationNode>(width / 2, height / 2).strength(params.centerStrength),
       )
 
     // Create initial SVG elements
@@ -154,19 +169,19 @@ class D3NetworkVisualization {
   }) {
     if (!this.simulation) return
 
-    const linkForce = this.simulation.force<d3.ForceLink<SimulationNode, SimulationLink>>('link')
+    const linkForce = this.simulation.force<ForceLink<SimulationNode, SimulationLink>>('link')
     if (linkForce) {
       linkForce.distance(params.linkDistance)
     }
 
     this.simulation
-      .force('charge', d3.forceManyBody<SimulationNode>().strength(params.chargeStrength))
-      .force('collision', d3.forceCollide<SimulationNode>().radius(params.collisionRadius))
+      .force('charge', forceManyBody<SimulationNode>().strength(params.chargeStrength))
+      .force('collision', forceCollide<SimulationNode>().radius(params.collisionRadius))
       .force(
         'center',
-        d3
-          .forceCenter<SimulationNode>(this.width / 2, this.height / 2)
-          .strength(params.centerStrength),
+        forceCenter<SimulationNode>(this.width / 2, this.height / 2).strength(
+          params.centerStrength,
+        ),
       )
       .alpha(0.3)
       .restart()
@@ -194,8 +209,7 @@ class D3NetworkVisualization {
 
     this.simulation?.force(
       'x',
-      d3
-        .forceX<SimulationNode>()
+      forceX<SimulationNode>()
         .x((d) => {
           switch (d.type) {
             case 'vc':
@@ -209,8 +223,8 @@ class D3NetworkVisualization {
         .strength(0.2),
     )
 
-    this.simulation?.force('y', d3.forceY<SimulationNode>(height / 2).strength(0.05))
-    this.simulation?.force('center', d3.forceCenter<SimulationNode>(width / 2, height / 2))
+    this.simulation?.force('y', forceY<SimulationNode>(height / 2).strength(0.05))
+    this.simulation?.force('center', forceCenter<SimulationNode>(width / 2, height / 2))
 
     this.simulation?.alpha(0.3).restart()
   }
@@ -235,7 +249,7 @@ class D3NetworkVisualization {
     if (this.simulation) {
       // Update simulation
       this.simulation.nodes(this.nodes)
-      const linkForce = this.simulation.force<d3.ForceLink<SimulationNode, SimulationLink>>('link')
+      const linkForce = this.simulation.force<ForceLink<SimulationNode, SimulationLink>>('link')
       if (linkForce) {
         linkForce.links(this.links)
       }
@@ -254,7 +268,7 @@ class D3NetworkVisualization {
     // Update gradients
     const defs = this.svg.select('defs').empty() ? this.svg.append('defs') : this.svg.select('defs')
 
-    const gradients = (defs as d3.Selection<SVGDefsElement, unknown, null, undefined>)
+    const gradients = (defs as Selection<SVGDefsElement, unknown, null, undefined>)
       .selectAll<SVGLinearGradientElement, SimulationLink>('linearGradient')
       .data(this.links, (d, i) => {
         // Use stable ID based on source and target
@@ -267,7 +281,7 @@ class D3NetworkVisualization {
     ;(gradients.exit() as any).remove()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const gradientsEnter = (gradients.enter() as any).append('linearGradient') as d3.Selection<
+    const gradientsEnter = (gradients.enter() as any).append('linearGradient') as Selection<
       SVGLinearGradientElement,
       SimulationLink,
       SVGDefsElement,
@@ -282,7 +296,7 @@ class D3NetworkVisualization {
       })
       .attr('gradientUnits', 'userSpaceOnUse')
       .each(function (d: SimulationLink) {
-        const gradient = d3.select(this)
+        const gradient = select(this)
         gradient
           .append('stop')
           .attr('offset', '0%')
@@ -300,7 +314,7 @@ class D3NetworkVisualization {
       ? this.g.append('g').attr('class', 'links')
       : this.g.select('.links')
 
-    this.linkElements = (linkGroup as d3.Selection<SVGGElement, unknown, null, undefined>)
+    this.linkElements = (linkGroup as Selection<SVGGElement, unknown, null, undefined>)
       .selectAll<SVGPathElement, SimulationLink>('path')
       .data(this.links, (d) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id
@@ -329,7 +343,7 @@ class D3NetworkVisualization {
       ? this.g.append('g').attr('class', 'nodes')
       : this.g.select('.nodes')
 
-    this.nodeElements = (nodeGroup as d3.Selection<SVGGElement, unknown, null, undefined>)
+    this.nodeElements = (nodeGroup as Selection<SVGGElement, unknown, null, undefined>)
       .selectAll<SVGGElement, SimulationNode>('g')
       .data(this.nodes, (d) => d.id)
 
@@ -340,8 +354,7 @@ class D3NetworkVisualization {
       .append('g')
       .attr('class', 'node')
       .call(
-        d3
-          .drag<SVGGElement, SimulationNode>()
+        drag<SVGGElement, SimulationNode>()
           .on('start', this.dragstarted.bind(this))
           .on('drag', this.dragged.bind(this))
           .on('end', this.dragended.bind(this)),
@@ -418,7 +431,7 @@ class D3NetworkVisualization {
       const source = link.source as SimulationNode
       const target = link.target as SimulationNode
       if (isNode(source) && isNode(target)) {
-        d3.select(`#gradient-${source.id}-${target.id}-${String(i)}`)
+        select(`#gradient-${source.id}-${target.id}-${String(i)}`)
           .attr('x1', source.x ?? 0)
           .attr('y1', source.y ?? 0)
           .attr('x2', target.x ?? 0)
@@ -458,7 +471,7 @@ class D3NetworkVisualization {
   }
 
   private dragstarted(
-    event: d3.D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
+    event: D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
     d: SimulationNode,
   ) {
     if (!event.active) this.simulation?.alphaTarget(0.3).restart()
@@ -467,7 +480,7 @@ class D3NetworkVisualization {
   }
 
   private dragged(
-    event: d3.D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
+    event: D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
     d: SimulationNode,
   ) {
     d.fx = event.x
@@ -475,7 +488,7 @@ class D3NetworkVisualization {
   }
 
   private dragended(
-    event: d3.D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
+    event: D3DragEvent<SVGGElement, SimulationNode, SimulationNode>,
     d: SimulationNode,
   ) {
     if (!event.active) this.simulation?.alphaTarget(0)

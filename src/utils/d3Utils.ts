@@ -1,5 +1,5 @@
-import * as d3 from 'd3'
-
+import { select, axisLeft, axisBottom } from 'd3'
+import type { Selection, ScaleLinear, ScaleTime } from 'd3'
 // Common transition duration for animations
 export const TRANSITION_DURATION = 200
 
@@ -67,9 +67,8 @@ export function getResponsiveDimensions(
 }
 
 // Create a tooltip div
-export function createTooltip(): d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> {
-  return d3
-    .select('body')
+export function createTooltip(): Selection<HTMLDivElement, unknown, HTMLElement, unknown> {
+  return select('body')
     .append('div')
     .attr('class', 'd3-tooltip')
     .style('opacity', '0')
@@ -87,7 +86,7 @@ export function createTooltip(): d3.Selection<HTMLDivElement, unknown, HTMLEleme
 
 // Show tooltip with content
 export function showTooltip(
-  tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown>,
+  tooltip: Selection<HTMLDivElement, unknown, HTMLElement, unknown>,
   content: string,
   event: MouseEvent,
 ) {
@@ -100,25 +99,23 @@ export function showTooltip(
 }
 
 // Hide tooltip
-export function hideTooltip(tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown>) {
+export function hideTooltip(tooltip: Selection<HTMLDivElement, unknown, HTMLElement, unknown>) {
   tooltip.transition().duration(500).style('opacity', '0')
 }
 
 // Create grid lines for axes
 export function createGridLines(
-  scale: d3.ScaleLinear<number, number> | d3.ScaleTime<number, number>,
+  scale: ScaleLinear<number, number> | ScaleTime<number, number>,
   tickCount: number,
   isHorizontal: boolean,
 ) {
   if (isHorizontal) {
-    return d3
-      .axisLeft(scale)
+    return axisLeft(scale)
       .tickSize(0)
       .tickFormat(() => '')
       .ticks(tickCount)
   } else {
-    return d3
-      .axisBottom(scale)
+    return axisBottom(scale)
       .tickSize(0)
       .tickFormat(() => '')
       .ticks(tickCount)
@@ -127,11 +124,11 @@ export function createGridLines(
 
 // Wrap text for long labels
 export function wrapText(
-  text: d3.Selection<SVGTextElement, unknown, SVGElement, unknown>,
+  text: Selection<SVGTextElement, unknown, SVGElement, unknown>,
   width: number,
 ): void {
   text.each(function () {
-    const textElement = d3.select(this)
+    const textElement = select(this)
     const words = textElement.text().split(/\s+/).reverse()
     const lineHeight = 1.1
     const y = textElement.attr('y')

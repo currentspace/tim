@@ -90,6 +90,9 @@ importers:
       vite:
         specifier: ^7.0.5
         version: 7.0.5(tsx@4.20.3)
+      vite-bundle-analyzer:
+        specifier: ^1.1.0
+        version: 1.1.0
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@vitest/ui@3.2.4)(jsdom@26.1.0)(tsx@4.20.3)
@@ -2324,6 +2327,10 @@ packages:
     resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  vite-bundle-analyzer@1.1.0:
+    resolution: {integrity: sha512-f/9m+6S5yPOHf/QS00rLOkyQ0icZeF67roM3O5LZZMPTOZFU1bHJTptNHCKMJc2yxXzj0Hunwcetrc+vM2LEQQ==}
+    hasBin: true
 
   vite-node@3.2.4:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
@@ -4968,6 +4975,8 @@ snapshots:
   use-sync-external-store@1.5.0(react@19.1.0):
     dependencies:
       react: 19.1.0
+
+  vite-bundle-analyzer@1.1.0: {}
 
   vite-node@3.2.4(tsx@4.20.3):
     dependencies:
