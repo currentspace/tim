@@ -115,14 +115,14 @@ class CountryExposureVisualization {
     const legendSpacing = 35
 
     sortedData.forEach((d, i) => {
-      const radius = radiusScale(d.percentage)
-      const angle = -Math.PI / 4 + (i * Math.PI) / (sortedData.length + 1)
-      const startX = Math.cos(angle) * (radius + 10)
-      const startY = Math.sin(angle) * (radius + 10)
       const endY = legendStartY + i * legendSpacing
 
-      // Create curved leader line path
-      const midX = startX + 100
+      // Start from center (0, 0) for all lines
+      const startX = 0
+      const startY = 0
+      
+      // Create curved leader line path from center to legend
+      const midX = (legendX - this.centerX) / 2
       const path = `M ${String(startX)} ${String(startY)} Q ${String(midX)} ${String(startY)}, ${String(legendX - this.centerX)} ${String(endY)}`
 
       g.append('path')
