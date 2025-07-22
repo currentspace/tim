@@ -260,18 +260,9 @@ input:checked + .slider:before {
   padding: 4rem 3rem 1rem;
 }
 
-.timeline-slider {
-  width: 100%;
-  height: 2px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: rgba(0, 0, 0, 0.1);
-  outline: none;
-  position: relative;
-  border-radius: 1px;
-  cursor: pointer;
-}
+/* Timeline slider styles now imported from shared timeline-slider.css */
 
+/* Component-specific progress bar overlay */
 .timeline-slider::before {
   content: '';
   position: absolute;
@@ -284,50 +275,9 @@ input:checked + .slider:before {
   transition: width 0.3s ease;
 }
 
-.timeline-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--color-ink);
-  cursor: pointer;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 1;
-  transition: transform 0.2s ease;
-}
-
-.timeline-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: var(--color-ink);
-  cursor: pointer;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 1;
-  transition: transform 0.2s ease;
-}
-
-.timeline-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-.timeline-slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-}
-
 .timeline-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  font-family: var(--font-data);
-  font-size: var(--type-xs);
-  color: var(--color-ink-muted);
   padding: 0 0.5rem;
+  margin-top: 1rem;
 }
 
 .header-tabs {

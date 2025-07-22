@@ -4,6 +4,8 @@ import { tariffTimeline } from '../data/tariffSchedules'
 import { COUNTRY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './CountryTariffTimeline.css'
+import '../styles/timeline-slider.css'
+import '../styles/timeline-slider.css'
 
 interface CountryTimeSeries {
   country: string
