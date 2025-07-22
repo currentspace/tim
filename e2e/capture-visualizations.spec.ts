@@ -56,7 +56,7 @@ test.describe('Capture Visualizations', () => {
       await page.waitForSelector('.navigation', { timeout: 10000 })
 
       // Click on the navigation item
-      await page.click(`button:has-text("${viz.navText}")`)
+      await page.click(`a:has-text("${viz.navText}")`)
 
       // Wait for the visualization to load
       await page.waitForSelector(viz.selector, { timeout: 10000 })
