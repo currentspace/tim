@@ -7,6 +7,7 @@ import { COUNTRY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './CountryExposure.css'
 import '../styles/timeline-slider.css'
+import Layout from './Layout'
 import '../styles/timeline-slider.css'
 
 interface ArcData {
@@ -269,10 +270,20 @@ function CountryExposure() {
   }, [])
 
   return (
-    <div className="country-exposure">
-      <div className="current-view">
-        <h3>Current View</h3>
-        <p className="view-subtitle">Percentage Share</p>
+    <Layout
+      showBackButton
+      currentView="Percentage Share"
+      toggleOptions={{
+        left: 'Percentage',
+        right: 'Dollar Volume',
+        current: 'left',
+        onToggle: () => {}
+      }}
+    >
+      <div className="country-exposure">
+        <div className="current-view">
+          <h3>Current View</h3>
+          <p className="view-subtitle">Percentage Share</p>
         <div className="company-info">
           <span>Company: </span>
           <select
@@ -326,6 +337,7 @@ function CountryExposure() {
         </div>
       </div>
     </div>
+    </Layout>
   )
 }
 

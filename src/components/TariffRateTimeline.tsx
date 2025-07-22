@@ -6,6 +6,7 @@ import { COMPANY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './TariffRateTimeline.css'
 import '../styles/timeline-slider.css'
+import Layout from './Layout'
 import '../styles/timeline-slider.css'
 
 interface CompanyTimeSeries {
@@ -384,10 +385,14 @@ function TariffRateTimeline() {
   }, [selectedDate, displayCompanies])
 
   return (
-    <div className="tariff-rate-timeline">
-      <div className="chart-header">
-        <h3>Tariff Rate Increases Over Time</h3>
-      </div>
+    <Layout
+      currentView="Timeline"
+      badge="TIMELINE"
+    >
+      <div className="tariff-rate-timeline">
+        <div className="chart-header">
+          <h3>Tariff Rate Increases Over Time</h3>
+        </div>
 
       <div className="visualization-container">
         <svg ref={svgRef} data-testid="tariff-timeline-svg"></svg>
@@ -416,6 +421,7 @@ function TariffRateTimeline() {
         </div>
       </div>
     </div>
+    </Layout>
   )
 }
 

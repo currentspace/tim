@@ -8,6 +8,7 @@ import { COMPANY_COLORS } from '../constants/colors'
 import { TRANSITION_DURATION } from '../utils/d3Utils'
 import './AnticipatedTariffImpact.css'
 import '../styles/timeline-slider.css'
+import Layout from './Layout'
 import '../styles/timeline-slider.css'
 
 interface CompanyData {
@@ -319,14 +320,24 @@ function AnticipatedTariffImpact() {
   }, [companyData, hoveredCompany])
 
   return (
-    <div className="anticipated-tariff-impact">
-      <div className="current-view">
-        <h3>Current View</h3>
-        <p className="view-subtitle">Tariff Exposure & Rate</p>
-        <p className="date-display">
-          {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-        </p>
-      </div>
+    <Layout 
+      currentView="Chart"
+      badge="ANTICIPATED"
+      toggleOptions={{
+        left: 'Dollar Volume',
+        right: 'Tariff Exposure & Rate',
+        current: 'right',
+        onToggle: () => {}
+      }}
+    >
+      <div className="anticipated-tariff-impact">
+        <div className="current-view">
+          <h3>Current View</h3>
+          <p className="view-subtitle">Tariff Exposure & Rate</p>
+          <p className="date-display">
+            {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+          </p>
+        </div>
 
       <div className="visualization-container">
         <svg ref={svgRef} data-testid="tariff-impact-svg"></svg>
@@ -360,6 +371,7 @@ function AnticipatedTariffImpact() {
         </div>
       </div>
     </div>
+    </Layout>
   )
 }
 
