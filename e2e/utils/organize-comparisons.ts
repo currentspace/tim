@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { mkdir, copyFile, readdir, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
@@ -54,21 +55,12 @@ async function organizeScreenshots() {
 
     if (capturedExists && designExists) {
       // Create subdirectory for this comparison
-      const subDir = join(
-        comparisonDir,
-        mapping.name.toLowerCase().replace(/\s+/g, '-')
-      )
+      const subDir = join(comparisonDir, mapping.name.toLowerCase().replace(/\s+/g, '-'))
       await mkdir(subDir, { recursive: true })
 
       // Copy files
-      await copyFile(
-        join(screenshotsDir, mapping.captured),
-        join(subDir, 'captured.png')
-      )
-      await copyFile(
-        join(designImagesDir, mapping.design),
-        join(subDir, 'design.png')
-      )
+      await copyFile(join(screenshotsDir, mapping.captured), join(subDir, 'captured.png'))
+      await copyFile(join(designImagesDir, mapping.design), join(subDir, 'design.png'))
 
       console.log(`✓ Copied captured screenshot for ${mapping.name}`)
       console.log(`✓ Copied design image for ${mapping.name}`)
@@ -141,9 +133,10 @@ async function organizeScreenshots() {
 <body>
   <h1>Screenshot Comparisons</h1>
   <div class="comparison-grid">
-    ${comparisonMap.map(mapping => {
-      const folderName = mapping.name.toLowerCase().replace(/\s+/g, '-')
-      return `
+    ${comparisonMap
+      .map((mapping) => {
+        const folderName = mapping.name.toLowerCase().replace(/\s+/g, '-')
+        return `
     <div class="comparison-item">
       <h2>${mapping.name}</h2>
       <div class="images">
@@ -158,7 +151,8 @@ async function organizeScreenshots() {
       </div>
     </div>
       `
-    }).join('')}
+      })
+      .join('')}
   </div>
 </body>
 </html>`
@@ -168,7 +162,7 @@ async function organizeScreenshots() {
   console.log('\nTo view comparisons, open the index.html file in your browser.')
 }
 
-void organizeScreenshots().catch((error) => {
+void organizeScreenshots().catch((error: unknown) => {
   console.error('Error organizing screenshots:', error)
   process.exit(1)
 })

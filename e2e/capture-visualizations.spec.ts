@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { test } from '@playwright/test'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
@@ -76,7 +77,7 @@ test.describe('Capture Visualizations', () => {
       })
 
       // Take a screenshot of just the visualization component
-      const element = await page.locator(viz.selector).first()
+      const element = page.locator(viz.selector).first()
       await element.screenshot({
         path: join('screenshots', `${viz.name}-component.png`),
       })

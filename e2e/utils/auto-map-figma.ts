@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { readdir } from 'fs/promises'
 import { join } from 'path'
 
@@ -8,7 +9,7 @@ async function getFigmaFiles() {
 
   console.log('Found Figma files:')
   pngFiles.forEach((file, i) => {
-    console.log(`${i + 1}. "${file}"`)
+    console.log(`${String(i + 1)}. "${file}"`)
   })
 
   // Try to auto-map based on content
@@ -21,14 +22,14 @@ async function getFigmaFiles() {
   }
 
   console.log('\nSuggested mapping:')
-  console.log('Anticipated Tariff Impact:', mapping.anticipated || 'NOT FOUND')
-  console.log('Country Exposure:', mapping.exposure || 'NOT FOUND')
-  console.log('Company Timeline:', mapping.companyTimeline || 'NOT FOUND')
-  console.log('Country Timeline:', mapping.countryTimeline || 'NOT FOUND')
-  console.log('Startup Universe:', mapping.universe || 'NOT FOUND')
+  console.log('Anticipated Tariff Impact:', mapping.anticipated ?? 'NOT FOUND')
+  console.log('Country Exposure:', mapping.exposure ?? 'NOT FOUND')
+  console.log('Company Timeline:', mapping.companyTimeline ?? 'NOT FOUND')
+  console.log('Country Timeline:', mapping.countryTimeline ?? 'NOT FOUND')
+  console.log('Startup Universe:', mapping.universe ?? 'NOT FOUND')
 }
 
-void getFigmaFiles().catch((error) => {
+void getFigmaFiles().catch((error: unknown) => {
   console.error('Error:', error)
   process.exit(1)
 })

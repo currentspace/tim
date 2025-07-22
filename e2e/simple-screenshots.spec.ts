@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { test } from '@playwright/test'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'

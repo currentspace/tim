@@ -1,7 +1,6 @@
+/* eslint-disable no-console */
 import { exec } from 'child_process'
 import { promisify } from 'util'
-import { existsSync } from 'fs'
-import { join } from 'path'
 
 const execAsync = promisify(exec)
 const projectRoot = process.cwd()
@@ -24,22 +23,25 @@ async function runComparisons() {
     console.log('📸 Capturing screenshots from all routes...')
     const { stdout: captureOutput } = await execAsync(
       'pnpm exec playwright test e2e/capture-and-compare.spec.ts --grep "Capture All Route Screenshots"',
-      { cwd: projectRoot }
+      { cwd: projectRoot },
     )
     console.log(captureOutput)
 
     // Step 3: Organize screenshots for comparison
     console.log('\n📁 Organizing screenshots for comparison...')
-    const { stdout: organizeOutput } = await execAsync('pnpm tsx e2e/utils/organize-comparisons.ts', {
-      cwd: projectRoot,
-    })
+    const { stdout: organizeOutput } = await execAsync(
+      'pnpm tsx e2e/utils/organize-comparisons.ts',
+      {
+        cwd: projectRoot,
+      },
+    )
     console.log(organizeOutput)
 
     // Step 4: Run visual regression tests
     console.log('\n🔍 Running visual regression tests...')
     const { stdout: testOutput } = await execAsync(
       'pnpm exec playwright test e2e/capture-and-compare.spec.ts --grep "Visual Regression Tests"',
-      { cwd: projectRoot }
+      { cwd: projectRoot },
     )
     console.log(testOutput)
 

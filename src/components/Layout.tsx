@@ -34,7 +34,9 @@ function Layout({ children, showBackButton, currentView, badge, toggleOptions }:
                 <input
                   type="checkbox"
                   checked={toggleOptions.current === 'right'}
-                  onChange={(e) => { toggleOptions.onToggle(e.target.checked ? 'right' : 'left'); }}
+                  onChange={(e) => {
+                    toggleOptions.onToggle(e.target.checked ? 'right' : 'left')
+                  }}
                 />
                 <span className="slider"></span>
               </label>
@@ -44,12 +46,12 @@ function Layout({ children, showBackButton, currentView, badge, toggleOptions }:
             </div>
           )}
         </div>
-        
+
         <div className="header-center">
           {currentView && <h1>{currentView}</h1>}
           {badge && <span className={`badge badge-${badge.toLowerCase()}`}>{badge}</span>}
         </div>
-        
+
         <div className="header-right">
           <div className="company-branding">
             <span className="company-name">Staples Technology Solutions</span>
@@ -57,10 +59,8 @@ function Layout({ children, showBackButton, currentView, badge, toggleOptions }:
           </div>
         </div>
       </header>
-      
-      <main className="app-main">
-        {children}
-      </main>
+
+      <main className="app-main">{children}</main>
     </div>
   )
 }

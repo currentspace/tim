@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { test, expect } from '@playwright/test'
 
 test.describe('Navigation Menu', () => {
@@ -7,7 +8,7 @@ test.describe('Navigation Menu', () => {
     await page.waitForLoadState('networkidle')
 
     // Capture just the navigation
-    const navigation = await page.locator('.top-navigation')
+    const navigation = page.locator('.top-navigation')
     await navigation.screenshot({
       path: 'navigation-menu/current-navigation-menu.png',
     })
@@ -15,12 +16,12 @@ test.describe('Navigation Menu', () => {
     // Test navigation functionality
     const navLinks = page.locator('.main-navigation .nav-link')
     const linkCount = await navLinks.count()
-    console.log(`Found ${linkCount} navigation links`)
+    console.log(`Found ${String(linkCount)} navigation links`)
 
     // Check active state
-    const activeLink = await page.locator('.main-navigation .nav-link.active')
+    const activeLink = page.locator('.main-navigation .nav-link.active')
     const activeText = await activeLink.textContent()
-    console.log(`Active link: ${activeText}`)
+    console.log(`Active link: ${activeText ?? 'null'}`)
 
     // Test navigation to each view
     const routes = [
@@ -37,14 +38,14 @@ test.describe('Navigation Menu', () => {
       await page.waitForLoadState('networkidle')
 
       // Check that the correct link is active
-      const activeLink = await page.locator('.main-navigation .nav-link.active')
+      const activeLink = page.locator('.main-navigation .nav-link.active')
       const activeText = await activeLink.textContent()
       expect(activeText).toBe(route.name)
 
       // Check badge text
-      const badge = await page.locator('.tab-badge')
+      const badge = page.locator('.tab-badge')
       const badgeText = await badge.textContent()
-      console.log(`Route: ${route.path}, Badge: ${badgeText}`)
+      console.log(`Route: ${route.path}, Badge: ${badgeText ?? 'null'}`)
     }
 
     // Capture full page with navigation

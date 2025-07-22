@@ -87,14 +87,14 @@ test.describe('Visual Regression Tests', () => {
   test.beforeAll(async () => {
     const figmaDir = join(process.cwd(), 'figma')
     if (existsSync(figmaDir)) {
-      const files = await readdir(figmaDir)
+      await readdir(figmaDir)
       // Available Figma design files found
     }
   })
 
   // Create a test for each route comparison
   for (const route of routes) {
-    test(`should match Figma design for ${route.name}`, async () => {
+    test(`should match Figma design for ${route.name}`, () => {
       const capturedPath = join(screenshotsDir, `${route.screenshotName}-component.png`)
       const figmaPath = join(process.cwd(), 'figma', route.figmaFile)
 

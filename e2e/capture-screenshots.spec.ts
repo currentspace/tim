@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test'
+/* eslint-disable no-console */
+import { test } from '@playwright/test'
 import { mkdir } from 'fs/promises'
 import { join } from 'path'
 
@@ -66,7 +67,7 @@ test.describe('Capture visualization screenshots', () => {
       })
 
       // Take a screenshot of just the visualization component
-      const element = await page.locator(viz.selector)
+      const element = page.locator(viz.selector)
       await element.screenshot({
         path: join('screenshots', `${viz.name}-component.png`),
       })

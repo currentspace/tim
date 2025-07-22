@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+/* eslint-disable no-console */
 
 import { rename } from 'fs/promises'
 import { join } from 'path'
@@ -26,7 +26,7 @@ async function fixFigmaNames() {
         await rename(join(figmaDir, from), join(figmaDir, to))
         console.log(`✓ Renamed: ${from} → ${to}`)
       } catch (err) {
-        console.error(`✗ Failed to rename ${from}: ${err.message}`)
+        console.error(`✗ Failed to rename ${from}: ${String((err as Error).message)}`)
       }
     }
   }

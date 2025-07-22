@@ -320,7 +320,7 @@ function AnticipatedTariffImpact() {
   }, [companyData, hoveredCompany])
 
   return (
-    <Layout 
+    <Layout
       currentView="Chart"
       badge="ANTICIPATED"
       toggleOptions={{
@@ -329,7 +329,7 @@ function AnticipatedTariffImpact() {
         current: 'right',
         onToggle: () => {
           // Toggle functionality to be implemented
-        }
+        },
       }}
     >
       <div className="anticipated-tariff-impact">
@@ -341,38 +341,38 @@ function AnticipatedTariffImpact() {
           </p>
         </div>
 
-      <div className="visualization-container">
-        <svg ref={svgRef} data-testid="tariff-impact-svg"></svg>
-      </div>
+        <div className="visualization-container">
+          <svg ref={svgRef} data-testid="tariff-impact-svg"></svg>
+        </div>
 
-      <div className="timeline-container">
-        <h3 className="timeline-title">TIMELINE</h3>
-        <div className="timeline-subtitle">Aug 2025</div>
-        <div className="timeline-wrapper">
-          <input
-            id="date-slider"
-            type="range"
-            min={0}
-            max={3}
-            value={getQuarterIndex(selectedDate)}
-            onChange={(e) => {
-              const quarterIndex = parseInt(e.target.value)
-              const newDate = getDateFromQuarterIndex(quarterIndex)
-              setSelectedDate(newDate)
-            }}
-            className="timeline-slider"
-            step={1}
-            aria-label="Timeline slider"
-          />
-          <div className="timeline-labels">
-            <span>Jun 2025</span>
-            <span>Aug 2025</span>
-            <span>Oct 2025</span>
-            <span>Dec 2025</span>
+        <div className="timeline-container">
+          <h3 className="timeline-title">TIMELINE</h3>
+          <div className="timeline-subtitle">Aug 2025</div>
+          <div className="timeline-wrapper">
+            <input
+              id="date-slider"
+              type="range"
+              min={0}
+              max={3}
+              value={getQuarterIndex(selectedDate)}
+              onChange={(e) => {
+                const quarterIndex = parseInt(e.target.value)
+                const newDate = getDateFromQuarterIndex(quarterIndex)
+                setSelectedDate(newDate)
+              }}
+              className="timeline-slider"
+              step={1}
+              aria-label="Timeline slider"
+            />
+            <div className="timeline-labels">
+              <span>Jun 2025</span>
+              <span>Aug 2025</span>
+              <span>Oct 2025</span>
+              <span>Dec 2025</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </Layout>
   )
 }
