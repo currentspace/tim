@@ -22,11 +22,10 @@ describe('CountryExposure', () => {
   it('displays the main components', async () => {
     await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
 
-    // Check current view section
+    // Check current view section in navigation
     expect(screen.getByText('Current View')).toBeInTheDocument()
-    // Use getAllByText since "Percentage Share" appears multiple times
-    const percentageShareElements = screen.getAllByText('Percentage Share')
-    expect(percentageShareElements.length).toBeGreaterThan(0)
+    const exposureTexts = screen.getAllByText('EXPOSURE')
+    expect(exposureTexts.length).toBeGreaterThan(0)
 
     // Check timeline section
     expect(screen.getByText('Timeline')).toBeInTheDocument()
@@ -107,7 +106,7 @@ describe('CountryExposure', () => {
     const { container } = await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
 
     expect(container.querySelector('.country-exposure')).toBeInTheDocument()
-    expect(container.querySelector('.current-view')).toBeInTheDocument()
+    expect(container.querySelector('.controls-section')).toBeInTheDocument()
     expect(container.querySelector('.visualization-container')).toBeInTheDocument()
     expect(container.querySelector('.timeline-container')).toBeInTheDocument()
   })
@@ -143,12 +142,13 @@ describe('CountryExposure', () => {
     expect(slider).toHaveAttribute('id', 'date-slider')
   })
 
-  it('displays view subtitle', async () => {
+  it('displays view subtitle in navigation', async () => {
     await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
-    // Get all instances and find the one with the right class
-    const subtitles = screen.getAllByText('Percentage Share')
-    const viewSubtitle = subtitles.find((el) => el.classList.contains('view-subtitle'))
-    expect(viewSubtitle).toBeInTheDocument()
+    // View subtitle is now in the navigation header
+    const viewSubtitles = screen.getAllByText('EXPOSURE')
+    // Find the one with view-subtitle class
+    const navViewSubtitle = viewSubtitles.find((el) => el.classList.contains('view-subtitle'))
+    expect(navViewSubtitle).toBeTruthy()
   })
 
   it('shows company info section', async () => {
@@ -165,9 +165,9 @@ describe('CountryExposure', () => {
     expect(timelineInfo?.textContent).toContain('Legend')
   })
 
-  it('displays current view information', async () => {
+  it('displays controls section', async () => {
     const { container } = await renderWithRouter(RoutePaths.COUNTRY_EXPOSURE)
-    const currentView = container.querySelector('.current-view')
-    expect(currentView).toBeInTheDocument()
+    const controlsSection = container.querySelector('.controls-section')
+    expect(controlsSection).toBeInTheDocument()
   })
 })

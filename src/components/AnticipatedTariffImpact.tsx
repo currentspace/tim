@@ -331,14 +331,6 @@ function AnticipatedTariffImpact() {
       }}
     >
       <div className="anticipated-tariff-impact">
-        <div className="current-view">
-          <h3>Current View</h3>
-          <p className="view-subtitle">Tariff Exposure & Rate</p>
-          <p className="date-display">
-            {selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-          </p>
-        </div>
-
         <div className="visualization-container">
           <svg ref={svgRef} data-testid="tariff-impact-svg"></svg>
         </div>
