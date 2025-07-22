@@ -2,6 +2,7 @@ import '@testing-library/jest-dom'
 import { afterEach } from 'vitest'
 import { resetNetworkDataCache } from '../data/networkDataProvider'
 import { configure } from '@testing-library/react'
+import './mocks' // Import centralized mocks
 
 // Configure React Testing Library for React 19
 configure({

@@ -145,15 +145,18 @@ describe('AnticipatedTariffImpact', () => {
 
     // Check for view title
     expect(screen.getByText('Current View')).toBeInTheDocument()
-    expect(screen.getByText('Tariff Exposure & Rate')).toBeInTheDocument()
+    // Use getAllByText since this text appears multiple times
+    const tariffTexts = screen.getAllByText('Tariff Exposure & Rate')
+    expect(tariffTexts.length).toBeGreaterThan(0)
   })
 
   it('displays tariff exposure view subtitle', () => {
     render(<AnticipatedTariffImpact />)
     // Check for view subtitle specifically
-    const subtitle = screen.getByText('Tariff Exposure & Rate')
-    expect(subtitle).toBeInTheDocument()
-    expect(subtitle).toHaveClass('view-subtitle')
+    const subtitles = screen.getAllByText('Tariff Exposure & Rate')
+    // Find the one with view-subtitle class
+    const viewSubtitle = subtitles.find((el) => el.classList.contains('view-subtitle'))
+    expect(viewSubtitle).toBeTruthy()
   })
 
   it('shows current date display', () => {

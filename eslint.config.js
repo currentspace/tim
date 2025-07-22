@@ -17,6 +17,7 @@ export default tseslint.config(
       'src/vite-env.d.ts',
       'scripts/**',
       'coverage/**',
+      'src/__mocks__/**',
     ],
   },
 

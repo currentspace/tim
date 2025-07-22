@@ -53,8 +53,9 @@ describe('TariffRateTimeline', () => {
     // Check chart header
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
 
-    // Check timeline section
-    expect(screen.getByText('Timeline')).toBeInTheDocument()
+    // Check timeline section - use getAllByText since "Timeline" appears multiple times
+    const timelineTexts = screen.getAllByText('Timeline')
+    expect(timelineTexts.length).toBeGreaterThan(0)
   })
 
   it('renders the timeline slider', () => {
