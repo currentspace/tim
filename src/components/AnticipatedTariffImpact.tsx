@@ -112,7 +112,7 @@ function AnticipatedTariffImpact() {
       .enter()
       .append('g')
       .attr('class', 'company-bubble')
-      .attr('transform', (d, i) => {
+      .attr('transform', (_d, i) => {
         const pos = getPosition(i)
         return `translate(${String(pos.x)},${String(pos.y)})`
       })
@@ -188,8 +188,12 @@ function AnticipatedTariffImpact() {
 
     // Add hover interactions
     companyGroups
-      .on('mouseenter', function (_event: MouseEvent, d: CompanyData, i: number) {
+      .on('mouseenter', function (this: SVGGElement, _event: MouseEvent, d: CompanyData) {
         setHoveredCompany(d.company)
+
+        // Get the index from the data
+        const allData = companyGroups.data()
+        const i = allData.indexOf(d)
 
         // Highlight bubble
         d3.select(this)
@@ -256,8 +260,9 @@ function AnticipatedTariffImpact() {
 
           popupContent
             .append('text')
-            .attr('x', 120)
+            .attr('x', popupWidth - 20)
             .attr('y', yPos)
+            .attr('text-anchor', 'end')
             .style('font-family', 'var(--font-data)')
             .style('font-size', '12px')
             .style('font-weight', '600')
@@ -310,31 +315,6 @@ function AnticipatedTariffImpact() {
 
   return (
     <div className="anticipated-tariff-impact">
-      <div className="header">
-        <div className="header-top">
-          <div className="title-section">
-            <span className="dollar-volume">Dollar Volume</span>
-            <label className="toggle-switch">
-              <input type="checkbox" checked readOnly />
-              <span className="slider"></span>
-            </label>
-            <span className="exposure-rate">Tariff Exposure & Rate</span>
-          </div>
-          <div className="company-title">
-            <h2>Staples Technology Solutions</h2>
-            <p>TIM Dashboard</p>
-          </div>
-          <div className="notifications-section">
-            <button className="notifications-button">Notifications</button>
-          </div>
-        </div>
-        <div className="header-tabs">
-          <button className="tab-button">Timeline</button>
-          <div className="anticipated-badge">ANTICIPATED</div>
-          <button className="tab-button active">Chart</button>
-        </div>
-      </div>
-
       <div className="current-view">
         <h3>Current View</h3>
         <p className="view-subtitle">Tariff Exposure & Rate</p>

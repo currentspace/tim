@@ -70,7 +70,7 @@ describe('AnticipatedTariffImpact', () => {
 
   it('renders the timeline section', () => {
     render(<AnticipatedTariffImpact />)
-    expect(screen.getByText('Timeline')).toBeInTheDocument()
+    expect(screen.getByText('TIMELINE')).toBeInTheDocument()
   })
 
   it('renders the timeline slider', () => {
@@ -140,29 +140,27 @@ describe('AnticipatedTariffImpact', () => {
     // but that requires more setup with JSDOM
   })
 
-  it('displays company names in visualization', () => {
+  it('displays view title correctly', () => {
     render(<AnticipatedTariffImpact />)
 
-    // Check for Staples branding
-    expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
-    expect(screen.getByText('TIM Dashboard')).toBeInTheDocument()
+    // Check for view title
+    expect(screen.getByText('Current View')).toBeInTheDocument()
+    expect(screen.getByText('Tariff Exposure & Rate')).toBeInTheDocument()
   })
 
   it('displays tariff exposure view subtitle', () => {
     render(<AnticipatedTariffImpact />)
-    // Use getAllByText since the text appears multiple times
-    const elements = screen.getAllByText('Tariff Exposure & Rate')
-    expect(elements.length).toBeGreaterThan(0)
-    // Check that at least one is the subtitle
-    const subtitle = elements.find(
-      (el) => el.classList.contains('view-subtitle') || el.classList.contains('exposure-rate'),
-    )
+    // Check for view subtitle specifically
+    const subtitle = screen.getByText('Tariff Exposure & Rate')
     expect(subtitle).toBeInTheDocument()
+    expect(subtitle).toHaveClass('view-subtitle')
   })
 
-  it('shows anticipated badge', () => {
+  it('shows current date display', () => {
     const { container } = render(<AnticipatedTariffImpact />)
-    expect(container.querySelector('.anticipated-badge')).toBeInTheDocument()
-    expect(screen.getByText('ANTICIPATED')).toBeInTheDocument()
+    // Find the date display element specifically
+    const dateDisplay = container.querySelector('.date-display')
+    expect(dateDisplay).toBeInTheDocument()
+    expect(dateDisplay?.textContent).toMatch(/\w{3} \d{4}/) // Matches format like "Jul 2025"
   })
 })

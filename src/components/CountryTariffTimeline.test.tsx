@@ -52,36 +52,11 @@ describe('CountryTariffTimeline', () => {
   it('displays the main components', () => {
     render(<CountryTariffTimeline />)
 
-    // Check main header elements
-    expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
-    expect(screen.getByText('TIM Dashboard')).toBeInTheDocument()
-
     // Check chart header
     expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
 
     // Check timeline section
     expect(screen.getByText('Timeline')).toBeInTheDocument()
-  })
-
-  it('displays toggle switch labels', () => {
-    render(<CountryTariffTimeline />)
-    const dollarVolumeSpans = screen.getAllByText('Dollar Volume')
-    expect(dollarVolumeSpans.length).toBeGreaterThan(0)
-    expect(screen.getByText('Tariff Exposure & Rate')).toBeInTheDocument()
-  })
-
-  it('shows country navigation tabs', () => {
-    render(<CountryTariffTimeline />)
-    const countryElements = screen.getAllByText('Country')
-    expect(countryElements.length).toBeGreaterThan(0)
-    expect(screen.getByText('Company')).toBeInTheDocument()
-  })
-
-  it('country tab is active by default', () => {
-    const { container } = render(<CountryTariffTimeline />)
-    const tabs = container.querySelectorAll('.nav-item')
-    const countryTab = Array.from(tabs).find((el) => el.textContent === 'Country')
-    expect(countryTab).toHaveClass('active')
   })
 
   it('renders the timeline slider', () => {
@@ -126,7 +101,6 @@ describe('CountryTariffTimeline', () => {
     const { container } = render(<CountryTariffTimeline />)
 
     expect(container.querySelector('.country-tariff-timeline')).toBeInTheDocument()
-    expect(container.querySelector('.header')).toBeInTheDocument()
     expect(container.querySelector('.chart-header')).toBeInTheDocument()
     expect(container.querySelector('.visualization-container')).toBeInTheDocument()
     expect(container.querySelector('.timeline-container')).toBeInTheDocument()
@@ -141,13 +115,6 @@ describe('CountryTariffTimeline', () => {
 
     expect(slider).toHaveAttribute('min', minDate.toString())
     expect(slider).toHaveAttribute('max', maxDate.toString())
-  })
-
-  it('renders toggle switch', () => {
-    const { container } = render(<CountryTariffTimeline />)
-    const toggleSwitch = container.querySelector('.toggle-switch input[type="checkbox"]')
-    expect(toggleSwitch).toBeInTheDocument()
-    expect(toggleSwitch).toBeChecked()
   })
 
   it('displays timeline heading', () => {
@@ -170,23 +137,6 @@ describe('CountryTariffTimeline', () => {
     // Check that date labels exist
     const timelineLabels = container.querySelector('.timeline-labels')
     expect(timelineLabels).toBeInTheDocument()
-  })
-
-  it('has proper header structure', () => {
-    const { container } = render(<CountryTariffTimeline />)
-
-    // Check header structure
-    const header = container.querySelector('.header')
-    expect(header).toBeInTheDocument()
-
-    const headerContent = container.querySelector('.header-content')
-    expect(headerContent).toBeInTheDocument()
-
-    const titleSection = container.querySelector('.title-section')
-    expect(titleSection).toBeInTheDocument()
-
-    const companyTitle = container.querySelector('.company-title')
-    expect(companyTitle).toBeInTheDocument()
   })
 
   it('initializes with correct selected date', () => {

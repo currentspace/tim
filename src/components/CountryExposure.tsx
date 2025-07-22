@@ -115,14 +115,14 @@ class CountryExposureVisualization {
     const legendSpacing = 35
 
     sortedData.forEach((d, i) => {
-      const radius = radiusScale(d.percentage)
-      const angle = -Math.PI / 4 + (i * Math.PI) / (sortedData.length + 1)
-      const startX = Math.cos(angle) * (radius + 10)
-      const startY = Math.sin(angle) * (radius + 10)
       const endY = legendStartY + i * legendSpacing
 
-      // Create curved leader line path
-      const midX = startX + 100
+      // Start from center (0, 0) for all lines
+      const startX = 0
+      const startY = 0
+
+      // Create curved leader line path from center to legend
+      const midX = (legendX - this.centerX) / 2
       const path = `M ${String(startX)} ${String(startY)} Q ${String(midX)} ${String(startY)}, ${String(legendX - this.centerX)} ${String(endY)}`
 
       g.append('path')
@@ -265,20 +265,6 @@ function CountryExposure() {
 
   return (
     <div className="country-exposure">
-      <div className="header">
-        <div className="header-top">
-          <div className="navigation-controls">
-            <button className="nav-button">← Back to Tariff View</button>
-            <span className="percentage-share">Percentage Share</span>
-            <button className="nav-button active">Dollar Volume</button>
-          </div>
-          <div className="company-title">
-            <h2>Staples Technology Solutions</h2>
-            <p>HP TIM Dashboard</p>
-          </div>
-        </div>
-      </div>
-
       <div className="current-view">
         <h3>Current View</h3>
         <p className="view-subtitle">Percentage Share</p>

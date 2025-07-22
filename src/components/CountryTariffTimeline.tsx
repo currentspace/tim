@@ -420,27 +420,6 @@ function CountryTariffTimeline() {
 
   return (
     <div className="country-tariff-timeline">
-      <div className="header">
-        <div className="header-content">
-          <div className="title-section">
-            <span className="dollar-volume">Dollar Volume</span>
-            <label className="toggle-switch">
-              <input type="checkbox" checked readOnly />
-              <span className="slider"></span>
-            </label>
-            <span className="exposure-rate">Tariff Exposure & Rate</span>
-          </div>
-          <div className="company-title">
-            <h2>Staples Technology Solutions</h2>
-            <p>TIM Dashboard</p>
-          </div>
-          <div className="navigation">
-            <span className="nav-item active">Country</span>
-            <span className="nav-item">Company</span>
-          </div>
-        </div>
-      </div>
-
       <div className="chart-header">
         <h3>Tariff Rate Increases Over Time</h3>
       </div>

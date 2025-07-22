@@ -50,24 +50,11 @@ describe('TariffRateTimeline', () => {
   it('displays the main components', () => {
     render(<TariffRateTimeline />)
 
-    // Check main header elements
-    expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
-    expect(screen.getByText('TIM Dashboard')).toBeInTheDocument()
+    // Check chart header
+    expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
 
     // Check timeline section
     expect(screen.getByText('Timeline')).toBeInTheDocument()
-  })
-
-  it('displays toggle switch labels', () => {
-    render(<TariffRateTimeline />)
-    const dollarVolumeSpans = screen.getAllByText('Dollar Volume')
-    expect(dollarVolumeSpans.length).toBeGreaterThan(0)
-    expect(screen.getByText('Tariff Exposure & Rate')).toBeInTheDocument()
-  })
-
-  it('renders chart header', () => {
-    render(<TariffRateTimeline />)
-    expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
   })
 
   it('renders the timeline slider', () => {
@@ -112,7 +99,6 @@ describe('TariffRateTimeline', () => {
     const { container } = render(<TariffRateTimeline />)
 
     expect(container.querySelector('.tariff-rate-timeline')).toBeInTheDocument()
-    expect(container.querySelector('.header')).toBeInTheDocument()
     expect(container.querySelector('.chart-header')).toBeInTheDocument()
     expect(container.querySelector('.visualization-container')).toBeInTheDocument()
     expect(container.querySelector('.timeline-container')).toBeInTheDocument()
@@ -128,33 +114,6 @@ describe('TariffRateTimeline', () => {
     expect(slider).toHaveAttribute('min', minDate.toString())
     expect(slider).toHaveAttribute('max', maxDate.toString())
   })
-
-  it('displays chart title', () => {
-    render(<TariffRateTimeline />)
-    expect(screen.getByText('Tariff Rate Increases Over Time')).toBeInTheDocument()
-  })
-
-  it('shows company navigation tabs', () => {
-    render(<TariffRateTimeline />)
-    expect(screen.getByText('Company')).toBeInTheDocument()
-    expect(screen.getByText('Country')).toBeInTheDocument()
-  })
-
-  it('company tab is active by default', () => {
-    const { container } = render(<TariffRateTimeline />)
-    const companyTab = Array.from(container.querySelectorAll('.nav-item')).find(
-      (el) => el.textContent === 'Company',
-    )
-    expect(companyTab).toHaveClass('active')
-  })
-
-  it('renders toggle switch', () => {
-    const { container } = render(<TariffRateTimeline />)
-    const toggleSwitch = container.querySelector('.toggle-switch input[type="checkbox"]')
-    expect(toggleSwitch).toBeInTheDocument()
-    expect(toggleSwitch).toBeChecked()
-  })
-
   it('has proper accessibility attributes', () => {
     render(<TariffRateTimeline />)
 

@@ -77,28 +77,6 @@ function NotificationSettings() {
 
   return (
     <div className="notification-settings">
-      <div className="header">
-        <div className="header-content">
-          <div className="title-section">
-            <span className="dollar-volume">Dollar Volume</span>
-            <label className="toggle-switch">
-              <input type="checkbox" checked readOnly />
-              <span className="slider"></span>
-            </label>
-            <span className="exposure-rate">Tariff Exposure & Rate</span>
-          </div>
-          <div className="company-title">
-            <h2>Staples Technology Solutions</h2>
-            <p>TIM Dashboard</p>
-          </div>
-          <div className="navigation-tabs">
-            <button className="nav-tab">Timeline</button>
-            <button className="nav-tab">Chart</button>
-            <button className="nav-tab active">Notifications</button>
-          </div>
-        </div>
-      </div>
-
       <div className="settings-container">
         <div className="settings-header">
           <h3>Notification Settings</h3>

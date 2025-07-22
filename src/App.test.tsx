@@ -31,10 +31,10 @@ describe('App', () => {
     render(<RouterProvider router={router} />)
 
     await waitFor(() => {
-      // There are multiple ANTICIPATED elements, check for at least one
-      expect(screen.getAllByText('ANTICIPATED').length).toBeGreaterThan(0)
-      // Also multiple Staples Technology Solutions elements
-      expect(screen.getAllByText('Staples Technology Solutions').length).toBeGreaterThan(0)
+      // Check for the main navigation element
+      expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
+      // Check that we're on the tariff impact view
+      expect(screen.getByText('Current View')).toBeInTheDocument()
     })
   })
 
@@ -44,9 +44,11 @@ describe('App', () => {
 
     await waitFor(() => {
       // Check for elements specific to AnticipatedTariffImpact
-      // Multiple elements have this text due to header and component content
-      expect(screen.getAllByText('Dollar Volume').length).toBeGreaterThan(0)
-      expect(screen.getAllByText('Tariff Exposure & Rate').length).toBeGreaterThan(0)
+      expect(screen.getByText('Current View')).toBeInTheDocument()
+      // Use getAllByText since this text appears in multiple places
+      const tariffElements = screen.getAllByText('Tariff Exposure & Rate')
+      expect(tariffElements.length).toBeGreaterThan(0)
+      expect(screen.getByText('TIMELINE')).toBeInTheDocument()
     })
   })
 
