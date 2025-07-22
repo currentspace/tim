@@ -1,115 +1,41 @@
 import { Outlet, useLocation, Link } from '@tanstack/react-router'
+import { Suspense } from 'react'
 import TopNavigation from './components/TopNavigation'
+import LoadingSpinner from './components/LoadingSpinner'
+import ErrorBoundary from './components/ErrorBoundary'
+import { ROUTE_CONFIG } from './routes'
 import './App.css'
 
 function App() {
   const location = useLocation()
 
-  // Determine the current view name for the badge
-  const getViewName = () => {
-    switch (location.pathname) {
-      case '/':
-        return 'ANTICIPATED'
-      case '/country-exposure':
-        return 'EXPOSURE'
-      case '/company-timeline':
-        return 'TIMELINE'
-      case '/country-timeline':
-        return 'TIMELINE'
-      case '/startup-universe':
-        return 'UNIVERSE'
-      case '/notifications':
-        return 'NOTIFICATIONS'
-      default:
-        return 'ANTICIPATED'
-    }
-  }
-
-  // Determine left section content based on current view
-  const getLeftSection = () => {
-    // For country exposure, show back button and toggle
-    if (location.pathname === '/country-exposure') {
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Link to="/" className="back-button">
-            ← Back to Tariff View
-          </Link>
-          <div className="toggle-group">
-            <span className="toggle-label">Percentage</span>
-            <label className="toggle-switch">
-              <input type="checkbox" />
-              <span className="toggle-slider"></span>
-            </label>
-            <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>
-              Dollar Volume
-            </span>
-          </div>
-        </div>
-      )
-    }
-
-    // For anticipated tariff, show the value toggle
-    if (location.pathname === '/') {
-      return (
-        <div className="toggle-group">
-          <span className="toggle-label">Dollar Volume</span>
-          <label className="toggle-switch">
-            <input type="checkbox" />
-            <span className="toggle-slider"></span>
-          </label>
-          <span className="toggle-label" style={{ marginLeft: '0.5rem' }}>
-            Tariff Exposure & Rate
-          </span>
-        </div>
-      )
-    }
-
-    // For other views, return null to show nothing in the left section
-    return null
-  }
+  // Find current route info from config
+  const currentRoute =
+    ROUTE_CONFIG.find((route) => route.path === location.pathname) ?? ROUTE_CONFIG[0]
 
   return (
     <div className="app-no-sidebar">
       <TopNavigation
-        leftSection={getLeftSection()}
+        leftSection={
+          <div className="current-view-header">
+            <h3>Current View</h3>
+            <p className="view-subtitle">{currentRoute.view}</p>
+          </div>
+        }
         centerSection={
           <div className="navigation-center">
             <nav className="main-navigation">
-              <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-                Anticipated Tariff Impact
-              </Link>
-              <Link
-                to="/country-exposure"
-                className={`nav-link ${location.pathname === '/country-exposure' ? 'active' : ''}`}
-              >
-                Country Exposure
-              </Link>
-              <Link
-                to="/company-timeline"
-                className={`nav-link ${location.pathname === '/company-timeline' ? 'active' : ''}`}
-              >
-                Company Timeline
-              </Link>
-              <Link
-                to="/country-timeline"
-                className={`nav-link ${location.pathname === '/country-timeline' ? 'active' : ''}`}
-              >
-                Country Timeline
-              </Link>
-              <Link
-                to="/startup-universe"
-                className={`nav-link ${location.pathname === '/startup-universe' ? 'active' : ''}`}
-              >
-                Startup Universe
-              </Link>
-              <Link
-                to="/notifications"
-                className={`nav-link ${location.pathname === '/notifications' ? 'active' : ''}`}
-              >
-                Notifications
-              </Link>
+              {ROUTE_CONFIG.map(({ path, label }) => (
+                <Link
+                  key={path}
+                  to={path}
+                  className={`nav-link ${location.pathname === path ? 'active' : ''}`}
+                >
+                  {label}
+                </Link>
+              ))}
             </nav>
-            <div className="tab-badge">{getViewName()}</div>
+            <div className="tab-badge">{currentRoute.view}</div>
           </div>
         }
         rightSection={
@@ -120,7 +46,11 @@ function App() {
         }
       />
       <main className="app-content">
-        <Outlet />
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   )

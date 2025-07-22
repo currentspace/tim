@@ -1,6 +1,5 @@
 export const RoutePaths = {
   ROOT: '/',
-  ANTICIPATED_TARIFF: '/anticipated-tariff',
   COUNTRY_EXPOSURE: '/country-exposure',
   COMPANY_TIMELINE: '/company-timeline',
   COUNTRY_TIMELINE: '/country-timeline',

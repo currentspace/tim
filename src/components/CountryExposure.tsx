@@ -283,9 +283,7 @@ function CountryExposure() {
       }}
     >
       <div className="country-exposure">
-        <div className="current-view">
-          <h3>Current View</h3>
-          <p className="view-subtitle">Percentage Share</p>
+        <div className="controls-section">
           <div className="company-info">
             <span>Company: </span>
             <select

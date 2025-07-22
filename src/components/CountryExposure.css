@@ -72,28 +72,13 @@
   letter-spacing: var(--tracking-wider);
 }
 
-.current-view {
+.controls-section {
   background: white;
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e0e0e0;
-}
-
-.current-view h3 {
-  margin: 0 0 0.5rem 0;
-  font-family: var(--font-editorial);
-  font-size: var(--type-xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  color: var(--color-ink);
-}
-
-.view-subtitle {
-  margin: 0 0 0.5rem 0;
-  color: var(--color-ink-muted);
-  font-family: var(--font-data);
-  font-size: var(--type-base);
-  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .company-info {
