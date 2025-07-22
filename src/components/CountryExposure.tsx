@@ -277,7 +277,9 @@ function CountryExposure() {
         left: 'Percentage',
         right: 'Dollar Volume',
         current: 'left',
-        onToggle: () => {}
+        onToggle: () => {
+          // Toggle functionality to be implemented
+        }
       }}
     >
       <div className="country-exposure">

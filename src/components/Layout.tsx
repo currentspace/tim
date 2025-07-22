@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Link, useLocation } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import './Layout.css'
 
 interface LayoutProps {
@@ -16,8 +16,6 @@ interface LayoutProps {
 }
 
 function Layout({ children, showBackButton, currentView, badge, toggleOptions }: LayoutProps) {
-  const location = useLocation()
-  
   return (
     <div className="app-layout">
       <header className="app-header">
@@ -36,7 +34,7 @@ function Layout({ children, showBackButton, currentView, badge, toggleOptions }:
                 <input
                   type="checkbox"
                   checked={toggleOptions.current === 'right'}
-                  onChange={(e) => toggleOptions.onToggle(e.target.checked ? 'right' : 'left')}
+                  onChange={(e) => { toggleOptions.onToggle(e.target.checked ? 'right' : 'left'); }}
                 />
                 <span className="slider"></span>
               </label>

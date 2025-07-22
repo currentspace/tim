@@ -327,7 +327,9 @@ function AnticipatedTariffImpact() {
         left: 'Dollar Volume',
         right: 'Tariff Exposure & Rate',
         current: 'right',
-        onToggle: () => {}
+        onToggle: () => {
+          // Toggle functionality to be implemented
+        }
       }}
     >
       <div className="anticipated-tariff-impact">

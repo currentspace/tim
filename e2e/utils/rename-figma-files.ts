@@ -37,7 +37,7 @@ async function renameFigmaFiles() {
 
   console.log('\nFinal file listing:')
   const finalFiles = await readdir(figmaDir)
-  finalFiles.forEach((f) => console.log(`  - ${f}`))
+  finalFiles.forEach((f) => { console.log(`  - ${f}`); })
 }
 
 renameFigmaFiles().catch(console.error)

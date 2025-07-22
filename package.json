@@ -18,7 +18,7 @@
     "screenshots": "playwright test e2e/capture-only.spec.ts",
     "screenshots:ui": "playwright test e2e/capture-only.spec.ts --ui",
     "screenshots:compare": "tsx e2e/utils/organize-comparisons.ts",
-    "screenshots:all": "node e2e/utils/run-comparisons.mjs",
+    "screenshots:all": "tsx e2e/utils/run-comparisons.ts",
     "screenshots:test": "playwright test e2e/capture-and-compare.spec.ts"
   },
   "keywords": [],

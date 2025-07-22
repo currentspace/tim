@@ -79,7 +79,11 @@ test.describe('Comprehensive UI Alignment', () => {
       // Check header
       const header = await page.locator('.top-navigation')
       if (await header.isVisible()) {
-        const headerHeight = await header.evaluate((el) => el.offsetHeight)
+        const headerHeight = await header.evaluate((el) => {
+          // Defensive: If element is not present, or not an HTMLElement, return null/0
+          if (!el || !(el instanceof HTMLElement)) return 0
+          return el.offsetHeight
+        })
         console.log(`- Header height: ${headerHeight}px`)
       }
 

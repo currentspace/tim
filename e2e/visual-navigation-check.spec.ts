@@ -1,5 +1,5 @@
 import { test } from '@playwright/test'
-import path from 'path'
+import { join } from 'path'
 
 test.describe('Visual Navigation Check', () => {
   test('compare navigation with all design mockups', async ({ page }) => {
@@ -109,7 +109,7 @@ test.describe('Visual Navigation Check', () => {
           <div class="comparison-container">
             <div class="panel">
               <div class="panel-label">Design Mockup</div>
-              <img src="file://${path.join(process.cwd(), 'figma', mockup.file)}" alt="Design">
+              <img src="file://${join(process.cwd(), 'figma', mockup.file)}" alt="Design">
             </div>
             <div class="panel">
               <div class="panel-label">Current Implementation</div>
@@ -147,7 +147,11 @@ test.describe('Visual Navigation Check', () => {
     console.log('\n=== Navigation Analysis ===')
 
     // Check current implementation details
-    const navHeight = await navigation.evaluate((el) => el.offsetHeight)
+    const navHeight = await navigation.evaluate((el) => {
+      // Defensive: If element is not present, or not an HTMLElement, return null/0
+      if (!el || !(el instanceof HTMLElement)) return 0
+      return el.offsetHeight
+    })
     console.log(`Navigation height: ${navHeight}px (Design: ~80px)`)
 
     // Check badge

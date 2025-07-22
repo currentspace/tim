@@ -54,7 +54,7 @@ test.describe('Capture All Route Screenshots', () => {
     await page.setViewportSize({ width: 1440, height: 900 })
 
     for (const route of routes) {
-      console.log(`Capturing ${route.name}...`)
+      // Capturing route screenshot
 
       // Navigate directly to the route
       await page.goto(route.path)
@@ -77,7 +77,7 @@ test.describe('Capture All Route Screenshots', () => {
         })
       }
 
-      console.log(`✓ Captured ${route.name}`)
+      // Successfully captured route
     }
   })
 })
@@ -88,7 +88,7 @@ test.describe('Visual Regression Tests', () => {
     const figmaDir = join(process.cwd(), 'figma')
     if (existsSync(figmaDir)) {
       const files = await readdir(figmaDir)
-      console.log('Available Figma design files:', files)
+      // Available Figma design files found
     }
   })
 
@@ -110,9 +110,8 @@ test.describe('Visual Regression Tests', () => {
       // 2. Or integrate with a visual regression testing service
       // 3. Or use a library like pixelmatch for pixel-by-pixel comparison
 
-      console.log(`Comparison ready for ${route.name}:`)
-      console.log(`  - Captured: ${capturedPath}`)
-      console.log(`  - Figma: ${figmaPath}`)
+      // Comparison ready for route
+      // Paths verified for captured and figma files
     })
   }
 })

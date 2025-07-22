@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { readdir } from 'fs/promises'
 import { join } from 'path'
 
@@ -28,8 +26,9 @@ async function getFigmaFiles() {
   console.log('Company Timeline:', mapping.companyTimeline || 'NOT FOUND')
   console.log('Country Timeline:', mapping.countryTimeline || 'NOT FOUND')
   console.log('Startup Universe:', mapping.universe || 'NOT FOUND')
-
-  return mapping
 }
 
-getFigmaFiles().catch(console.error)
+void getFigmaFiles().catch((error) => {
+  console.error('Error:', error)
+  process.exit(1)
+})

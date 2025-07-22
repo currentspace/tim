@@ -16,7 +16,7 @@ test.describe('Visual regression tests', () => {
   test('list available design images', async () => {
     const designImages = await readdir('figma')
     console.log('Available design images:')
-    designImages.forEach((img) => console.log(`  - ${img}`))
+    designImages.forEach((img) => { console.log(`  - ${img}`); })
   })
 
   for (const [vizName, designImages] of Object.entries(designImageMap)) {
