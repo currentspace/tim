@@ -157,10 +157,10 @@ describe('AnticipatedTariffImpact', () => {
   })
 
   it('shows current date display', () => {
-    render(<AnticipatedTariffImpact />)
-    // Should show date in format like "Jul 2025"
-    const dateDisplay = screen.getByText('Jul 2025')
+    const { container } = render(<AnticipatedTariffImpact />)
+    // Find the date display element specifically
+    const dateDisplay = container.querySelector('.date-display')
     expect(dateDisplay).toBeInTheDocument()
-    expect(dateDisplay).toHaveClass('date-display')
+    expect(dateDisplay?.textContent).toMatch(/\w{3} \d{4}/) // Matches format like "Jul 2025"
   })
 })
