@@ -1,12 +1,12 @@
 import { useRef, useEffect, useState, useMemo } from 'react'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
-import { COMPANY_COLORS } from '../constants/colors'
+import { COMPANY_COLORS, D3_COLORS } from '../constants/colors'
+import { FONTS } from '../constants/fonts'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
-import './TariffRateTimeline.css'
-import '../styles/timeline-slider.css'
+import { css, cx } from '../../styled-system/css'
+import { layoutStyles, timelineStyles } from '../styles/shared'
 import Layout from './Layout'
-import '../styles/timeline-slider.css'
 import {
   select,
   min,
@@ -107,7 +107,7 @@ function TariffRateTimeline() {
         company: company.name,
         companyId: company.id,
         values,
-        color: COMPANY_COLORS[company.id] ?? '#888888',
+        color: COMPANY_COLORS[company.id] ?? D3_COLORS.TEXT_MUTED,
       })
     })
 
@@ -136,7 +136,7 @@ function TariffRateTimeline() {
     g.append('g')
       .attr('class', 'grid y-grid')
       .call(yAxisGrid)
-      .style('stroke', '#e0e0e0')
+      .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
       .style('opacity', 0.5)
 
@@ -145,7 +145,7 @@ function TariffRateTimeline() {
       .attr('class', 'grid x-grid')
       .attr('transform', `translate(0,${String(innerHeight)})`)
       .call(xAxisGrid)
-      .style('stroke', '#e0e0e0')
+      .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
       .style('opacity', 0.5)
 
@@ -167,10 +167,10 @@ function TariffRateTimeline() {
     g.append('g')
       .attr('transform', `translate(0,${String(innerHeight)})`)
       .call(xAxis)
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '12px')
 
-    g.append('g').call(yAxis).style('font-family', 'var(--font-data)').style('font-size', '12px')
+    g.append('g').call(yAxis).style('font-family', FONTS.DATA).style('font-size', '12px')
 
     // Add Y-axis label
     g.append('text')
@@ -178,9 +178,9 @@ function TariffRateTimeline() {
       .attr('y', -45)
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '14px')
-      .style('fill', '#666')
+      .style('fill', D3_COLORS.TEXT_MUTED)
       .text('Tariff Rate (%)')
 
     // Create line generator
@@ -210,7 +210,7 @@ function TariffRateTimeline() {
       .attr('x2', xScale(mayDate))
       .attr('y1', 0)
       .attr('y2', innerHeight)
-      .attr('stroke', '#666')
+      .attr('stroke', D3_COLORS.TEXT_MUTED)
       .attr('stroke-width', 1)
       .attr('stroke-dasharray', '5,3')
       .style('opacity', 0.6)
@@ -220,9 +220,9 @@ function TariffRateTimeline() {
       .attr('x', xScale(mayDate))
       .attr('y', -5)
       .attr('text-anchor', 'middle')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '11px')
-      .style('fill', '#666')
+      .style('fill', D3_COLORS.TEXT_MUTED)
       .text('May 2025')
 
     // Add dots at data points with hover interactions
@@ -289,10 +289,10 @@ function TariffRateTimeline() {
       .append('text')
       .attr('x', 0)
       .attr('y', -10)
-      .style('font-family', 'var(--font-heading)')
+      .style('font-family', FONTS.EDITORIAL)
       .style('font-size', '12px')
       .style('font-weight', '600')
-      .style('fill', '#333')
+      .style('fill', D3_COLORS.TEXT_PRIMARY)
       .text('Apr 2025')
 
     const legendItems = legend
@@ -318,9 +318,9 @@ function TariffRateTimeline() {
       .attr('x', 12)
       .attr('y', 0)
       .attr('dy', '0.32em')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '11px')
-      .style('fill', '#666')
+      .style('fill', D3_COLORS.TEXT_MUTED)
       .text((d) => {
         // Truncate long names
         const name = d.company
@@ -335,10 +335,10 @@ function TariffRateTimeline() {
       .attr('y', 0)
       .attr('dy', '0.32em')
       .attr('text-anchor', 'end')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '11px')
       .style('font-weight', '600')
-      .style('fill', '#333')
+      .style('fill', D3_COLORS.TEXT_PRIMARY)
 
     // Update legend values based on selected date
     const updateLegend = (date: Date) => {
@@ -391,18 +391,47 @@ function TariffRateTimeline() {
 
   return (
     <Layout currentView="Timeline" badge="TIMELINE">
-      <div className="tariff-rate-timeline">
-        <div className="chart-header">
-          <h3>Tariff Rate Increases Over Time</h3>
+      <div className={cx('tariff-rate-timeline', layoutStyles.pageContainer)}>
+        <div className={cx('chart-header', layoutStyles.chartHeader)}>
+          <h3
+            className={css({
+              margin: 0,
+              fontFamily: 'data',
+              fontSize: 'base',
+              fontWeight: 'medium',
+              color: 'text.primary',
+              textTransform: 'none',
+            })}
+          >
+            Tariff Rate Increases Over Time
+          </h3>
         </div>
 
-        <div className="visualization-container">
-          <svg ref={svgRef} data-testid="tariff-timeline-svg"></svg>
+        <div
+          className={cx(
+            'visualization-container',
+            css({
+              background: 'white',
+              padding: '2rem',
+              margin: 0,
+              minHeight: '480px',
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
+          )}
+        >
+          <svg
+            ref={svgRef}
+            data-testid="tariff-timeline-svg"
+            className={css({ width: '100%', background: 'white' })}
+          ></svg>
         </div>
 
-        <div className="timeline-container">
-          <h3 className="timeline-title">Timeline</h3>
-          <div className="timeline-wrapper">
+        <div className={cx('timeline-container', layoutStyles.timelineContainer)}>
+          <h3 className={timelineStyles.timelineTitle}>Timeline</h3>
+          <div className={layoutStyles.timelineWrapper}>
             <input
               id="timeline-slider"
               type="range"
@@ -412,10 +441,10 @@ function TariffRateTimeline() {
               onChange={(e) => {
                 setSelectedDate(new Date(parseInt(e.target.value)))
               }}
-              className="timeline-slider"
+              className={timelineStyles.timelineSlider}
               aria-label="Timeline slider"
             />
-            <div className="timeline-labels">
+            <div className={timelineStyles.timelineLabels}>
               <span>Jan 2025</span>
               <span>Jul 2025</span>
               <span>Jan 2026</span>

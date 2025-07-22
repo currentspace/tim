@@ -11,6 +11,9 @@ import {
   forceX,
   drag,
 } from 'd3'
+import { D3_COLORS } from '../constants/colors'
+import { css, cx } from '../../styled-system/css'
+import { visualization } from '../../styled-system/recipes'
 import type {
   Selection,
   ZoomBehavior,
@@ -22,7 +25,6 @@ import type {
 } from 'd3'
 import { NetworkData } from '../types/network'
 import { SimulationNode, SimulationLink } from '../types/d3-network'
-import './NetworkGraph.css'
 
 interface NetworkGraphProps {
   data: NetworkData
@@ -300,12 +302,18 @@ class D3NetworkVisualization {
         gradient
           .append('stop')
           .attr('offset', '0%')
-          .attr('stop-color', d.type === 'investment' ? '#646cff' : '#82ca9d')
+          .attr(
+            'stop-color',
+            d.type === 'investment' ? D3_COLORS.CHART_BLUE : D3_COLORS.CHART_GREEN,
+          )
           .attr('stop-opacity', 0.6)
         gradient
           .append('stop')
           .attr('offset', '100%')
-          .attr('stop-color', d.type === 'investment' ? '#8884d8' : '#82ca9d')
+          .attr(
+            'stop-color',
+            d.type === 'investment' ? D3_COLORS.CHART_PURPLE : D3_COLORS.CHART_GREEN,
+          )
           .attr('stop-opacity', 0.2)
       })
 
@@ -378,11 +386,11 @@ class D3NetworkVisualization {
       .attr('fill', (d) => {
         switch (d.type) {
           case 'vc':
-            return '#646cff'
+            return D3_COLORS.CHART_BLUE
           case 'startup':
-            return '#8884d8'
+            return D3_COLORS.CHART_PURPLE
           case 'founder':
-            return '#82ca9d'
+            return D3_COLORS.CHART_GREEN
         }
       })
       .attr('opacity', 0.8)
@@ -411,7 +419,7 @@ class D3NetworkVisualization {
         return 'middle'
       })
       .attr('font-size', '12px')
-      .attr('fill', '#333')
+      .attr('fill', D3_COLORS.TEXT_PRIMARY)
       .attr('pointer-events', 'none')
 
     this.nodeElements = nodeEnter.merge(this.nodeElements)
@@ -581,12 +589,46 @@ function NetworkGraph({
   )
 
   return (
-    <div className="network-graph-container">
-      <svg ref={svgRef} className="network-graph">
-        <rect width={width} height={height} fill="#fafafa" />
+    <div
+      className={css({
+        position: 'relative',
+        background: 'bg.hover',
+        borderRadius: 'lg',
+        boxShadow: 'md',
+        overflow: 'hidden',
+      })}
+    >
+      <svg
+        ref={svgRef}
+        className={cx(
+          visualization({ background: 'transparent' }),
+          css({
+            cursor: 'grab',
+            '&:active': {
+              cursor: 'grabbing',
+            },
+          }),
+        )}
+      >
+        <rect width={width} height={height} fill={D3_COLORS.BG_HOVER} />
       </svg>
       {hoveredNode && (
-        <div className="tooltip">{data.nodes.find((n) => n.id === hoveredNode)?.name}</div>
+        <div
+          className={css({
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: D3_COLORS.TOOLTIP_BG,
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: 'md',
+            fontSize: '14px',
+            pointerEvents: 'none',
+            zIndex: 1000,
+          })}
+        >
+          {data.nodes.find((n) => n.id === hoveredNode)?.name}
+        </div>
       )}
     </div>
   )

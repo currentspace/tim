@@ -26,9 +26,12 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@pandacss/dev": "^0.54.0",
+    "@park-ui/panda-preset": "^0.43.1",
     "@tanstack/react-router": "^1.129.2",
     "@types/d3": "^7.4.3",
     "d3": "^7.9.0",
+    "framer-motion": "^12.23.6",
     "react": "~19.1.0",
     "react-dom": "~19.1.0"
   },

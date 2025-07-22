@@ -1,0 +1,191 @@
+/* Global CSS - Minimal styles that cannot be expressed in Panda CSS */
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Font face declarations for ABC Monument Grotesk */
+@font-face {
+  font-family: 'ABC Monument Grotesk';
+  src: url('/fonts/ABCMonumentGroteskVariableVF.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'ABC Monument Grotesk';
+  src: url('/fonts/ABCMonumentGrotesk-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'ABC Monument Grotesk';
+  src: url('/fonts/ABCMonumentGrotesk-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'ABC Monument Grotesk';
+  src: url('/fonts/ABCMonumentGrotesk-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+/* CSS Variables for native CSS usage and D3 - minimal set only */
+:root {
+  /* Font families - these match our Panda tokens */
+  --font-editorial: ABC Monument Grotesk, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-data: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Colors - for D3 and other JS usage */
+  --color-ink: #213547;
+  --color-paper: #ffffff;
+  --color-ink-light: rgba(33, 53, 71, 0.87);
+  --color-ink-muted: #666;
+  --color-accent: #646cff;
+  --color-data: #ff8800;
+  --color-alert: #ff4d4d;
+}
+
+/* D3-specific styles that need to use CSS variables */
+.d3-tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 12px 16px;
+  font-family: var(--font-data);
+  font-size: var(--type-sm);
+  background: white;
+  color: var(--color-ink);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Timeline slider styles - shared across multiple components */
+.timeline-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #f0f0f0;
+  outline: none;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s;
+  opacity: 0.85;
+}
+
+.timeline-slider:hover {
+  opacity: 1;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #666;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.timeline-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: #555;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Firefox */
+.timeline-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #666;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.timeline-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  background: #555;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Timeline container shared styles */
+.timeline-container {
+  background: white;
+  padding: 1.5rem 2rem 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.timeline-container h3,
+.timeline-title {
+  margin: 0 0 0.75rem 0;
+  font-family: var(--font-data);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-ink);
+}
+
+.timeline-wrapper {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+  user-select: none;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Global resets handled by Panda CSS preflight */
+/* Only add styles here that cannot be expressed through Panda CSS */

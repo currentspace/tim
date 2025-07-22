@@ -1,4 +1,6 @@
 import { Component, ReactNode } from 'react'
+import { css, cx } from '../../styled-system/css'
+import { typography, button, spacing } from '../../styled-system/recipes'
 
 interface Props {
   children: ReactNode
@@ -29,27 +31,40 @@ class ErrorBoundary extends Component<Props, State> {
       return (
         this.props.fallback ?? (
           <div
-            style={{
-              padding: '2rem',
-              textAlign: 'center',
-              color: '#dc2626',
-            }}
+            className={cx(
+              spacing({ p: 'xl' }),
+              css({
+                textAlign: 'center',
+                color: 'alert.DEFAULT',
+              }),
+            )}
           >
-            <h2>Something went wrong</h2>
-            <p>{this.state.error?.message}</p>
+            <h2
+              className={typography({
+                variant: 'editorialDisplay',
+                size: '2xl',
+                weight: 'semibold',
+                mb: 'md',
+                color: 'alert',
+              })}
+            >
+              Something went wrong
+            </h2>
+            <p
+              className={typography({
+                variant: 'dataValue',
+                size: 'base',
+                color: 'secondary',
+                mb: 'lg',
+              })}
+            >
+              {this.state.error?.message}
+            </p>
             <button
               onClick={() => {
                 this.setState({ hasError: false })
               }}
-              style={{
-                marginTop: '1rem',
-                padding: '0.5rem 1rem',
-                background: '#dc2626',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
+              className={button({ variant: 'danger', size: 'md' })}
             >
               Try again
             </button>

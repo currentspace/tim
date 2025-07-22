@@ -16,11 +16,11 @@ import {
 import type { Selection, ScaleTime, ScaleLinear } from 'd3'
 
 import { tariffTimeline } from '../data/tariffSchedules'
-import { COUNTRY_COLORS } from '../constants/colors'
+import { COUNTRY_COLORS, D3_COLORS } from '../constants/colors'
+import { FONTS } from '../constants/fonts'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
-import './CountryTariffTimeline.css'
-import '../styles/timeline-slider.css'
-import '../styles/timeline-slider.css'
+import { css, cx } from '../../styled-system/css'
+import { layoutStyles, timelineStyles } from '../styles/shared'
 
 interface CountryTimeSeries {
   country: string
@@ -107,7 +107,7 @@ class CountryTariffVisualization {
       .append('g')
       .attr('class', 'grid y-grid')
       .call(yAxisGrid)
-      .style('stroke', '#e0e0e0')
+      .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
       .style('opacity', 0.5)
 
@@ -116,7 +116,7 @@ class CountryTariffVisualization {
       .attr('class', 'grid x-grid')
       .attr('transform', `translate(0,${String(this.innerHeight)})`)
       .call(xAxisGrid)
-      .style('stroke', '#e0e0e0')
+      .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
       .style('opacity', 0.5)
   }
@@ -140,7 +140,7 @@ class CountryTariffVisualization {
       .append('g')
       .attr('transform', `translate(0,${String(this.innerHeight)})`)
       .call(xAxis)
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '12px')
       .selectAll('text')
       .style('text-anchor', 'middle')
@@ -148,11 +148,7 @@ class CountryTariffVisualization {
       .attr('dx', '-0.8em')
       .attr('dy', '0.15em')
 
-    this.g
-      .append('g')
-      .call(yAxis)
-      .style('font-family', 'var(--font-data)')
-      .style('font-size', '12px')
+    this.g.append('g').call(yAxis).style('font-family', FONTS.DATA).style('font-size', '12px')
 
     // Add Y-axis label
     this.g
@@ -161,9 +157,9 @@ class CountryTariffVisualization {
       .attr('y', -45)
       .attr('x', -this.innerHeight / 2)
       .attr('text-anchor', 'middle')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '14px')
-      .style('fill', '#666')
+      .style('fill', D3_COLORS.TEXT_MUTED)
       .text('Tariff Rate (%)')
   }
 
@@ -241,7 +237,7 @@ class CountryTariffVisualization {
       .attr('class', 'selected-date-line')
       .attr('y1', 0)
       .attr('y2', this.innerHeight)
-      .attr('stroke', '#333')
+      .attr('stroke', D3_COLORS.TEXT_PRIMARY)
       .attr('stroke-width', 1)
       .attr('stroke-dasharray', '4,2')
       .style('opacity', 0.5)
@@ -282,10 +278,10 @@ class CountryTariffVisualization {
       .append('text')
       .attr('x', 0)
       .attr('y', -10)
-      .style('font-family', 'var(--font-heading)')
+      .style('font-family', FONTS.EDITORIAL)
       .style('font-size', '12px')
       .style('font-weight', '600')
-      .style('fill', '#333')
+      .style('fill', D3_COLORS.TEXT_PRIMARY)
       .text(selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))
 
     this.legendItems = legend
@@ -311,9 +307,9 @@ class CountryTariffVisualization {
       .attr('x', 12)
       .attr('y', 0)
       .attr('dy', '0.32em')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '11px')
-      .style('fill', '#666')
+      .style('fill', D3_COLORS.TEXT_MUTED)
       .text((d) => d.country)
 
     // Add legend values
@@ -324,7 +320,7 @@ class CountryTariffVisualization {
       .attr('y', 0)
       .attr('dy', '0.32em')
       .attr('text-anchor', 'end')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '11px')
       .style('font-weight', '600')
       .style('fill', (d) => d.color)
@@ -411,7 +407,7 @@ function CountryTariffTimeline() {
         country,
         countryId: country.toLowerCase().replace(/\s+/g, '-'),
         values,
-        color: COUNTRY_COLORS[country] ?? '#888888',
+        color: COUNTRY_COLORS[country] ?? D3_COLORS.TEXT_MUTED,
       })
     })
 
@@ -432,18 +428,32 @@ function CountryTariffTimeline() {
   }
 
   return (
-    <div className="country-tariff-timeline">
-      <div className="chart-header">
-        <h3>Tariff Rate Increases Over Time</h3>
+    <div className={cx('country-tariff-timeline', layoutStyles.pageContainerGray)}>
+      <div className={cx('chart-header', layoutStyles.chartHeader)}>
+        <h3
+          className={css({
+            margin: 0,
+            fontFamily: 'editorial',
+            fontSize: 'lg',
+            fontWeight: 'semibold',
+            color: 'text.primary',
+          })}
+        >
+          Tariff Rate Increases Over Time
+        </h3>
       </div>
 
-      <div className="visualization-container">
-        <svg ref={svgRefCallback} data-testid="country-timeline-svg"></svg>
+      <div className={cx('visualization-container', layoutStyles.visualizationContainerMinHeight)}>
+        <svg
+          ref={svgRefCallback}
+          data-testid="country-timeline-svg"
+          className={css({ width: '100%', background: 'white' })}
+        ></svg>
       </div>
 
-      <div className="timeline-container">
-        <h3>Timeline</h3>
-        <div className="timeline-wrapper">
+      <div className={cx('timeline-container', layoutStyles.timelineContainer)}>
+        <h3 className={timelineStyles.timelineTitle}>Timeline</h3>
+        <div className={layoutStyles.timelineWrapper}>
           <input
             id="timeline-slider"
             type="range"
@@ -453,10 +463,10 @@ function CountryTariffTimeline() {
             onChange={(e) => {
               setSelectedDate(new Date(parseInt(e.target.value)))
             }}
-            className="timeline-slider"
+            className={timelineStyles.timelineSlider}
             aria-label="Timeline slider"
           />
-          <div className="timeline-labels">
+          <div className={cx('timeline-labels', timelineStyles.timelineLabels)}>
             <span>Jan 2025</span>
             <span>Jul 2025</span>
             <span>Jan 2026</span>

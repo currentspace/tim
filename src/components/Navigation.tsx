@@ -1,4 +1,11 @@
-import './Navigation.css'
+import { css, cx } from '../../styled-system/css'
+import {
+  typography,
+  flexLayout,
+  pageContainer,
+  navItem,
+  spacing,
+} from '../../styled-system/recipes'
 
 export type ViewType =
   | 'startup'
@@ -63,55 +70,148 @@ function Navigation({ currentView, onViewChange }: NavigationProps) {
   const visualizations = navigationItems.filter((item) => item.category === 'visualization')
   const settings = navigationItems.filter((item) => item.category === 'settings')
 
+  const getNavItemStyles = (isActive: boolean) =>
+    cx(navItem({ active: isActive }), isActive && 'active')
+
   return (
-    <nav className="navigation">
-      <div className="navigation-header">
-        <h1>Staples Technology Solutions</h1>
-        <p className="navigation-subtitle">TIM Dashboard</p>
+    <nav
+      className={cx(
+        flexLayout({ direction: 'column' }),
+        css({
+          background: 'bg.primary',
+          borderRight: '1px solid',
+          borderColor: 'border.DEFAULT',
+          height: '100vh',
+          width: '320px',
+          overflowY: 'auto',
+
+          '@media (max-width: 768px)': {
+            position: 'fixed',
+            left: '-320px',
+            zIndex: 1000,
+            transition: 'left 0.3s ease',
+            '&.open': {
+              left: 0,
+            },
+          },
+        }),
+      )}
+    >
+      <div
+        className={cx(
+          pageContainer({ padding: 'lg', border: 'bottom' }),
+          css({ borderColor: 'border.DEFAULT' }),
+        )}
+      >
+        <h1 className={typography({ variant: 'editorialDisplay', size: 'lg', m: '0' })}>
+          Staples Technology Solutions
+        </h1>
+        <p className={typography({ variant: 'dataLabel', size: 'sm', mt: 'xs', mb: '0' })}>
+          TIM Dashboard
+        </p>
       </div>
 
-      <div className="navigation-sections">
-        <div className="navigation-section">
-          <h2 className="navigation-section-title">Visualizations</h2>
-          <div className="navigation-items">
+      <div
+        className={cx(flexLayout({ direction: 'column', grow: '1' }), css({ padding: '1.5rem 0' }))}
+      >
+        <div className={spacing({ mb: 'xl' })}>
+          <h2
+            className={cx(typography({ variant: 'sectionTitle', mb: 'sm' }), spacing({ ml: 'lg' }))}
+          >
+            Visualizations
+          </h2>
+          <div className={flexLayout({ direction: 'column' })}>
             {visualizations.map((item) => (
               <button
                 key={item.id}
-                className={`navigation-item ${currentView === item.id ? 'active' : ''}`}
+                className={getNavItemStyles(currentView === item.id)}
                 onClick={() => {
                   onViewChange(item.id)
                 }}
                 aria-current={currentView === item.id ? 'page' : undefined}
               >
-                <span className="navigation-item-label">{item.label}</span>
-                <span className="navigation-item-description">{item.description}</span>
+                <span
+                  className={typography({
+                    variant: 'dataValue',
+                    size: 'sm',
+                    mb: 'xs',
+                    ...(currentView === item.id && { weight: 'semibold', color: 'accent' }),
+                  })}
+                >
+                  {item.label}
+                </span>
+                <span
+                  className={cx(
+                    typography({ variant: 'dataLabel', size: 'xs' }),
+                    css({
+                      lineHeight: '1.4',
+                      '@media (max-width: 768px)': {
+                        display: 'none',
+                      },
+                    }),
+                  )}
+                >
+                  {item.description}
+                </span>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="navigation-section">
-          <h2 className="navigation-section-title">Settings</h2>
-          <div className="navigation-items">
+        <div className={spacing({ mb: 'xl' })}>
+          <h2
+            className={cx(typography({ variant: 'sectionTitle', mb: 'sm' }), spacing({ ml: 'lg' }))}
+          >
+            Settings
+          </h2>
+          <div className={flexLayout({ direction: 'column' })}>
             {settings.map((item) => (
               <button
                 key={item.id}
-                className={`navigation-item ${currentView === item.id ? 'active' : ''}`}
+                className={getNavItemStyles(currentView === item.id)}
                 onClick={() => {
                   onViewChange(item.id)
                 }}
                 aria-current={currentView === item.id ? 'page' : undefined}
               >
-                <span className="navigation-item-label">{item.label}</span>
-                <span className="navigation-item-description">{item.description}</span>
+                <span
+                  className={typography({
+                    variant: 'dataValue',
+                    size: 'sm',
+                    mb: 'xs',
+                    ...(currentView === item.id && { weight: 'semibold', color: 'accent' }),
+                  })}
+                >
+                  {item.label}
+                </span>
+                <span
+                  className={cx(
+                    typography({ variant: 'dataLabel', size: 'xs' }),
+                    css({
+                      lineHeight: '1.4',
+                      '@media (max-width: 768px)': {
+                        display: 'none',
+                      },
+                    }),
+                  )}
+                >
+                  {item.description}
+                </span>
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="navigation-footer">
-        <p className="navigation-version">Version 1.0.0</p>
+      <div
+        className={cx(
+          pageContainer({ padding: 'md', border: 'top' }),
+          css({ borderColor: 'border.DEFAULT', marginTop: 'auto' }),
+        )}
+      >
+        <p className={typography({ variant: 'dataLabel', size: 'xs', align: 'center', m: '0' })}>
+          Version 1.0.0
+        </p>
       </div>
     </nav>
   )

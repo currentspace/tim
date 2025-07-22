@@ -2,12 +2,12 @@ import { useState, useMemo, useRef } from 'react'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { getActiveTariffForDate } from '../utils/tariffCalculations'
-import { COUNTRY_COLORS } from '../constants/colors'
+import { COUNTRY_COLORS, D3_COLORS } from '../constants/colors'
+import { FONTS } from '../constants/fonts'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
-import './CountryExposure.css'
-import '../styles/timeline-slider.css'
+import { css, cx } from '../../styled-system/css'
+import { typographyStyles, formStyles } from '../styles/shared'
 import Layout from './Layout'
-import '../styles/timeline-slider.css'
 import { select, scaleSqrt, max } from 'd3'
 import type { Selection } from 'd3'
 
@@ -70,7 +70,7 @@ class CountryExposureVisualization {
 
       g.append('circle')
         .attr('r', radius)
-        .attr('fill', COUNTRY_COLORS[d.country] ?? '#888888')
+        .attr('fill', COUNTRY_COLORS[d.country] ?? D3_COLORS.DEFAULT_GRAY)
         .attr('stroke', 'white')
         .attr('stroke-width', 3)
         .style('opacity', 0.8)
@@ -106,10 +106,10 @@ class CountryExposureVisualization {
     g.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '0.35em')
-      .style('font-family', 'var(--font-heading)')
+      .style('font-family', FONTS.EDITORIAL)
       .style('font-size', '24px')
       .style('font-weight', 'bold')
-      .style('fill', '#333')
+      .style('fill', D3_COLORS.TEXT_PRIMARY)
       .text(selectedCompany === 'HP Inc.' ? 'HP' : selectedCompany)
 
     // Add legend on the right side
@@ -134,7 +134,7 @@ class CountryExposureVisualization {
       g.append('path')
         .attr('d', path)
         .attr('fill', 'none')
-        .attr('stroke', '#999')
+        .attr('stroke', D3_COLORS.AXIS_LINE)
         .attr('stroke-width', 1.5)
         .style('opacity', 0.4)
 
@@ -144,7 +144,7 @@ class CountryExposureVisualization {
         .attr('cx', legendX - 20)
         .attr('cy', endY)
         .attr('r', 5)
-        .attr('fill', COUNTRY_COLORS[d.country] ?? '#888888')
+        .attr('fill', COUNTRY_COLORS[d.country] ?? D3_COLORS.DEFAULT_GRAY)
 
       // Add country name
       this.svg
@@ -152,9 +152,9 @@ class CountryExposureVisualization {
         .attr('x', legendX - 5)
         .attr('y', endY)
         .attr('dy', '0.32em')
-        .style('font-family', 'var(--font-data)')
+        .style('font-family', FONTS.DATA)
         .style('font-size', '12px')
-        .style('fill', '#333')
+        .style('fill', D3_COLORS.TEXT_PRIMARY)
         .text(d.country)
 
       // Add revenue value
@@ -164,10 +164,10 @@ class CountryExposureVisualization {
         .attr('y', endY)
         .attr('dy', '0.32em')
         .attr('text-anchor', 'end')
-        .style('font-family', 'var(--font-data)')
+        .style('font-family', FONTS.DATA)
         .style('font-size', '12px')
         .style('font-weight', '500')
-        .style('fill', '#666')
+        .style('fill', D3_COLORS.TEXT_MUTED)
         .text(`${String(Math.round(d.totalRevenue / 1e6))}M`)
     })
   }
@@ -282,16 +282,41 @@ function CountryExposure() {
         },
       }}
     >
-      <div className="country-exposure">
-        <div className="controls-section">
-          <div className="company-info">
+      <div
+        className={cx(
+          'country-exposure',
+          css({
+            background: 'bg.secondary',
+            minHeight: '100vh',
+            padding: 0,
+            margin: 0,
+          }),
+        )}
+      >
+        <div
+          className={cx(
+            'controls-section',
+            css({
+              background: 'white',
+              padding: '1.5rem 2rem',
+              borderBottom: '1px solid',
+              borderColor: 'border.DEFAULT',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }),
+          )}
+        >
+          <div
+            className={cx('company-info', typographyStyles.dataValue, css({ fontSize: 'base' }))}
+          >
             <span>Company: </span>
             <select
               value={selectedCompany}
               onChange={(e) => {
                 setSelectedCompany(e.target.value)
               }}
-              className="company-select-inline"
+              className={formStyles.inlineSelect}
             >
               <option value="all">All Companies</option>
               {techCompanies.map((company) => (
@@ -301,18 +326,71 @@ function CountryExposure() {
               ))}
             </select>
           </div>
-          <p className="total-display">
+          <p
+            className={cx(
+              typographyStyles.dataLabel,
+              css({
+                margin: '0.5rem 0 0 0',
+                fontSize: 'sm',
+              }),
+            )}
+          >
             Total: ${Math.round(exposureData.reduce((sum, d) => sum + d.totalRevenue, 0) / 1e6)}M
           </p>
         </div>
 
-        <div className="visualization-container">
-          <svg ref={svgRefCallback} data-testid="country-exposure-svg"></svg>
+        <div
+          className={cx(
+            'visualization-container',
+            css({
+              background: 'white',
+              padding: '2rem',
+              margin: 0,
+              minHeight: '600px',
+              position: 'relative',
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
+          )}
+        >
+          <svg
+            ref={svgRefCallback}
+            data-testid="country-exposure-svg"
+            className={css({
+              width: '100%',
+              height: 'auto',
+              background: 'white',
+              display: 'block',
+            })}
+          ></svg>
         </div>
 
-        <div className="timeline-container">
-          <h3>Timeline</h3>
-          <div className="timeline-wrapper">
+        <div
+          className={cx(
+            'timeline-container',
+            css({
+              background: 'white',
+              borderTop: '1px solid',
+              borderColor: 'border.DEFAULT',
+              padding: '2rem',
+            }),
+          )}
+        >
+          <h3
+            className={cx(
+              typographyStyles.editorialDisplay,
+              css({
+                margin: '0 0 1rem 0',
+                fontSize: 'sm',
+                letterSpacing: 'wider',
+              }),
+            )}
+          >
+            Timeline
+          </h3>
+          <div className={css({ position: 'relative' })}>
             <input
               id="date-slider"
               type="range"
@@ -323,16 +401,35 @@ function CountryExposure() {
               onChange={(e) => {
                 setSelectedDate(new Date(parseInt(e.target.value)))
               }}
-              className="timeline-slider"
+              className={formStyles.timelineSlider}
             />
-            <div className="timeline-labels">
+            <div
+              className={css({
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: '0.5rem',
+                fontFamily: 'data',
+                fontSize: 'xs',
+                color: 'text.muted',
+              })}
+            >
               <span>Jan 2025</span>
               <span>Jul 2025</span>
               <span>Jan 2026</span>
               <span>Dec 2026</span>
             </div>
           </div>
-          <div className="timeline-info">
+          <div
+            className={cx(
+              'timeline-info',
+              typographyStyles.dataLabel,
+              css({
+                marginTop: '1rem',
+                fontSize: 'sm',
+                color: 'text.primary',
+              }),
+            )}
+          >
             <span>Legend</span>
           </div>
         </div>

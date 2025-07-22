@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { techCompanies } from '../data/techCompanies'
-import { COMPANY_COLORS, COUNTRY_COLORS } from '../constants/colors'
-import './NotificationSettings.css'
+import { COMPANY_COLORS, COUNTRY_COLORS, D3_COLORS } from '../constants/colors'
+import { css, cx } from '../../styled-system/css'
+import { settingsStyles, layoutStyles, typographyStyles } from '../styles/shared'
 
 type ViewType = 'company' | 'country'
 
@@ -32,7 +33,7 @@ function NotificationSettings() {
     techCompanies.map((company) => ({
       id: company.id,
       name: company.name,
-      color: COMPANY_COLORS[company.id] ?? '#888888',
+      color: COMPANY_COLORS[company.id] ?? D3_COLORS.DEFAULT_GRAY,
       category: company.category,
       selected: false,
     })),
@@ -43,7 +44,7 @@ function NotificationSettings() {
     getUniqueCountries().map((country) => ({
       id: country.toLowerCase().replace(/\s+/g, '-'),
       name: country,
-      color: COUNTRY_COLORS[country] ?? '#888888',
+      color: COUNTRY_COLORS[country] ?? D3_COLORS.DEFAULT_GRAY,
       selected: false,
     })),
   )
@@ -76,13 +77,26 @@ function NotificationSettings() {
   }
 
   return (
-    <div className="notification-settings">
-      <div className="settings-container">
-        <div className="settings-header">
-          <h3>Notification Settings</h3>
-          <div className="view-toggle">
+    <div className={layoutStyles.pageContainer}>
+      <div className={settingsStyles.settingsContainer}>
+        <div className={settingsStyles.settingsHeader}>
+          <h3
+            className={css({
+              margin: 0,
+              fontFamily: 'editorial',
+              fontSize: 'xl',
+              fontWeight: 'semibold',
+              color: 'text.primary',
+            })}
+          >
+            Notification Settings
+          </h3>
+          <div className={settingsStyles.viewToggle}>
             <button
-              className={`toggle-btn ${activeView === 'country' ? 'active' : ''}`}
+              className={cx(
+                settingsStyles.toggleBtn,
+                activeView === 'country' && settingsStyles.toggleBtnActive,
+              )}
               onClick={() => {
                 setActiveView('country')
               }}
@@ -90,7 +104,10 @@ function NotificationSettings() {
               Country
             </button>
             <button
-              className={`toggle-btn ${activeView === 'company' ? 'active' : ''}`}
+              className={cx(
+                settingsStyles.toggleBtn,
+                activeView === 'company' && settingsStyles.toggleBtnActive,
+              )}
               onClick={() => {
                 setActiveView('company')
               }}
@@ -100,11 +117,21 @@ function NotificationSettings() {
           </div>
         </div>
 
-        <div className="settings-content">
-          <div className="selection-panel">
-            <h4>{activeView === 'company' ? 'Select Companies' : 'Select Countries'}</h4>
+        <div className={settingsStyles.settingsContent}>
+          <div className={settingsStyles.selectionPanel}>
+            <h4
+              className={css({
+                margin: '0 0 1.5rem 0',
+                fontFamily: 'editorial',
+                fontSize: 'base',
+                fontWeight: 'semibold',
+                color: 'text.primary',
+              })}
+            >
+              {activeView === 'company' ? 'Select Companies' : 'Select Countries'}
+            </h4>
 
-            <div className="selection-list">
+            <div className={settingsStyles.selectionList}>
               {activeView === 'company' ? (
                 <>
                   {/* Group companies by category */}
@@ -113,10 +140,10 @@ function NotificationSettings() {
                     if (items.length === 0) return null
 
                     return (
-                      <div key={category} className="category-group">
-                        <div className="category-items">
+                      <div key={category} className={settingsStyles.categoryGroup}>
+                        <div className={settingsStyles.categoryItems}>
                           {items.map((company) => (
-                            <label key={company.id} className="selection-item">
+                            <label key={company.id} className={settingsStyles.selectionItem}>
                               <input
                                 type="checkbox"
                                 checked={company.selected}
@@ -125,11 +152,13 @@ function NotificationSettings() {
                                 }}
                               />
                               <span
-                                className="color-dot"
-                                style={{ backgroundColor: company.color }}
+                                className={cx(
+                                  settingsStyles.colorDot,
+                                  css({ backgroundColor: company.color }),
+                                )}
                               ></span>
-                              <span className="item-name">{company.name}</span>
-                              <span className="item-category">{category}</span>
+                              <span className={settingsStyles.itemName}>{company.name}</span>
+                              <span className={settingsStyles.itemCategory}>{category}</span>
                             </label>
                           ))}
                         </div>
@@ -138,9 +167,9 @@ function NotificationSettings() {
                   })}
                 </>
               ) : (
-                <div className="category-items">
+                <div className={settingsStyles.categoryItems}>
                   {countrySelections.map((country) => (
-                    <label key={country.id} className="selection-item">
+                    <label key={country.id} className={settingsStyles.selectionItem}>
                       <input
                         type="checkbox"
                         checked={country.selected}
@@ -148,8 +177,13 @@ function NotificationSettings() {
                           handleCountryToggle(country.id)
                         }}
                       />
-                      <span className="color-dot" style={{ backgroundColor: country.color }}></span>
-                      <span className="item-name">{country.name}</span>
+                      <span
+                        className={cx(
+                          settingsStyles.colorDot,
+                          css({ backgroundColor: country.color }),
+                        )}
+                      ></span>
+                      <span className={settingsStyles.itemName}>{country.name}</span>
                     </label>
                   ))}
                 </div>
@@ -157,19 +191,49 @@ function NotificationSettings() {
             </div>
           </div>
 
-          <div className="selected-panel">
-            <h4>Selected Items</h4>
-            <div className="selected-list">
+          <div className={settingsStyles.selectionPanel}>
+            <h4
+              className={css({
+                margin: '0 0 1.5rem 0',
+                fontFamily: 'editorial',
+                fontSize: 'base',
+                fontWeight: 'semibold',
+                color: 'text.primary',
+              })}
+            >
+              Selected Items
+            </h4>
+            <div className={settingsStyles.selectedList}>
               {currentSelections.length === 0 ? (
-                <p className="no-selection">
+                <p className={typographyStyles.mutedText}>
                   {activeView === 'company' ? 'Products: None selected' : 'No countries selected'}
                 </p>
               ) : (
                 currentSelections.map((item) => (
-                  <div key={item.id} className="selected-item">
-                    <span className="item-name">{item.name}</span>
+                  <div key={item.id} className={settingsStyles.selectedItem}>
+                    <span
+                      className={css({
+                        display: 'block',
+                        fontFamily: 'data',
+                        fontSize: 'sm',
+                        color: 'text.primary',
+                        fontWeight: 'medium',
+                      })}
+                    >
+                      {item.name}
+                    </span>
                     {item.category && (
-                      <span className="item-subtitle">Products: {item.category}</span>
+                      <span
+                        className={css({
+                          display: 'block',
+                          fontFamily: 'data',
+                          fontSize: 'xs',
+                          color: 'text.muted',
+                          marginTop: '0.25rem',
+                        })}
+                      >
+                        Products: {item.category}
+                      </span>
                     )}
                   </div>
                 ))
@@ -177,7 +241,7 @@ function NotificationSettings() {
             </div>
 
             <button
-              className="send-button"
+              className={settingsStyles.sendButton}
               onClick={sendNotifications}
               disabled={selectedCompanies.length === 0 && selectedCountries.length === 0}
             >
@@ -187,8 +251,24 @@ function NotificationSettings() {
         </div>
       </div>
 
-      <div className="footer">
-        <p>Proprietary and Confidential: Copyright Staples Technology Solutions 2025</p>
+      <div
+        className={css({
+          padding: '1rem 2rem',
+          textAlign: 'center',
+          background: 'white',
+          borderTop: '1px solid #e0e0e0',
+        })}
+      >
+        <p
+          className={css({
+            margin: 0,
+            fontFamily: 'data',
+            fontSize: 'xs',
+            color: 'text.muted',
+          })}
+        >
+          Proprietary and Confidential: Copyright Staples Technology Solutions 2025
+        </p>
       </div>
     </div>
   )

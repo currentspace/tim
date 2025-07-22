@@ -2,13 +2,13 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { calculateAllCompaniesImpact } from '../utils/tariffCalculations'
-import { COMPANY_COLORS } from '../constants/colors'
+import { COMPANY_COLORS, D3_COLORS } from '../constants/colors'
+import { FONTS } from '../constants/fonts'
 // Removed unused import - getProductBreakdown
 import { TRANSITION_DURATION } from '../utils/d3Utils'
-import './AnticipatedTariffImpact.css'
-import '../styles/timeline-slider.css'
+import { css, cx } from '../../styled-system/css'
+import { layoutStyles, timelineStyles } from '../styles/shared'
 import Layout from './Layout'
-import '../styles/timeline-slider.css'
 import { max, scaleSqrt, select } from 'd3'
 
 interface CompanyData {
@@ -94,9 +94,9 @@ function AnticipatedTariffImpact() {
     const getCompanyColor = (companyName: string): string => {
       const company = techCompanies.find((c) => c.name === companyName)
       if (company) {
-        return COMPANY_COLORS[company.id] || '#888888'
+        return COMPANY_COLORS[company.id] || D3_COLORS.TEXT_MUTED
       }
-      return '#888888'
+      return D3_COLORS.TEXT_MUTED
     }
 
     // Calculate positions for vertical stack layout
@@ -124,7 +124,7 @@ function AnticipatedTariffImpact() {
       .append('circle')
       .attr('r', (d) => radiusScale(d.impactPercentage))
       .attr('fill', (d) => getCompanyColor(d.company))
-      .attr('stroke', '#fff')
+      .attr('stroke', D3_COLORS.BG_PRIMARY)
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
       .style('opacity', 0.9)
@@ -137,10 +137,10 @@ function AnticipatedTariffImpact() {
       .attr('dy', '0.35em')
       .attr('text-anchor', 'end')
       .attr('class', 'company-name')
-      .style('font-family', 'var(--font-heading)')
+      .style('font-family', FONTS.EDITORIAL)
       .style('font-size', '16px')
       .style('font-weight', '600')
-      .style('fill', '#333')
+      .style('fill', D3_COLORS.TEXT_PRIMARY)
       .style('pointer-events', 'none')
       .text((d) => {
         if (d.company === 'HP Inc.') return 'HP'
@@ -156,11 +156,11 @@ function AnticipatedTariffImpact() {
       .attr('dy', '0.35em')
       .attr('text-anchor', 'end')
       .attr('class', 'impact-percentage')
-      .style('font-family', 'var(--font-data)')
+      .style('font-family', FONTS.DATA)
       .style('font-size', '14px')
       .style('font-weight', '400')
       .style('font-variant-numeric', 'tabular-nums')
-      .style('fill', '#666')
+      .style('fill', D3_COLORS.TEXT_MUTED)
       .style('pointer-events', 'none')
       .text((d) => `${d.impactPercentage.toFixed(1)}%`)
 
@@ -176,10 +176,10 @@ function AnticipatedTariffImpact() {
       .append('rect')
       .attr('class', 'popup-background')
       .attr('rx', 8)
-      .style('fill', '#fff')
-      .style('stroke', '#ddd')
+      .style('fill', D3_COLORS.BG_PRIMARY)
+      .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-width', 1)
-      .style('filter', 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))')
+      .style('filter', `drop-shadow(0 4px 12px ${D3_COLORS.SHADOW})`)
 
     // Popup content group
     const popupContent = popup
@@ -235,10 +235,10 @@ function AnticipatedTariffImpact() {
           .append('text')
           .attr('x', 0)
           .attr('y', 0)
-          .style('font-family', 'var(--font-heading)')
+          .style('font-family', FONTS.EDITORIAL)
           .style('font-size', '16px')
           .style('font-weight', '600')
-          .style('fill', '#333')
+          .style('fill', D3_COLORS.TEXT_PRIMARY)
           .text(d.company)
 
         // Add impact details
@@ -256,10 +256,10 @@ function AnticipatedTariffImpact() {
             .append('text')
             .attr('x', 0)
             .attr('y', yPos)
-            .style('font-family', 'var(--font-data)')
+            .style('font-family', FONTS.DATA)
             .style('font-size', '12px')
             .style('font-weight', '500')
-            .style('fill', '#666')
+            .style('fill', D3_COLORS.TEXT_MUTED)
             .text(detail.label)
 
           popupContent
@@ -267,10 +267,10 @@ function AnticipatedTariffImpact() {
             .attr('x', popupWidth - 20)
             .attr('y', yPos)
             .attr('text-anchor', 'end')
-            .style('font-family', 'var(--font-data)')
+            .style('font-family', FONTS.DATA)
             .style('font-size', '12px')
             .style('font-weight', '600')
-            .style('fill', '#333')
+            .style('fill', D3_COLORS.TEXT_PRIMARY)
             .text(detail.value)
         })
 
@@ -284,7 +284,7 @@ function AnticipatedTariffImpact() {
           .attr('y1', bubblePos.y)
           .attr('x2', popupX - 5)
           .attr('y2', popupY + popupHeight / 2)
-          .style('stroke', '#999')
+          .style('stroke', D3_COLORS.TEXT_MUTED)
           .style('stroke-width', 1)
           .style('stroke-dasharray', '4,4')
           .style('opacity', 0)
@@ -322,23 +322,62 @@ function AnticipatedTariffImpact() {
       currentView="Chart"
       badge="ANTICIPATED"
       toggleOptions={{
-        left: 'Dollar Volume',
-        right: 'Tariff Exposure & Rate',
+        left: 'Volume',
+        right: 'Exposure',
         current: 'right',
         onToggle: () => {
           // Toggle functionality to be implemented
         },
       }}
     >
-      <div className="anticipated-tariff-impact">
-        <div className="visualization-container">
-          <svg ref={svgRef} data-testid="tariff-impact-svg"></svg>
+      <div className={cx('anticipated-tariff-impact', layoutStyles.pageContainer)}>
+        <div className={cx('visualization-container', layoutStyles.visualizationContainer)}>
+          <svg
+            ref={svgRef}
+            data-testid="tariff-impact-svg"
+            className={css({
+              width: '100%',
+              height: 'auto',
+              background: 'transparent',
+              display: 'block',
+            })}
+          ></svg>
         </div>
 
-        <div className="timeline-container">
-          <h3 className="timeline-title">TIMELINE</h3>
-          <div className="timeline-subtitle">Aug 2025</div>
-          <div className="timeline-wrapper">
+        <div
+          className={cx(
+            'timeline-container',
+            css({
+              background: 'white',
+              padding: '2rem 3rem 3rem',
+              borderTop: '1px solid #e0e0e0',
+              position: 'relative',
+            }),
+          )}
+        >
+          <h3
+            className={css({
+              margin: 0,
+              fontFamily: 'editorial',
+              fontSize: 'xs',
+              fontWeight: 'bold',
+              letterSpacing: 'wider',
+              textTransform: 'uppercase',
+              color: 'text.primary',
+              position: 'absolute',
+              left: '3rem',
+              top: '2rem',
+            })}
+          >
+            TIMELINE
+          </h3>
+          <div className={cx('timeline-subtitle', timelineStyles.timelineSubtitle)}>Aug 2025</div>
+          <div
+            className={css({
+              position: 'relative',
+              padding: '4rem 3rem 1rem',
+            })}
+          >
             <input
               id="date-slider"
               type="range"
@@ -350,11 +389,37 @@ function AnticipatedTariffImpact() {
                 const newDate = getDateFromQuarterIndex(quarterIndex)
                 setSelectedDate(newDate)
               }}
-              className="timeline-slider"
+              className={css({
+                position: 'relative',
+                width: '100%',
+                height: '4px',
+                background: '#e0e0e0',
+                borderRadius: '2px',
+                cursor: 'pointer',
+                margin: '2rem 0 1rem',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  height: '100%',
+                  background: '#333',
+                  borderRadius: '2px',
+                  width: 'calc(var(--progress, 0) * 100%)',
+                  transition: 'width 0.3s ease',
+                },
+              })}
               step={1}
               aria-label="Timeline slider"
             />
-            <div className="timeline-labels">
+            <div
+              className={css({
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: '1rem',
+                padding: '0 0.5rem',
+              })}
+            >
               <span>Jun 2025</span>
               <span>Aug 2025</span>
               <span>Oct 2025</span>

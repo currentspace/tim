@@ -1,4 +1,5 @@
 import { TechCompany, TariffSchedule, QuarterlyImpact } from '../types/tariff'
+import { GRADIENTS } from '../constants/colors'
 
 export function getQuarterFromDate(date: string): string {
   const d = new Date(date)
@@ -103,9 +104,9 @@ export function formatCurrency(value: number): string {
 }
 
 export function getImpactColor(impactPercentage: number): string {
-  if (impactPercentage === 0) return '#82ca9d' // Green
-  if (impactPercentage < 5) return '#FFA500' // Orange
-  if (impactPercentage < 10) return '#FF6347' // Tomato
-  if (impactPercentage < 15) return '#DC143C' // Crimson
-  return '#8B0000' // Dark Red
+  if (impactPercentage === 0) return GRADIENTS.tariffImpact.low
+  if (impactPercentage < 5) return GRADIENTS.tariffImpact.medium
+  if (impactPercentage < 10) return GRADIENTS.tariffImpact.high
+  if (impactPercentage < 15) return GRADIENTS.tariffImpact.high
+  return GRADIENTS.tariffImpact.high
 }

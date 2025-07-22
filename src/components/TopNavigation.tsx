@@ -1,4 +1,5 @@
-import './TopNavigation.css'
+import { css, cx } from '../../styled-system/css'
+import { flexLayout, pageContainer } from '../../styled-system/recipes'
 
 interface TopNavigationProps {
   leftSection?: React.ReactNode
@@ -6,12 +7,27 @@ interface TopNavigationProps {
   rightSection?: React.ReactNode
 }
 
+const topNavigationStyles = cx(
+  flexLayout({ align: 'center', justify: 'between' }),
+  pageContainer({ variant: 'header', padding: 'none' }),
+  css({
+    px: '3rem',
+    py: '1.5rem',
+    minHeight: '90px',
+    flexWrap: 'nowrap',
+  }),
+)
+
+const navLeftStyles = flexLayout({ align: 'center', gap: 'md', grow: '1', justify: 'start' })
+const navCenterStyles = flexLayout({ align: 'center', gap: 'md', shrink: '0' })
+const navRightStyles = flexLayout({ align: 'center', gap: 'md', grow: '1', justify: 'end' })
+
 function TopNavigation({ leftSection, centerSection, rightSection }: TopNavigationProps) {
   return (
-    <header className="top-navigation">
-      <div className="nav-section nav-left">{leftSection}</div>
-      <div className="nav-section nav-center">{centerSection}</div>
-      <div className="nav-section nav-right">{rightSection}</div>
+    <header className={topNavigationStyles}>
+      <div className={navLeftStyles}>{leftSection}</div>
+      <div className={navCenterStyles}>{centerSection}</div>
+      <div className={navRightStyles}>{rightSection}</div>
     </header>
   )
 }

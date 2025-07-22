@@ -1,5 +1,7 @@
 import { select, axisLeft, axisBottom } from 'd3'
 import type { Selection, ScaleLinear, ScaleTime } from 'd3'
+import { D3_COLORS } from '../constants/colors'
+import { FONTS } from '../constants/fonts'
 // Common transition duration for animations
 export const TRANSITION_DURATION = 200
 
@@ -73,15 +75,15 @@ export function createTooltip(): Selection<HTMLDivElement, unknown, HTMLElement,
     .attr('class', 'd3-tooltip')
     .style('opacity', '0')
     .style('position', 'absolute')
-    .style('background', 'rgba(0, 0, 0, 0.9)')
-    .style('color', 'white')
+    .style('background', D3_COLORS.TOOLTIP_BG)
+    .style('color', D3_COLORS.BG_PRIMARY)
     .style('padding', '12px')
     .style('border-radius', '8px')
     .style('pointer-events', 'none')
-    .style('font-family', 'Inter, system-ui, -apple-system, sans-serif')
+    .style('font-family', FONTS.DATA)
     .style('font-size', '14px')
     .style('line-height', '1.5')
-    .style('box-shadow', '0 4px 6px rgba(0, 0, 0, 0.1)')
+    .style('box-shadow', `0 4px 6px ${D3_COLORS.SHADOW}`)
 }
 
 // Show tooltip with content

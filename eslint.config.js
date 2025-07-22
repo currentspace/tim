@@ -18,6 +18,8 @@ export default tseslint.config(
       'scripts/**',
       'coverage/**',
       'src/__mocks__/**',
+      'styled-system/**',
+      'postcss.config.js',
     ],
   },
 
