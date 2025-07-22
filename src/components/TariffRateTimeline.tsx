@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState, useMemo } from 'react'
-import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { COMPANY_COLORS } from '../constants/colors'
@@ -7,6 +6,20 @@ import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './TariffRateTimeline.css'
 import '../styles/timeline-slider.css'
 import '../styles/timeline-slider.css'
+import {
+  select,
+  min,
+  max,
+  scaleTime,
+  timeMonth,
+  timeFormat,
+  axisLeft,
+  curveCatmullRom,
+  axisBottom,
+  scaleLinear,
+  line,
+} from 'd3'
+import type { Selection } from 'd3'
 
 interface CompanyTimeSeries {
   company: string
@@ -20,9 +33,7 @@ interface CompanyTimeSeries {
 
 function TariffRateTimeline() {
   const svgRef = useRef<SVGSVGElement>(null)
-  const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> | null>(
-    null,
-  )
+  const tooltipRef = useRef<Selection<HTMLDivElement, unknown, HTMLElement, unknown> | null>(null)
   const [selectedDate, setSelectedDate] = useState(new Date('2025-04-01'))
 
   // Select top companies to display (matching Figma design)
@@ -54,10 +65,9 @@ function TariffRateTimeline() {
     const innerHeight = height - margin.top - margin.bottom
 
     // Clear previous content
-    d3.select(svgRef.current).selectAll('*').remove()
+    select(svgRef.current).selectAll('*').remove()
 
-    const svg = d3
-      .select(svgRef.current)
+    const svg = select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
@@ -72,8 +82,8 @@ function TariffRateTimeline() {
 
     // Get date range from tariff timeline
     const dates = tariffTimeline.map((t) => new Date(t.date))
-    const minDate = d3.min(dates) ?? new Date('2025-01-01')
-    const maxDate = d3.max(dates) ?? new Date('2026-01-01')
+    const minDate = min(dates) ?? new Date('2025-01-01')
+    const maxDate = max(dates) ?? new Date('2026-01-01')
 
     // Generate time series for selected companies
     displayCompanies.forEach((company) => {
@@ -101,10 +111,9 @@ function TariffRateTimeline() {
     })
 
     // Create scales
-    const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, innerWidth])
+    const xScale = scaleTime().domain([minDate, maxDate]).range([0, innerWidth])
 
-    const yScale = d3
-      .scaleLinear()
+    const yScale = scaleLinear()
       .domain([0, 32]) // 0-32% as shown in screenshot
       .range([innerHeight, 0])
 
@@ -112,17 +121,15 @@ function TariffRateTimeline() {
     tooltipRef.current ??= createTooltip()
 
     // Create grid lines
-    const yAxisGrid = d3
-      .axisLeft(yScale)
+    const yAxisGrid = axisLeft(yScale)
       .tickSize(-innerWidth)
       .tickFormat(() => '')
       .ticks(8)
 
-    const xAxisGrid = d3
-      .axisBottom(xScale)
+    const xAxisGrid = axisBottom(xScale)
       .tickSize(-innerHeight)
       .tickFormat(() => '')
-      .ticks(d3.timeMonth.every(1))
+      .ticks(timeMonth.every(1))
 
     // Add Y grid lines
     g.append('g')
@@ -142,17 +149,16 @@ function TariffRateTimeline() {
       .style('opacity', 0.5)
 
     // Create axes
-    const xAxis = d3
-      .axisBottom(xScale)
+    const xAxis = axisBottom(xScale)
       .tickFormat((domainValue) => {
         if (domainValue instanceof Date) {
-          return d3.timeFormat('%b')(domainValue)
+          return timeFormat('%b')(domainValue)
         }
         return ''
       })
-      .ticks(d3.timeMonth.every(1))
+      .ticks(timeMonth.every(1))
 
-    const yAxis = d3.axisLeft(yScale).tickFormat((d) => {
+    const yAxis = axisLeft(yScale).tickFormat((d) => {
       if (typeof d === 'number') return String(d)
       return ''
     })
@@ -177,11 +183,10 @@ function TariffRateTimeline() {
       .text('Tariff Rate (%)')
 
     // Create line generator
-    const line = d3
-      .line<{ date: Date; rate: number }>()
+    const myLine = line<{ date: Date; rate: number }>()
       .x((d) => xScale(d.date))
       .y((d) => yScale(d.rate))
-      .curve(d3.curveCatmullRom.alpha(0.5))
+      .curve(curveCatmullRom.alpha(0.5))
 
     // Draw lines
     const lines = g
@@ -190,7 +195,7 @@ function TariffRateTimeline() {
       .enter()
       .append('path')
       .attr('class', 'line')
-      .attr('d', (d) => line(d.values))
+      .attr('d', (d) => myLine(d.values))
       .attr('fill', 'none')
       .attr('stroke', (d) => d.color)
       .attr('stroke-width', 2.5)
@@ -236,7 +241,7 @@ function TariffRateTimeline() {
         .style('opacity', 0)
         .on('mouseenter', function (event: MouseEvent, d) {
           // Enlarge dot on hover
-          d3.select(this).transition().duration(200).attr('r', 5).style('opacity', 1)
+          select(this).transition().duration(200).attr('r', 5).style('opacity', 1)
 
           // Show tooltip
           if (tooltipRef.current) {
@@ -250,7 +255,7 @@ function TariffRateTimeline() {
         })
         .on('mouseleave', function () {
           // Reset dot size
-          d3.select(this).transition().duration(200).attr('r', 3).style('opacity', 0)
+          select(this).transition().duration(200).attr('r', 3).style('opacity', 0)
 
           if (tooltipRef.current) {
             hideTooltip(tooltipRef.current)

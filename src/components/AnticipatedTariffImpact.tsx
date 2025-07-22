@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
-import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { calculateAllCompaniesImpact } from '../utils/tariffCalculations'
@@ -9,6 +8,7 @@ import { TRANSITION_DURATION } from '../utils/d3Utils'
 import './AnticipatedTariffImpact.css'
 import '../styles/timeline-slider.css'
 import '../styles/timeline-slider.css'
+import { max, scaleSqrt, select } from 'd3'
 
 interface CompanyData {
   company: string
@@ -77,18 +77,16 @@ function AnticipatedTariffImpact() {
     const bubbleSpacing = 140
 
     // Clear previous content
-    d3.select(svgRef.current).selectAll('*').remove()
+    select(svgRef.current).selectAll('*').remove()
 
-    const svg = d3
-      .select(svgRef.current)
+    const svg = select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
 
     // Create radius scale based on impact percentage - larger circles to match Figma
-    const radiusScale = d3
-      .scaleSqrt()
-      .domain([0, d3.max(companyData, (d) => d.impactPercentage) ?? 0])
+    const radiusScale = scaleSqrt()
+      .domain([0, max(companyData, (d) => d.impactPercentage) ?? 0])
       .range([40, 80])
 
     // Get company colors
@@ -201,7 +199,7 @@ function AnticipatedTariffImpact() {
         const i = allData.indexOf(d)
 
         // Highlight bubble
-        d3.select(this)
+        select(this)
           .select('circle')
           .transition()
           .duration(TRANSITION_DURATION)
@@ -297,7 +295,7 @@ function AnticipatedTariffImpact() {
         setHoveredCompany(null)
 
         // Reset bubble
-        d3.select(this)
+        select(this)
           .select('circle')
           .transition()
           .duration(TRANSITION_DURATION)
