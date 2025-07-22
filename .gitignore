@@ -35,5 +35,5 @@ screenshot-comparisons
 playwright-report
 test-results
 
-# Panda CSS
-styled-system
+# Panda CSS (keeping styled-system committed for Cloudflare Pages)
+# styled-system
