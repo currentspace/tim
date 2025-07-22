@@ -6,6 +6,7 @@ import { COUNTRY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './CountryExposure.css'
 import '../styles/timeline-slider.css'
+import Layout from './Layout'
 import '../styles/timeline-slider.css'
 import { select, scaleSqrt, max } from 'd3'
 import type { Selection } from 'd3'
@@ -269,63 +270,76 @@ function CountryExposure() {
   }, [])
 
   return (
-    <div className="country-exposure">
-      <div className="current-view">
-        <h3>Current View</h3>
-        <p className="view-subtitle">Percentage Share</p>
-        <div className="company-info">
-          <span>Company: </span>
-          <select
-            value={selectedCompany}
-            onChange={(e) => {
-              setSelectedCompany(e.target.value)
-            }}
-            className="company-select-inline"
-          >
-            <option value="all">All Companies</option>
-            {techCompanies.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
+    <Layout
+      showBackButton
+      currentView="Percentage Share"
+      toggleOptions={{
+        left: 'Percentage',
+        right: 'Dollar Volume',
+        current: 'left',
+        onToggle: () => {
+          // Toggle functionality to be implemented
+        },
+      }}
+    >
+      <div className="country-exposure">
+        <div className="current-view">
+          <h3>Current View</h3>
+          <p className="view-subtitle">Percentage Share</p>
+          <div className="company-info">
+            <span>Company: </span>
+            <select
+              value={selectedCompany}
+              onChange={(e) => {
+                setSelectedCompany(e.target.value)
+              }}
+              className="company-select-inline"
+            >
+              <option value="all">All Companies</option>
+              {techCompanies.map((company) => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="total-display">
+            Total: ${Math.round(exposureData.reduce((sum, d) => sum + d.totalRevenue, 0) / 1e6)}M
+          </p>
         </div>
-        <p className="total-display">
-          Total: ${Math.round(exposureData.reduce((sum, d) => sum + d.totalRevenue, 0) / 1e6)}M
-        </p>
-      </div>
 
-      <div className="visualization-container">
-        <svg ref={svgRefCallback} data-testid="country-exposure-svg"></svg>
-      </div>
+        <div className="visualization-container">
+          <svg ref={svgRefCallback} data-testid="country-exposure-svg"></svg>
+        </div>
 
-      <div className="timeline-container">
-        <h3>Timeline</h3>
-        <div className="timeline-wrapper">
-          <input
-            id="date-slider"
-            type="range"
-            aria-label="Date slider"
-            min={dateRange.start.getTime()}
-            max={dateRange.end.getTime()}
-            value={selectedDate.getTime()}
-            onChange={(e) => {
-              setSelectedDate(new Date(parseInt(e.target.value)))
-            }}
-            className="timeline-slider"
-          />
-          <div className="timeline-labels">
-            <span>Jan 2025</span>
-            <span>Jul 2025</span>
-            <span>Jan 2026</span>
-            <span>Dec 2026</span>
+        <div className="timeline-container">
+          <h3>Timeline</h3>
+          <div className="timeline-wrapper">
+            <input
+              id="date-slider"
+              type="range"
+              aria-label="Date slider"
+              min={dateRange.start.getTime()}
+              max={dateRange.end.getTime()}
+              value={selectedDate.getTime()}
+              onChange={(e) => {
+                setSelectedDate(new Date(parseInt(e.target.value)))
+              }}
+              className="timeline-slider"
+            />
+            <div className="timeline-labels">
+              <span>Jan 2025</span>
+              <span>Jul 2025</span>
+              <span>Jan 2026</span>
+              <span>Dec 2026</span>
+            </div>
+          </div>
+          <div className="timeline-info">
+            <span>Legend</span>
           </div>
         </div>
-        <div className="timeline-info">
-          <span>Legend</span>
-        </div>
       </div>
-    </div>
+    </Layout>
   )
 }
 

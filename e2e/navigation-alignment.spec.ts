@@ -1,5 +1,5 @@
+/* eslint-disable no-console */
 import { test, expect } from '@playwright/test'
-import path from 'path'
 
 test.describe('Navigation Alignment', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +15,7 @@ test.describe('Navigation Alignment', () => {
     await page.waitForSelector('.top-navigation', { state: 'visible' })
 
     // Capture just the navigation header
-    const navigation = await page.locator('.top-navigation')
+    const navigation = page.locator('.top-navigation')
     await navigation.screenshot({
       path: 'navigation-comparison/current-navigation.png',
     })
@@ -40,7 +40,7 @@ test.describe('Navigation Alignment', () => {
       await page.waitForLoadState('networkidle')
       await page.waitForSelector('.top-navigation', { state: 'visible' })
 
-      const navigation = await page.locator('.top-navigation')
+      const navigation = page.locator('.top-navigation')
       await navigation.screenshot({
         path: `navigation-comparison/${route.name}-navigation.png`,
       })

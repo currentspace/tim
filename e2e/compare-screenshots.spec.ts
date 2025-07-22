@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test'
+/* eslint-disable no-console */
+import { test } from '@playwright/test'
 import { readdir } from 'fs/promises'
-import { join } from 'path'
 
 // Map visualization names to their corresponding design images
 const designImageMap: Record<string, string[]> = {
@@ -15,19 +15,21 @@ const designImageMap: Record<string, string[]> = {
 test.describe('Visual regression tests', () => {
   test('list available design images', async () => {
     const designImages = await readdir('figma')
-    console.log('Available design images:')
-    designImages.forEach((img) => console.log(`  - ${img}`))
+    // Available design images
+    designImages.forEach((img: string) => {
+      console.log(`  - ${img}`)
+    })
   })
 
   for (const [vizName, designImages] of Object.entries(designImageMap)) {
     if (designImages.length > 0) {
-      test(`compare ${vizName} with design`, async ({ page }) => {
+      test(`compare ${vizName} with design`, () => {
         // This test assumes screenshots have already been captured
         // You can use Playwright's visual comparison features here
         // For now, we'll just log what would be compared
 
-        console.log(`Would compare:`)
-        console.log(`  Captured: screenshots/${vizName}-component.png`)
+        // Would compare:
+        // Captured: screenshots/${vizName}-component.png
         console.log(`  Design: figma/${designImages[0]}`)
 
         // Example of how to do visual comparison (requires reference images):

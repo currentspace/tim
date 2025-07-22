@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import { test } from '@playwright/test'
-import path from 'path'
+import { join } from 'path'
 
 test.describe('Visual Navigation Check', () => {
   test('compare navigation with all design mockups', async ({ page }) => {
@@ -109,7 +110,7 @@ test.describe('Visual Navigation Check', () => {
           <div class="comparison-container">
             <div class="panel">
               <div class="panel-label">Design Mockup</div>
-              <img src="file://${path.join(process.cwd(), 'figma', mockup.file)}" alt="Design">
+              <img src="file://${join(process.cwd(), 'figma', mockup.file)}" alt="Design">
             </div>
             <div class="panel">
               <div class="panel-label">Current Implementation</div>
@@ -147,8 +148,10 @@ test.describe('Visual Navigation Check', () => {
     console.log('\n=== Navigation Analysis ===')
 
     // Check current implementation details
-    const navHeight = await navigation.evaluate((el) => el.offsetHeight)
-    console.log(`Navigation height: ${navHeight}px (Design: ~80px)`)
+    const navHeight = await navigation.evaluate((el) => {
+      return (el as HTMLElement).offsetHeight
+    })
+    console.log(`Navigation height: ${String(navHeight)}px (Design: ~80px)`)
 
     // Check badge
     const badge = navigation.locator('.tab-badge')
@@ -163,7 +166,7 @@ test.describe('Visual Navigation Check', () => {
       }
     })
     console.log('\nBadge details:')
-    console.log(`- Text: "${badgeText}"`)
+    console.log(`- Text: "${badgeText ?? 'null'}"`)
     console.log(`- Background: ${badgeStyles.background}`)
     console.log(`- Padding: ${badgeStyles.padding}`)
     console.log(`- Font size: ${badgeStyles.fontSize}`)
@@ -173,8 +176,8 @@ test.describe('Visual Navigation Check', () => {
     const companyName = await navigation.locator('.company-name').textContent()
     const companySubtitle = await navigation.locator('.company-subtitle').textContent()
     console.log('\nCompany branding:')
-    console.log(`- Name: "${companyName}"`)
-    console.log(`- Subtitle: "${companySubtitle}"`)
+    console.log(`- Name: "${companyName ?? 'null'}"`)
+    console.log(`- Subtitle: "${companySubtitle ?? 'null'}"`)
 
     // Differences from design
     console.log('\n=== Key Differences from Design ===')

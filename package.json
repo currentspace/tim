@@ -18,7 +18,7 @@
     "screenshots": "playwright test e2e/capture-only.spec.ts",
     "screenshots:ui": "playwright test e2e/capture-only.spec.ts --ui",
     "screenshots:compare": "tsx e2e/utils/organize-comparisons.ts",
-    "screenshots:all": "node e2e/utils/run-comparisons.mjs",
+    "screenshots:all": "tsx e2e/utils/run-comparisons.ts",
     "screenshots:test": "playwright test e2e/capture-and-compare.spec.ts"
   },
   "keywords": [],
@@ -38,6 +38,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.0.15",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.11.0",

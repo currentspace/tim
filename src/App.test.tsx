@@ -1,59 +1,53 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import { RouterProvider } from '@tanstack/react-router'
-import { createRouter, createMemoryHistory } from '@tanstack/react-router'
-import { routeTree } from './routes'
-
-// Create a test router with the route tree
-function createTestRouter(initialPath = '/') {
-  const memoryHistory = createMemoryHistory({
-    initialEntries: [initialPath],
-  })
-
-  return createRouter({
-    routeTree,
-    history: memoryHistory,
-  })
-}
+import { it, expect, describe } from 'vitest'
+import { screen } from '@testing-library/react'
+import { renderWithRouter } from './test/testRouter'
 
 describe('App', () => {
-  it('renders the app container', async () => {
-    const router = createTestRouter()
-    const { container } = render(<RouterProvider router={router} />)
+  it('renders without crashing', async () => {
+    await renderWithRouter()
 
-    await waitFor(() => {
-      expect(container.querySelector('.app-no-sidebar')).toBeInTheDocument()
-    })
+    // Check for company branding - there are multiple instances
+    const companyNames = screen.getAllByText('Staples Technology Solutions')
+    expect(companyNames.length).toBeGreaterThan(0)
   })
 
-  it('renders default view (Anticipated Tariff Impact)', async () => {
-    const router = createTestRouter()
-    render(<RouterProvider router={router} />)
+  it('renders the navigation', async () => {
+    await renderWithRouter()
 
-    await waitFor(() => {
-      // Check for the main navigation element
-      expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
-      // Check that we're on the tariff impact view
-      expect(screen.getByText('Current View')).toBeInTheDocument()
-    })
+    // Check for company branding - there are multiple instances
+    const companyNames = screen.getAllByText('Staples Technology Solutions')
+    expect(companyNames.length).toBeGreaterThan(0)
+    const dashboards = screen.getAllByText('TIM Dashboard')
+    expect(dashboards.length).toBeGreaterThan(0)
   })
 
-  it('has the correct initial view', async () => {
-    const router = createTestRouter()
-    render(<RouterProvider router={router} />)
+  it('renders the main navigation links', async () => {
+    await renderWithRouter()
 
-    await waitFor(() => {
-      // Check for elements specific to AnticipatedTariffImpact
-      expect(screen.getByText('Current View')).toBeInTheDocument()
-      // Use getAllByText since this text appears in multiple places
-      const tariffElements = screen.getAllByText('Tariff Exposure & Rate')
-      expect(tariffElements.length).toBeGreaterThan(0)
-      expect(screen.getByText('TIMELINE')).toBeInTheDocument()
-    })
+    // Check for navigation links
+    expect(screen.getByText('Anticipated Tariff Impact')).toBeInTheDocument()
+    expect(screen.getByText('Country Exposure')).toBeInTheDocument()
+    expect(screen.getByText('Company Timeline')).toBeInTheDocument()
+    expect(screen.getByText('Country Timeline')).toBeInTheDocument()
+    expect(screen.getByText('Startup Universe')).toBeInTheDocument()
+    expect(screen.getByText('Notifications')).toBeInTheDocument()
   })
 
-  it('renders without errors', () => {
-    const router = createTestRouter()
-    expect(() => render(<RouterProvider router={router} />)).not.toThrow()
+  it('renders the badge', async () => {
+    await renderWithRouter()
+
+    // The default badge should be ANTICIPATED - appears multiple times
+    const badges = screen.getAllByText('ANTICIPATED')
+    expect(badges.length).toBeGreaterThan(0)
+  })
+
+  it('renders the anticipated tariff view by default', async () => {
+    await renderWithRouter()
+
+    // Check for elements specific to AnticipatedTariffImpact
+    expect(screen.getByText('Current View')).toBeInTheDocument()
+    // Use getAllByText since this text appears in multiple places
+    const tariffElements = screen.getAllByText('Tariff Exposure & Rate')
+    expect(tariffElements.length).toBeGreaterThan(0)
   })
 })

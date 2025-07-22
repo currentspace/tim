@@ -1,5 +1,6 @@
-import { test, expect } from '@playwright/test'
-import path from 'path'
+/* eslint-disable no-console */
+import { test } from '@playwright/test'
+import { join } from 'path'
 
 test.describe('Comprehensive UI Alignment', () => {
   const mockups = [
@@ -64,11 +65,11 @@ test.describe('Comprehensive UI Alignment', () => {
         console.log(`\n${category}:`)
         for (const item of items) {
           try {
-            const element = await page.locator(`text="${item}"`).first()
+            const element = page.locator(`text="${String(item)}"`).first()
             const isVisible = await element.isVisible()
-            console.log(`  ✓ "${item}" - ${isVisible ? 'Found' : 'NOT FOUND'}`)
+            console.log(`  ✓ "${String(item)}" - ${isVisible ? 'Found' : 'NOT FOUND'}`)
           } catch {
-            console.log(`  ✗ "${item}" - NOT FOUND`)
+            console.log(`  ✗ "${String(item)}" - NOT FOUND`)
           }
         }
       }
@@ -77,24 +78,26 @@ test.describe('Comprehensive UI Alignment', () => {
       console.log('\nLayout Analysis:')
 
       // Check header
-      const header = await page.locator('.top-navigation')
+      const header = page.locator('.top-navigation')
       if (await header.isVisible()) {
-        const headerHeight = await header.evaluate((el) => el.offsetHeight)
-        console.log(`- Header height: ${headerHeight}px`)
+        const headerHeight = await header.evaluate((el) => {
+          return (el as HTMLElement).offsetHeight
+        })
+        console.log(`- Header height: ${String(headerHeight)}px`)
       }
 
       // Check main content area
-      const mainContent = await page.locator('.app-content > div').first()
+      const mainContent = page.locator('.app-content > div').first()
       if (await mainContent.isVisible()) {
         const contentClass = await mainContent.getAttribute('class')
-        console.log(`- Main content class: ${contentClass}`)
+        console.log(`- Main content class: ${contentClass ?? 'null'}`)
       }
 
       // Check for visualization
-      const svg = await page.locator('svg').first()
+      const svg = page.locator('svg').first()
       if (await svg.isVisible()) {
         const viewBox = await svg.getAttribute('viewBox')
-        console.log(`- SVG viewBox: ${viewBox}`)
+        console.log(`- SVG viewBox: ${viewBox ?? 'null'}`)
       }
     })
   }
@@ -202,7 +205,7 @@ test.describe('Comprehensive UI Alignment', () => {
           <div class="comparison-container">
             <div class="panel">
               <div class="panel-label">Design Mockup</div>
-              <img src="file://${path.join(process.cwd(), 'figma', mockup.designFile)}" alt="Design">
+              <img src="file://${join(process.cwd(), 'figma', mockup.designFile)}" alt="Design">
             </div>
             <div class="panel">
               <div class="panel-label">Current Implementation</div>
@@ -285,7 +288,7 @@ test.describe('Comprehensive UI Alignment', () => {
 
       // Measure key elements
       const measurements = await page.evaluate(() => {
-        const results: any = {}
+        const results: Record<string, unknown> = {}
 
         // Header
         const header = document.querySelector('.top-navigation')

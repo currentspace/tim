@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-
+/* eslint-disable no-console */
 import { readdir, rename } from 'fs/promises'
 import { join } from 'path'
 
@@ -30,14 +29,16 @@ async function renameFigmaFiles() {
         await rename(oldPath, newPath)
         console.log(`✓ Renamed: ${oldFile} → ${newName}`)
       } catch (err) {
-        console.error(`✗ Failed to rename ${oldFile}: ${err.message}`)
+        console.error(`✗ Failed to rename ${oldFile}: ${String((err as Error).message)}`)
       }
     }
   }
 
   console.log('\nFinal file listing:')
   const finalFiles = await readdir(figmaDir)
-  finalFiles.forEach((f) => console.log(`  - ${f}`))
+  finalFiles.forEach((f) => {
+    console.log(`  - ${f}`)
+  })
 }
 
 renameFigmaFiles().catch(console.error)
