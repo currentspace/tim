@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import { afterEach } from 'vitest'
 import { resetNetworkDataCache } from '../data/networkDataProvider'
-import { resetNetworkDataResource } from '../utils/testUtils'
 import { configure } from '@testing-library/react'
 
 // Configure React Testing Library for React 19
@@ -62,5 +61,4 @@ globalThis.ResizeObserver = class ResizeObserver {
 // Reset data cache between tests
 afterEach(() => {
   resetNetworkDataCache()
-  resetNetworkDataResource()
 })
