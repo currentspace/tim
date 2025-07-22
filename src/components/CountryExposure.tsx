@@ -120,7 +120,7 @@ class CountryExposureVisualization {
       // Start from center (0, 0) for all lines
       const startX = 0
       const startY = 0
-      
+
       // Create curved leader line path from center to legend
       const midX = (legendX - this.centerX) / 2
       const path = `M ${String(startX)} ${String(startY)} Q ${String(midX)} ${String(startY)}, ${String(legendX - this.centerX)} ${String(endY)}`
