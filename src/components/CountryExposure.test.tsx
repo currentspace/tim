@@ -52,10 +52,6 @@ describe('CountryExposure', () => {
   it('displays the main components', () => {
     render(<CountryExposure />)
 
-    // Check main header elements
-    expect(screen.getByText('Staples Technology Solutions')).toBeInTheDocument()
-    expect(screen.getByText('HP TIM Dashboard')).toBeInTheDocument()
-
     // Check current view section
     expect(screen.getByText('Current View')).toBeInTheDocument()
     // Use getAllByText since "Percentage Share" appears multiple times
@@ -66,15 +62,11 @@ describe('CountryExposure', () => {
     expect(screen.getByText('Timeline')).toBeInTheDocument()
   })
 
-  it('displays navigation buttons', () => {
+  it('displays company selector', () => {
     render(<CountryExposure />)
-    expect(screen.getByText('← Back to Tariff View')).toBeInTheDocument()
-    const dollarVolumeButtons = screen.getAllByText('Dollar Volume')
-    expect(dollarVolumeButtons.length).toBeGreaterThan(0)
-    // Check for active button
-    const buttons = screen.getAllByRole('button')
-    const activeButton = buttons.find((btn) => btn.classList.contains('active'))
-    expect(activeButton).toBeInTheDocument()
+    expect(screen.getByText('Company:')).toBeInTheDocument()
+    const selector = screen.getByRole('combobox')
+    expect(selector).toBeInTheDocument()
   })
 
   it('renders company selector', () => {
@@ -145,7 +137,6 @@ describe('CountryExposure', () => {
     const { container } = render(<CountryExposure />)
 
     expect(container.querySelector('.country-exposure')).toBeInTheDocument()
-    expect(container.querySelector('.header')).toBeInTheDocument()
     expect(container.querySelector('.current-view')).toBeInTheDocument()
     expect(container.querySelector('.visualization-container')).toBeInTheDocument()
     expect(container.querySelector('.timeline-container')).toBeInTheDocument()
@@ -184,8 +175,10 @@ describe('CountryExposure', () => {
 
   it('displays view subtitle', () => {
     render(<CountryExposure />)
-    const subtitle = screen.getByText('Percentage Share', { selector: '.view-subtitle' })
-    expect(subtitle).toBeInTheDocument()
+    // Get all instances and find the one with the right class
+    const subtitles = screen.getAllByText('Percentage Share')
+    const viewSubtitle = subtitles.find((el) => el.classList.contains('view-subtitle'))
+    expect(viewSubtitle).toBeInTheDocument()
   })
 
   it('shows company info section', () => {
@@ -202,13 +195,9 @@ describe('CountryExposure', () => {
     expect(timelineInfo?.textContent).toContain('Legend')
   })
 
-  it('navigation controls have proper structure', () => {
+  it('displays current view information', () => {
     const { container } = render(<CountryExposure />)
-    const navControls = container.querySelector('.navigation-controls')
-    expect(navControls).toBeInTheDocument()
-
-    // Should have multiple buttons
-    const buttons = navControls?.querySelectorAll('.nav-button')
-    expect(buttons?.length).toBeGreaterThan(0)
+    const currentView = container.querySelector('.current-view')
+    expect(currentView).toBeInTheDocument()
   })
 })

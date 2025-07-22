@@ -265,20 +265,6 @@ function CountryExposure() {
 
   return (
     <div className="country-exposure">
-      <div className="header">
-        <div className="header-top">
-          <div className="navigation-controls">
-            <button className="nav-button">← Back to Tariff View</button>
-            <span className="percentage-share">Percentage Share</span>
-            <button className="nav-button active">Dollar Volume</button>
-          </div>
-          <div className="company-title">
-            <h2>Staples Technology Solutions</h2>
-            <p>HP TIM Dashboard</p>
-          </div>
-        </div>
-      </div>
-
       <div className="current-view">
         <h3>Current View</h3>
         <p className="view-subtitle">Percentage Share</p>
