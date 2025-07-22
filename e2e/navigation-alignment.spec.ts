@@ -192,7 +192,7 @@ test.describe('Visual Comparison with Design', () => {
           <div class="comparison-item">
             <div class="comparison-header">Design Mockup</div>
             <div class="comparison-content">
-              <img src="file:///Users/brianmeek/scratch/charles/src/images/Screenshot 2025-07-21 at 12.05.50 PM.png" alt="Design">
+              <img src="file:///Users/brianmeek/scratch/charles/figma/Screenshot 2025-07-21 at 12.05.50 PM.png" alt="Design">
             </div>
           </div>
           <div class="comparison-item">

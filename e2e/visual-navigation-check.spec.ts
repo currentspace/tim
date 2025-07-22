@@ -109,7 +109,7 @@ test.describe('Visual Navigation Check', () => {
           <div class="comparison-container">
             <div class="panel">
               <div class="panel-label">Design Mockup</div>
-              <img src="file://${path.join(process.cwd(), 'src/images', mockup.file)}" alt="Design">
+              <img src="file://${path.join(process.cwd(), 'figma', mockup.file)}" alt="Design">
             </div>
             <div class="panel">
               <div class="panel-label">Current Implementation</div>

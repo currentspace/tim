@@ -76,7 +76,7 @@ function App() {
           <div className="navigation-center">
             <nav className="main-navigation">
               <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-                Anticipated Tariff
+                Anticipated Tariff Impact
               </Link>
               <Link
                 to="/country-exposure"

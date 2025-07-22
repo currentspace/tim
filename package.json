@@ -15,9 +15,11 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:ci": "vitest run",
-    "screenshots": "playwright test capture-screenshots.spec.ts",
-    "screenshots:ui": "playwright test capture-screenshots.spec.ts --ui",
-    "screenshots:compare": "tsx scripts/organize-screenshots.ts"
+    "screenshots": "playwright test e2e/capture-only.spec.ts",
+    "screenshots:ui": "playwright test e2e/capture-only.spec.ts --ui",
+    "screenshots:compare": "tsx e2e/utils/organize-comparisons.ts",
+    "screenshots:all": "node e2e/utils/run-comparisons.mjs",
+    "screenshots:test": "playwright test e2e/capture-and-compare.spec.ts"
   },
   "keywords": [],
   "author": "",

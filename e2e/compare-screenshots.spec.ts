@@ -14,7 +14,7 @@ const designImageMap: Record<string, string[]> = {
 
 test.describe('Visual regression tests', () => {
   test('list available design images', async () => {
-    const designImages = await readdir('src/images')
+    const designImages = await readdir('figma')
     console.log('Available design images:')
     designImages.forEach((img) => console.log(`  - ${img}`))
   })
@@ -28,7 +28,7 @@ test.describe('Visual regression tests', () => {
 
         console.log(`Would compare:`)
         console.log(`  Captured: screenshots/${vizName}-component.png`)
-        console.log(`  Design: src/images/${designImages[0]}`)
+        console.log(`  Design: figma/${designImages[0]}`)
 
         // Example of how to do visual comparison (requires reference images):
         // await expect(page).toHaveScreenshot(`${vizName}.png`, {

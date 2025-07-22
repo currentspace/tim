@@ -47,7 +47,7 @@ test.describe('Capture Screenshots', () => {
       console.log(`Capturing ${viz.name}...`)
 
       // Click on the navigation item
-      await page.click(`button:has-text("${viz.navText}")`)
+      await page.click(`a:has-text("${viz.navText}")`)
 
       // Wait for content to load and animations to complete
       await page.waitForTimeout(4000)

@@ -78,7 +78,7 @@ charles/
 │   └── [visualization-name]/      # Per-visualization comparisons
 │       ├── captured.png
 │       └── design.png
-└── src/images/                    # Original design images
+└── figma/                    # Original design images
 ```
 
 ## Troubleshooting

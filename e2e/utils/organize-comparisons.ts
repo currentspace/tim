@@ -6,38 +6,38 @@ import { existsSync } from 'fs'
 
 const screenshotsDir = 'screenshots'
 const comparisonDir = 'screenshot-comparisons'
-const designImagesDir = 'src/images'
+const designImagesDir = 'figma'
 
 // Map captured screenshots to design images for comparison
 const comparisonMap = [
   {
     captured: 'anticipated-tariff-impact-component.png',
-    design: 'anticipated.png',
+    design: 'anticipated_tariff_impact.png',
     name: 'Anticipated Tariff Impact',
   },
   {
     captured: 'country-exposure-component.png',
-    design: 'exposure.png',
+    design: 'country_exposure.png',
     name: 'Country Exposure',
   },
   {
-    captured: 'tariff-rate-timeline-component.png',
-    design: 'Screenshot 2025-07-21 at 12.06.07 PM.png',
-    name: 'Tariff Rate Timeline',
+    captured: 'company-timeline-component.png',
+    design: 'tariff_timeline.png', // Line chart timeline
+    name: 'Company Timeline',
   },
   {
-    captured: 'country-tariff-timeline-component.png',
-    design: 'company_timeline.png',
-    name: 'Country Tariff Timeline',
+    captured: 'country-timeline-component.png',
+    design: 'country_timeline.png',
+    name: 'Country Timeline',
   },
   {
     captured: 'startup-universe-component.png',
-    design: 'Screenshot 2025-07-21 at 12.05.50 PM.png',
+    design: 'startup_universe.png', // Note: No Figma design available
     name: 'Startup Universe',
   },
 ]
 
-async function organizeScreenshots() {
+export async function organizeScreenshots() {
   console.log('Organizing screenshots for comparison...\n')
 
   // Create comparison directory structure
@@ -61,6 +61,11 @@ async function organizeScreenshots() {
       console.log(`✓ Copied design image for ${item.name}`)
     } else {
       console.log(`✗ Missing design image: ${designPath}`)
+      // Create a placeholder text file for missing designs
+      await writeFile(
+        join(vizDir, 'design-missing.txt'),
+        `No Figma design available for ${item.name}\nExpected file: ${item.design}`,
+      )
     }
 
     console.log(`  → Comparison folder: ${vizDir}\n`)
@@ -134,5 +139,7 @@ async function organizeScreenshots() {
   console.log('\nTo view comparisons, open the index.html file in your browser.')
 }
 
-// Run the script
-organizeScreenshots().catch(console.error)
+// Run the script if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  organizeScreenshots().catch(console.error)
+}
