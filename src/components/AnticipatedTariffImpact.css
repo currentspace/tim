@@ -1,6 +1,5 @@
 .anticipated-tariff-impact {
-  background: var(--color-paper);
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   padding: 0;
   margin: 0;
   display: flex;
@@ -126,11 +125,15 @@ input:checked + .slider:before {
 }
 
 .current-view {
-  background: var(--color-paper);
-  padding: 2rem 3rem;
-  border-bottom: none;
-  margin-left: 3rem;
-  margin-top: 2rem;
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+  min-width: 180px;
 }
 
 .current-view h3 {
@@ -160,8 +163,8 @@ input:checked + .slider:before {
 }
 
 .visualization-container {
-  background: var(--color-paper);
-  padding: 0;
+  background: white;
+  padding: 2rem;
   margin: 0;
   flex: 1;
   position: relative;
@@ -172,7 +175,7 @@ input:checked + .slider:before {
 
 .visualization-container svg {
   width: 100%;
-  background: white;
+  background: transparent;
 }
 
 .legend {
@@ -227,9 +230,9 @@ input:checked + .slider:before {
 }
 
 .timeline-container {
-  background: var(--color-paper);
+  background: white;
   padding: 2rem 3rem 3rem;
-  border-top: none;
+  border-top: 1px solid #e0e0e0;
   position: relative;
 }
 

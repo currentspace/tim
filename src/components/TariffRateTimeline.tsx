@@ -5,6 +5,7 @@ import { COMPANY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './TariffRateTimeline.css'
 import '../styles/timeline-slider.css'
+import Layout from './Layout'
 import '../styles/timeline-slider.css'
 import {
   select,
@@ -389,38 +390,40 @@ function TariffRateTimeline() {
   }, [selectedDate, displayCompanies])
 
   return (
-    <div className="tariff-rate-timeline">
-      <div className="chart-header">
-        <h3>Tariff Rate Increases Over Time</h3>
-      </div>
+    <Layout currentView="Timeline" badge="TIMELINE">
+      <div className="tariff-rate-timeline">
+        <div className="chart-header">
+          <h3>Tariff Rate Increases Over Time</h3>
+        </div>
 
-      <div className="visualization-container">
-        <svg ref={svgRef} data-testid="tariff-timeline-svg"></svg>
-      </div>
+        <div className="visualization-container">
+          <svg ref={svgRef} data-testid="tariff-timeline-svg"></svg>
+        </div>
 
-      <div className="timeline-container">
-        <h3 className="timeline-title">Timeline</h3>
-        <div className="timeline-wrapper">
-          <input
-            id="timeline-slider"
-            type="range"
-            min={new Date('2025-01-01').getTime()}
-            max={new Date('2026-01-01').getTime()}
-            value={selectedDate.getTime()}
-            onChange={(e) => {
-              setSelectedDate(new Date(parseInt(e.target.value)))
-            }}
-            className="timeline-slider"
-            aria-label="Timeline slider"
-          />
-          <div className="timeline-labels">
-            <span>Jan 2025</span>
-            <span>Jul 2025</span>
-            <span>Jan 2026</span>
+        <div className="timeline-container">
+          <h3 className="timeline-title">Timeline</h3>
+          <div className="timeline-wrapper">
+            <input
+              id="timeline-slider"
+              type="range"
+              min={new Date('2025-01-01').getTime()}
+              max={new Date('2026-01-01').getTime()}
+              value={selectedDate.getTime()}
+              onChange={(e) => {
+                setSelectedDate(new Date(parseInt(e.target.value)))
+              }}
+              className="timeline-slider"
+              aria-label="Timeline slider"
+            />
+            <div className="timeline-labels">
+              <span>Jan 2025</span>
+              <span>Jul 2025</span>
+              <span>Jan 2026</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   )
 }
 
