@@ -260,8 +260,9 @@ function AnticipatedTariffImpact() {
 
           popupContent
             .append('text')
-            .attr('x', 120)
+            .attr('x', popupWidth - 20)
             .attr('y', yPos)
+            .attr('text-anchor', 'end')
             .style('font-family', 'var(--font-data)')
             .style('font-size', '12px')
             .style('font-weight', '600')
