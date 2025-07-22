@@ -49,11 +49,9 @@ function AnticipatedTariffImpact() {
     [selectedDate],
   )
 
-  // Filter to show only specific companies and calculate percentages
+  // Show all companies with tariff impact, sorted by impact percentage
   const companyData: CompanyData[] = useMemo(() => {
-    const targetCompanies = ['Canon', 'HP Inc.', 'Apple']
     return allImpacts
-      .filter((impact) => targetCompanies.includes(impact.company))
       .map((impact) => ({
         company: impact.company,
         baseRevenue: impact.baseRevenue,
@@ -61,7 +59,8 @@ function AnticipatedTariffImpact() {
         netRevenue: impact.netRevenue,
         impactPercentage: (impact.tariffImpact / impact.baseRevenue) * 100,
       }))
-    // Don't sort - maintain specific order for positioning
+      .filter((company) => company.impactPercentage > 0) // Only show companies with tariff impact
+      .sort((a, b) => b.impactPercentage - a.impactPercentage) // Sort by impact descending
   }, [allImpacts])
 
   // Create visualization
@@ -69,10 +68,10 @@ function AnticipatedTariffImpact() {
     if (!svgRef.current || companyData.length === 0) return
 
     const width = 800
-    const height = 400
-    const centerX = width / 2
-    const centerY = height / 2
-    const radius = 120
+    const height = 600
+    const leftMargin = 100
+    const topMargin = 50
+    const bubbleSpacing = 80
 
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
@@ -83,11 +82,11 @@ function AnticipatedTariffImpact() {
       .attr('height', height)
       .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
 
-    // Create radius scale based on impact percentage - smaller bubbles
+    // Create radius scale based on impact percentage
     const radiusScale = d3
       .scaleSqrt()
       .domain([0, d3.max(companyData, (d) => d.impactPercentage) ?? 0])
-      .range([40, 80])
+      .range([15, 40])
 
     // Get company colors
     const getCompanyColor = (companyName: string): string => {
@@ -98,33 +97,23 @@ function AnticipatedTariffImpact() {
       return '#888888'
     }
 
-    // Calculate positions for three bubbles in triangular arrangement
-    // Match the design mockup: Canon top, HP bottom left, Apple bottom right
-    const getPosition = (company: string) => {
-      // Adjust positioning to match design mockup exactly
-      const adjustedRadius = radius * 0.7 // Slightly tighter arrangement
-      switch (company) {
-        case 'Canon':
-        case 'Dell Technologies':
-          return { x: centerX, y: centerY - adjustedRadius * 0.8 } // Top
-        case 'HP Inc.':
-          return { x: centerX - adjustedRadius * 0.866, y: centerY + adjustedRadius * 0.5 } // Bottom left
-        case 'Apple':
-          return { x: centerX + adjustedRadius * 0.866, y: centerY + adjustedRadius * 0.5 } // Bottom right
-        default:
-          return { x: centerX, y: centerY }
+    // Calculate positions for vertical stack layout
+    const getPosition = (index: number) => {
+      return {
+        x: leftMargin,
+        y: topMargin + (index * bubbleSpacing)
       }
     }
 
-    // Create company groups with specific positioning
+    // Create company groups with vertical positioning
     const companyGroups = svg
       .selectAll('.company-bubble')
       .data(companyData)
       .enter()
       .append('g')
       .attr('class', 'company-bubble')
-      .attr('transform', (d) => {
-        const pos = getPosition(d.company)
+      .attr('transform', (d, i) => {
+        const pos = getPosition(i)
         return `translate(${String(pos.x)},${String(pos.y)})`
       })
 
@@ -134,21 +123,21 @@ function AnticipatedTariffImpact() {
       .attr('r', (d) => radiusScale(d.impactPercentage))
       .attr('fill', (d) => getCompanyColor(d.company))
       .attr('stroke', '#fff')
-      .attr('stroke-width', 3)
+      .attr('stroke-width', 2)
       .style('cursor', 'pointer')
       .style('opacity', 0.9)
 
-    // Add company names
+    // Add company names next to bubbles
     companyGroups
       .append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '-0.5em')
+      .attr('x', (d) => radiusScale(d.impactPercentage) + 15)
+      .attr('y', 0)
+      .attr('dy', '0.35em')
       .attr('class', 'company-name')
       .style('font-family', 'var(--font-heading)')
       .style('font-size', '14px')
-      .style('font-weight', '700')
-      .style('letter-spacing', '-0.01em')
-      .style('fill', '#fff')
+      .style('font-weight', '600')
+      .style('fill', '#333')
       .style('pointer-events', 'none')
       .text((d) => {
         if (d.company === 'HP Inc.') return 'HP'
@@ -156,56 +145,50 @@ function AnticipatedTariffImpact() {
         return d.company
       })
 
-    // Add impact percentage
+    // Add impact percentage next to company name
     companyGroups
       .append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '1.2em')
+      .attr('x', (d) => radiusScale(d.impactPercentage) + 80)
+      .attr('y', 0)
+      .attr('dy', '0.35em')
       .attr('class', 'impact-percentage')
       .style('font-family', 'var(--font-data)')
-      .style('font-size', '16px')
+      .style('font-size', '14px')
       .style('font-weight', '600')
       .style('font-variant-numeric', 'tabular-nums')
-      .style('fill', '#fff')
+      .style('fill', '#666')
       .style('pointer-events', 'none')
       .text((d) => `${d.impactPercentage.toFixed(1)}%`)
 
-    // Create dotted lines group (will be populated on hover)
-    svg.append('g').attr('class', 'dotted-lines')
-
-    // Create right panel for product breakdown - remove as it's not in the design
-    const rightPanel = svg
+    // Create popup group for product breakdown
+    const popup = svg
       .append('g')
-      .attr('class', 'right-panel')
-      .attr('transform', `translate(${String(width - 250)},${String(50)})`)
+      .attr('class', 'breakdown-popup')
       .style('opacity', 0)
-      .style('display', 'none')
+      .style('pointer-events', 'none')
 
-    // Add product breakdown title
-    rightPanel
-      .append('text')
-      .attr('class', 'breakdown-title')
-      .attr('x', 0)
-      .attr('y', 0)
-      .style('font-family', 'var(--font-heading)')
-      .style('font-size', '14px')
-      .style('font-weight', '600')
-      .style('fill', '#333')
+    // Popup background
+    const popupBg = popup
+      .append('rect')
+      .attr('class', 'popup-background')
+      .attr('rx', 8)
+      .style('fill', '#fff')
+      .style('stroke', '#ddd')
+      .style('stroke-width', 1)
+      .style('filter', 'drop-shadow(0 4px 12px rgba(0,0,0,0.1))')
 
-    // Add cumulative average
-    rightPanel
-      .append('text')
-      .attr('class', 'cumulative-avg')
-      .attr('x', 0)
-      .attr('y', 25)
-      .style('font-family', 'var(--font-data)')
-      .style('font-size', '20px')
-      .style('font-weight', '700')
-      .style('fill', '#333')
+    // Popup content group
+    const popupContent = popup
+      .append('g')
+      .attr('class', 'popup-content')
+      .attr('transform', 'translate(15,20)')
+
+    // Create callout line group
+    svg.append('g').attr('class', 'callout-line')
 
     // Add hover interactions
     companyGroups
-      .on('mouseenter', function (_event: MouseEvent, d: CompanyData) {
+      .on('mouseenter', function (_event: MouseEvent, d: CompanyData, i: number) {
         setHoveredCompany(d.company)
 
         // Highlight bubble
@@ -213,8 +196,94 @@ function AnticipatedTariffImpact() {
           .select('circle')
           .transition()
           .duration(TRANSITION_DURATION)
-          .attr('stroke-width', 5)
+          .attr('stroke-width', 3)
           .style('filter', 'brightness(1.1)')
+
+        // Get bubble position
+        const bubblePos = getPosition(i)
+        const bubbleRadius = radiusScale(d.impactPercentage)
+
+        // Show popup with product breakdown
+        const popupX = bubblePos.x + bubbleRadius + 50
+        const popupY = bubblePos.y - 80
+        const popupWidth = 250
+        const popupHeight = 160
+
+        // Position popup
+        popup
+          .attr('transform', `translate(${String(popupX)},${String(popupY)})`)
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .style('opacity', 1)
+
+        // Update popup background size
+        popupBg
+          .attr('width', popupWidth)
+          .attr('height', popupHeight)
+
+        // Clear existing popup content
+        popupContent.selectAll('*').remove()
+
+        // Add company title
+        popupContent
+          .append('text')
+          .attr('x', 0)
+          .attr('y', 0)
+          .style('font-family', 'var(--font-heading)')
+          .style('font-size', '16px')
+          .style('font-weight', '600')
+          .style('fill', '#333')
+          .text(d.company)
+
+        // Add impact details
+        const details = [
+          { label: 'Base Revenue:', value: `$${(d.baseRevenue / 1000000).toFixed(1)}M` },
+          { label: 'Tariff Impact:', value: `$${(d.tariffImpact / 1000000).toFixed(1)}M` },
+          { label: 'Net Revenue:', value: `$${(d.netRevenue / 1000000).toFixed(1)}M` },
+          { label: 'Impact Rate:', value: `${d.impactPercentage.toFixed(1)}%` }
+        ]
+
+        details.forEach((detail, idx) => {
+          const yPos = 25 + (idx * 25)
+          
+          popupContent
+            .append('text')
+            .attr('x', 0)
+            .attr('y', yPos)
+            .style('font-family', 'var(--font-data)')
+            .style('font-size', '12px')
+            .style('font-weight', '500')
+            .style('fill', '#666')
+            .text(detail.label)
+
+          popupContent
+            .append('text')
+            .attr('x', 120)
+            .attr('y', yPos)
+            .style('font-family', 'var(--font-data)')
+            .style('font-size', '12px')
+            .style('font-weight', '600')
+            .style('fill', '#333')
+            .text(detail.value)
+        })
+
+        // Draw callout line from bubble to popup
+        const calloutLine = svg.select('.callout-line')
+        calloutLine.selectAll('*').remove()
+
+        calloutLine
+          .append('line')
+          .attr('x1', bubblePos.x + bubbleRadius)
+          .attr('y1', bubblePos.y)
+          .attr('x2', popupX - 5)
+          .attr('y2', popupY + popupHeight / 2)
+          .style('stroke', '#999')
+          .style('stroke-width', 1)
+          .style('stroke-dasharray', '4,4')
+          .style('opacity', 0)
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .style('opacity', 0.6)
       })
       .on('mouseleave', function () {
         setHoveredCompany(null)
@@ -224,8 +293,23 @@ function AnticipatedTariffImpact() {
           .select('circle')
           .transition()
           .duration(TRANSITION_DURATION)
-          .attr('stroke-width', 3)
+          .attr('stroke-width', 2)
           .style('filter', 'none')
+
+        // Hide popup
+        popup
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .style('opacity', 0)
+
+        // Remove callout line
+        svg
+          .select('.callout-line')
+          .selectAll('*')
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .style('opacity', 0)
+          .remove()
       })
   }, [companyData, hoveredCompany])
 
