@@ -2,6 +2,20 @@ import { TechCompany } from '../types/tariff'
 
 export const techCompanies: TechCompany[] = [
   {
+    id: 'canon',
+    name: 'Canon',
+    revenue: 32000, // $32B estimate
+    headquarters: 'Japan',
+    primaryManufacturing: ['China', 'Vietnam', 'Japan'],
+    revenueByCountry: {
+      China: 35,
+      Vietnam: 20,
+      Japan: 30,
+      USA: 15,
+    },
+    category: 'hardware',
+  },
+  {
     id: 'apple',
     name: 'Apple',
     revenue: 383300, // $383.3B

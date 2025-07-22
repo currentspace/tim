@@ -49,7 +49,7 @@ function AnticipatedTariffImpact() {
     [selectedDate],
   )
 
-  // Show all companies with tariff impact, sorted by impact percentage
+  // Show top 3 companies with highest tariff impact to match Figma design
   const companyData: CompanyData[] = useMemo(() => {
     return allImpacts
       .map((impact) => ({
@@ -61,6 +61,7 @@ function AnticipatedTariffImpact() {
       }))
       .filter((company) => company.impactPercentage > 0) // Only show companies with tariff impact
       .sort((a, b) => b.impactPercentage - a.impactPercentage) // Sort by impact descending
+      .slice(0, 3) // Only show top 3 companies
   }, [allImpacts])
 
   // Create visualization
@@ -69,9 +70,9 @@ function AnticipatedTariffImpact() {
 
     const width = 800
     const height = 600
-    const leftMargin = 100
-    const topMargin = 50
-    const bubbleSpacing = 80
+    const leftMargin = 300
+    const topMargin = 150
+    const bubbleSpacing = 140
 
     // Clear previous content
     d3.select(svgRef.current).selectAll('*').remove()
@@ -82,11 +83,11 @@ function AnticipatedTariffImpact() {
       .attr('height', height)
       .attr('viewBox', `0 0 ${String(width)} ${String(height)}`)
 
-    // Create radius scale based on impact percentage
+    // Create radius scale based on impact percentage - larger circles to match Figma
     const radiusScale = d3
       .scaleSqrt()
       .domain([0, d3.max(companyData, (d) => d.impactPercentage) ?? 0])
-      .range([15, 40])
+      .range([40, 80])
 
     // Get company colors
     const getCompanyColor = (companyName: string): string => {
@@ -127,15 +128,16 @@ function AnticipatedTariffImpact() {
       .style('cursor', 'pointer')
       .style('opacity', 0.9)
 
-    // Add company names next to bubbles
+    // Add company names to the left of bubbles (to match Figma)
     companyGroups
       .append('text')
-      .attr('x', (d) => radiusScale(d.impactPercentage) + 15)
+      .attr('x', (d) => -radiusScale(d.impactPercentage) - 20)
       .attr('y', 0)
       .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
       .attr('class', 'company-name')
       .style('font-family', 'var(--font-heading)')
-      .style('font-size', '14px')
+      .style('font-size', '16px')
       .style('font-weight', '600')
       .style('fill', '#333')
       .style('pointer-events', 'none')
@@ -145,16 +147,17 @@ function AnticipatedTariffImpact() {
         return d.company
       })
 
-    // Add impact percentage next to company name
+    // Add impact percentage below company name
     companyGroups
       .append('text')
-      .attr('x', (d) => radiusScale(d.impactPercentage) + 80)
-      .attr('y', 0)
+      .attr('x', (d) => -radiusScale(d.impactPercentage) - 20)
+      .attr('y', 20)
       .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
       .attr('class', 'impact-percentage')
       .style('font-family', 'var(--font-data)')
       .style('font-size', '14px')
-      .style('font-weight', '600')
+      .style('font-weight', '400')
       .style('font-variant-numeric', 'tabular-nums')
       .style('fill', '#666')
       .style('pointer-events', 'none')
@@ -208,7 +211,7 @@ function AnticipatedTariffImpact() {
         const bubbleRadius = radiusScale(d.impactPercentage)
 
         // Show popup with product breakdown
-        const popupX = bubblePos.x + bubbleRadius + 50
+        const popupX = bubblePos.x + bubbleRadius + 80
         const popupY = bubblePos.y - 80
         const popupWidth = 250
         const popupHeight = 160
