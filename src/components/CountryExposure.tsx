@@ -127,7 +127,7 @@ class CountryExposureVisualization {
       const controlX = this.outerRadius + 40
       const endXRelative = legendX - this.centerX - 20
       const endYRelative = endY - this.centerY
-      
+
       const path = `M ${String(startX)} ${String(startY)} C ${String(controlX)} ${String(startY)}, ${String(endXRelative - 40)} ${String(endYRelative)}, ${String(endXRelative)} ${String(endYRelative)}`
 
       g.append('path')

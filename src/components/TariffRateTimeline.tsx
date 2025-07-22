@@ -28,10 +28,20 @@ function TariffRateTimeline() {
   // Select top companies to display (matching Figma design)
   const displayCompanies = useMemo(() => {
     const priorityCompanies = [
-      'apple', 'alphabet', 'canon', 'foxconn', 'dell', 'lenovo', 'microsoft',
-      'samsung', 'intel', 'cisco', 'tsmc', 'tencent'
+      'apple',
+      'alphabet',
+      'canon',
+      'foxconn',
+      'dell',
+      'lenovo',
+      'microsoft',
+      'samsung',
+      'intel',
+      'cisco',
+      'tsmc',
+      'tencent',
     ]
-    return techCompanies.filter(c => priorityCompanies.includes(c.id))
+    return techCompanies.filter((c) => priorityCompanies.includes(c.id))
   }, [])
 
   useEffect(() => {
