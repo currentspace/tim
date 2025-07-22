@@ -7,6 +7,8 @@ import { COMPANY_COLORS } from '../constants/colors'
 // Removed unused import - getProductBreakdown
 import { TRANSITION_DURATION } from '../utils/d3Utils'
 import './AnticipatedTariffImpact.css'
+import '../styles/timeline-slider.css'
+import '../styles/timeline-slider.css'
 
 interface CompanyData {
   company: string

@@ -6,6 +6,8 @@ import { getActiveTariffForDate } from '../utils/tariffCalculations'
 import { COUNTRY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './CountryExposure.css'
+import '../styles/timeline-slider.css'
+import '../styles/timeline-slider.css'
 
 interface ArcData {
   country: string
@@ -24,9 +26,9 @@ class CountryExposureVisualization {
   private tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown>
   private width = 900
   private height = 600
-  private centerX = 350
+  private centerX = 300
   private centerY = this.height / 2
-  private outerRadius = 200
+  private outerRadius = 180
 
   constructor(svgElement: SVGSVGElement) {
     this.svg = d3.select(svgElement)
@@ -109,10 +111,10 @@ class CountryExposureVisualization {
       .style('fill', '#333')
       .text(selectedCompany === 'HP Inc.' ? 'HP' : selectedCompany)
 
-    // Add leader lines and labels
-    const legendX = this.centerX + this.outerRadius + 100
-    const legendStartY = 80
-    const legendSpacing = 35
+    // Add legend on the right side
+    const legendX = this.width - 250
+    const legendStartY = 120
+    const legendSpacing = 30
 
     sortedData.forEach((d, i) => {
       const endY = legendStartY + i * legendSpacing
@@ -122,45 +124,48 @@ class CountryExposureVisualization {
       const startY = 0
 
       // Create curved leader line path from center to legend
-      const midX = (legendX - this.centerX) / 2
-      const path = `M ${String(startX)} ${String(startY)} Q ${String(midX)} ${String(startY)}, ${String(legendX - this.centerX)} ${String(endY)}`
+      const controlX = this.outerRadius + 40
+      const endXRelative = legendX - this.centerX - 20
+      const endYRelative = endY - this.centerY
+      
+      const path = `M ${String(startX)} ${String(startY)} C ${String(controlX)} ${String(startY)}, ${String(endXRelative - 40)} ${String(endYRelative)}, ${String(endXRelative)} ${String(endYRelative)}`
 
       g.append('path')
         .attr('d', path)
         .attr('fill', 'none')
-        .attr('stroke', '#666')
-        .attr('stroke-width', 1)
-        .style('opacity', 0.6)
+        .attr('stroke', '#999')
+        .attr('stroke-width', 1.5)
+        .style('opacity', 0.4)
 
       // Add colored dot
       this.svg
         .append('circle')
-        .attr('cx', legendX - 15)
-        .attr('cy', endY + this.centerY)
-        .attr('r', 6)
+        .attr('cx', legendX - 20)
+        .attr('cy', endY)
+        .attr('r', 5)
         .attr('fill', COUNTRY_COLORS[d.country] ?? '#888888')
 
       // Add country name
       this.svg
         .append('text')
-        .attr('x', legendX)
-        .attr('y', endY + this.centerY)
+        .attr('x', legendX - 5)
+        .attr('y', endY)
         .attr('dy', '0.32em')
         .style('font-family', 'var(--font-data)')
-        .style('font-size', '14px')
+        .style('font-size', '12px')
         .style('fill', '#333')
         .text(d.country)
 
       // Add revenue value
       this.svg
         .append('text')
-        .attr('x', legendX + 150)
-        .attr('y', endY + this.centerY)
+        .attr('x', this.width - 20)
+        .attr('y', endY)
         .attr('dy', '0.32em')
         .attr('text-anchor', 'end')
         .style('font-family', 'var(--font-data)')
-        .style('font-size', '14px')
-        .style('font-weight', '600')
+        .style('font-size', '12px')
+        .style('font-weight', '500')
         .style('fill', '#666')
         .text(`${String(Math.round(d.totalRevenue / 1e6))}M`)
     })

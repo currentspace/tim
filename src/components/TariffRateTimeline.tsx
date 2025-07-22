@@ -1,10 +1,12 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useMemo } from 'react'
 import * as d3 from 'd3'
 import { techCompanies } from '../data/techCompanies'
 import { tariffTimeline } from '../data/tariffSchedules'
 import { COMPANY_COLORS } from '../constants/colors'
 import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import './TariffRateTimeline.css'
+import '../styles/timeline-slider.css'
+import '../styles/timeline-slider.css'
 
 interface CompanyTimeSeries {
   company: string
@@ -21,14 +23,23 @@ function TariffRateTimeline() {
   const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> | null>(
     null,
   )
-  const [selectedDate, setSelectedDate] = useState(new Date('2025-05-01'))
+  const [selectedDate, setSelectedDate] = useState(new Date('2025-04-01'))
+
+  // Select top companies to display (matching Figma design)
+  const displayCompanies = useMemo(() => {
+    const priorityCompanies = [
+      'apple', 'alphabet', 'canon', 'foxconn', 'dell', 'lenovo', 'microsoft',
+      'samsung', 'intel', 'cisco', 'tsmc', 'tencent'
+    ]
+    return techCompanies.filter(c => priorityCompanies.includes(c.id))
+  }, [])
 
   useEffect(() => {
     if (!svgRef.current) return
 
     const width = 900
-    const height = 500
-    const margin = { top: 40, right: 200, bottom: 60, left: 60 }
+    const height = 480
+    const margin = { top: 20, right: 180, bottom: 100, left: 60 }
     const innerWidth = width - margin.left - margin.right
     const innerHeight = height - margin.top - margin.bottom
 
@@ -54,8 +65,8 @@ function TariffRateTimeline() {
     const minDate = d3.min(dates) ?? new Date('2025-01-01')
     const maxDate = d3.max(dates) ?? new Date('2026-01-01')
 
-    // Generate time series for each company
-    techCompanies.forEach((company) => {
+    // Generate time series for selected companies
+    displayCompanies.forEach((company) => {
       const values = tariffTimeline.map((schedule) => {
         let weightedRate = 0
 
@@ -160,7 +171,7 @@ function TariffRateTimeline() {
       .line<{ date: Date; rate: number }>()
       .x((d) => xScale(d.date))
       .y((d) => yScale(d.rate))
-      .curve(d3.curveMonotoneX)
+      .curve(d3.curveCatmullRom.alpha(0.5))
 
     // Draw lines
     const lines = g
@@ -172,8 +183,31 @@ function TariffRateTimeline() {
       .attr('d', (d) => line(d.values))
       .attr('fill', 'none')
       .attr('stroke', (d) => d.color)
-      .attr('stroke-width', 2)
-      .style('opacity', 0.8)
+      .attr('stroke-width', 2.5)
+      .style('opacity', 0.9)
+
+    // Add May 2025 vertical line
+    const mayDate = new Date('2025-05-01')
+    g.append('line')
+      .attr('class', 'may-2025-line')
+      .attr('x1', xScale(mayDate))
+      .attr('x2', xScale(mayDate))
+      .attr('y1', 0)
+      .attr('y2', innerHeight)
+      .attr('stroke', '#666')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '5,3')
+      .style('opacity', 0.6)
+
+    // Add May 2025 label
+    g.append('text')
+      .attr('x', xScale(mayDate))
+      .attr('y', -5)
+      .attr('text-anchor', 'middle')
+      .style('font-family', 'var(--font-data)')
+      .style('font-size', '11px')
+      .style('fill', '#666')
+      .text('May 2025')
 
     // Add dots at data points with hover interactions
     timeSeriesData.forEach((series) => {
@@ -184,14 +218,15 @@ function TariffRateTimeline() {
         .attr('class', `dot dot-${series.companyId}`)
         .attr('cx', (d) => xScale(d.date))
         .attr('cy', (d) => yScale(d.rate))
-        .attr('r', 4)
+        .attr('r', 3)
         .attr('fill', series.color)
         .attr('stroke', 'white')
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1.5)
         .style('cursor', 'pointer')
+        .style('opacity', 0)
         .on('mouseenter', function (event: MouseEvent, d) {
           // Enlarge dot on hover
-          d3.select(this).transition().duration(200).attr('r', 6)
+          d3.select(this).transition().duration(200).attr('r', 5).style('opacity', 1)
 
           // Show tooltip
           if (tooltipRef.current) {
@@ -205,7 +240,7 @@ function TariffRateTimeline() {
         })
         .on('mouseleave', function () {
           // Reset dot size
-          d3.select(this).transition().duration(200).attr('r', 4)
+          d3.select(this).transition().duration(200).attr('r', 3).style('opacity', 0)
 
           if (tooltipRef.current) {
             hideTooltip(tooltipRef.current)
@@ -220,22 +255,10 @@ function TariffRateTimeline() {
         })
     })
 
-    // Add vertical line for selected date
-    const selectedLine = g
-      .append('line')
-      .attr('class', 'selected-date-line')
-      .attr('y1', 0)
-      .attr('y2', innerHeight)
-      .attr('stroke', '#333')
-      .attr('stroke-width', 1)
-      .attr('stroke-dasharray', '4,2')
-      .style('opacity', 0.5)
+    // Remove selected date line - not shown in Figma design
 
-    // Update selected date line position
+    // Update legend values based on selected date
     const updateSelectedDate = (date: Date) => {
-      selectedLine.attr('x1', xScale(date)).attr('x2', xScale(date))
-
-      // Update legend values
       updateLegend(date)
     }
 
@@ -254,7 +277,7 @@ function TariffRateTimeline() {
       .style('font-size', '12px')
       .style('font-weight', '600')
       .style('fill', '#333')
-      .text(selectedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))
+      .text('Apr 2025')
 
     const legendItems = legend
       .selectAll('.legend-item')
@@ -313,21 +336,18 @@ function TariffRateTimeline() {
         return `${closestValue.rate.toFixed(1)}%`
       })
 
-      // Update legend title with selected date
-      legend
-        .select('text')
-        .text(date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))
+      // Keep legend title as Apr 2025 to match Figma
     }
 
     // Add hover interaction for lines
     legendItems
       .on('mouseenter', function (_, d) {
         // Highlight selected line
-        lines.style('opacity', 0.2)
+        lines.style('opacity', 0.3)
         lines
           .filter((line) => line.companyId === d.companyId)
           .style('opacity', 1)
-          .attr('stroke-width', 3)
+          .attr('stroke-width', 3.5)
 
         // Highlight dots for this line
         g.selectAll('.dot').style('opacity', 0.3)
@@ -335,29 +355,14 @@ function TariffRateTimeline() {
       })
       .on('mouseleave', function () {
         // Reset all lines and dots
-        lines.style('opacity', 0.8).attr('stroke-width', 2)
+        lines.style('opacity', 0.9).attr('stroke-width', 2.5)
         g.selectAll('.dot').style('opacity', 1)
       })
 
     // Initialize with selected date
     updateSelectedDate(selectedDate)
 
-    // Add interactive overlay for date selection
-    const overlay = g
-      .append('rect')
-      .attr('class', 'overlay')
-      .attr('width', innerWidth)
-      .attr('height', innerHeight)
-      .style('fill', 'none')
-      .style('pointer-events', 'all')
-      .style('cursor', 'crosshair')
-
-    overlay.on('mousemove click', function (event) {
-      const [mouseX] = d3.pointer(event)
-      const date = xScale.invert(mouseX)
-      setSelectedDate(date)
-      updateSelectedDate(date)
-    })
+    // Remove interactive overlay - keep chart static like Figma
 
     // Cleanup on unmount
     return () => {
@@ -366,7 +371,7 @@ function TariffRateTimeline() {
         tooltipRef.current = null
       }
     }
-  }, [selectedDate])
+  }, [selectedDate, displayCompanies])
 
   return (
     <div className="tariff-rate-timeline">
@@ -379,7 +384,7 @@ function TariffRateTimeline() {
       </div>
 
       <div className="timeline-container">
-        <h3>Timeline</h3>
+        <h3 className="timeline-title">Timeline</h3>
         <div className="timeline-wrapper">
           <input
             id="timeline-slider"
