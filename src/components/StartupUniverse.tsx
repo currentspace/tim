@@ -17,10 +17,10 @@ function NetworkVisualization({ dataLoader = getNetworkData }: NetworkVisualizat
   // React 19's use hook automatically handles Suspense
   const data = use(dataLoader())
 
-  const [linkDistance, setLinkDistance] = useState(150)
-  const [chargeStrength, setChargeStrength] = useState(-300)
-  const [collisionRadius, setCollisionRadius] = useState(30)
-  const [centerStrength, setCenterStrength] = useState(0.05)
+  const [linkDistance, setLinkDistance] = useState(100)
+  const [chargeStrength, setChargeStrength] = useState(-200)
+  const [collisionRadius, setCollisionRadius] = useState(25)
+  const [centerStrength, setCenterStrength] = useState(0.1)
 
   // Use startTransition to avoid replacing visible content with loading state
   const updateParam =

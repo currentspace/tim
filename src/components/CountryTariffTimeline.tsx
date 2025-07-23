@@ -3,7 +3,7 @@ import {
   select,
   max,
   axisLeft,
-  curveMonotoneX,
+  curveCardinal,
   min,
   pointer,
   scaleLinear,
@@ -37,7 +37,7 @@ class CountryTariffVisualization {
   private svg: Selection<SVGSVGElement, unknown, null, undefined>
   private tooltip: Selection<HTMLDivElement, unknown, HTMLElement, unknown>
   private width = 900
-  private height = 500
+  private height = 380
   private margin = { top: 40, right: 200, bottom: 60, left: 60 }
   private innerWidth = this.width - this.margin.left - this.margin.right
   private innerHeight = this.height - this.margin.top - this.margin.bottom
@@ -109,7 +109,7 @@ class CountryTariffVisualization {
       .call(yAxisGrid)
       .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
-      .style('opacity', 0.5)
+      .style('opacity', 0.1)
 
     this.g
       .append('g')
@@ -118,7 +118,7 @@ class CountryTariffVisualization {
       .call(xAxisGrid)
       .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
-      .style('opacity', 0.5)
+      .style('opacity', 0.1)
   }
 
   private createAxes() {
@@ -164,11 +164,11 @@ class CountryTariffVisualization {
   }
 
   private createLineChart(timeSeriesData: CountryTimeSeries[]) {
-    // Create line generator
+    // Create line generator with smooth curves
     const myLine = line<{ date: Date; rate: number }>()
       .x((d) => this.xScale(d.date))
       .y((d) => this.yScale(d.rate))
-      .curve(curveMonotoneX)
+      .curve(curveCardinal.tension(0.7))
 
     // Draw lines
     this.lines = this.g

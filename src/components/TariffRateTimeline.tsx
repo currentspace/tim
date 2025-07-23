@@ -60,8 +60,8 @@ function TariffRateTimeline() {
     if (!svgRef.current) return
 
     const width = 900
-    const height = 480
-    const margin = { top: 20, right: 180, bottom: 100, left: 60 }
+    const height = 360
+    const margin = { top: 20, right: 180, bottom: 80, left: 60 }
     const innerWidth = width - margin.left - margin.right
     const innerHeight = height - margin.top - margin.bottom
 
@@ -138,7 +138,7 @@ function TariffRateTimeline() {
       .call(yAxisGrid)
       .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
-      .style('opacity', 0.5)
+      .style('opacity', 0.1)
 
     // Add X grid lines
     g.append('g')
@@ -147,7 +147,7 @@ function TariffRateTimeline() {
       .call(xAxisGrid)
       .style('stroke', D3_COLORS.BORDER_DEFAULT)
       .style('stroke-dasharray', '1,1')
-      .style('opacity', 0.5)
+      .style('opacity', 0.1)
 
     // Create axes
     const xAxis = axisBottom(xScale)

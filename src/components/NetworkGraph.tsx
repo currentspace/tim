@@ -101,20 +101,20 @@ class D3NetworkVisualization {
     const startupX = width * 0.5
     const founderX = width * 0.85
 
-    // Initialize node positions
+    // Initialize node positions with tighter clustering
     this.nodes.forEach((node) => {
       switch (node.type) {
         case 'vc':
-          node.x = vcX + (Math.random() - 0.5) * 100
-          node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+          node.x = vcX + (Math.random() - 0.5) * 60
+          node.y = height / 2 + (Math.random() - 0.5) * height * 0.4
           break
         case 'startup':
-          node.x = startupX + (Math.random() - 0.5) * 200
-          node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+          node.x = startupX + (Math.random() - 0.5) * 120
+          node.y = height / 2 + (Math.random() - 0.5) * height * 0.4
           break
         case 'founder':
-          node.x = founderX + (Math.random() - 0.5) * 100
-          node.y = height / 2 + (Math.random() - 0.5) * height * 0.6
+          node.x = founderX + (Math.random() - 0.5) * 60
+          node.y = height / 2 + (Math.random() - 0.5) * height * 0.4
           break
       }
     })
@@ -145,9 +145,9 @@ class D3NetworkVisualization {
                 return founderX
             }
           })
-          .strength(0.2),
+          .strength(0.3),
       )
-      .force('y', forceY<SimulationNode>(height / 2).strength(0.05))
+      .force('y', forceY<SimulationNode>(height / 2).strength(0.1))
       .force('collision', forceCollide<SimulationNode>().radius(params.collisionRadius))
       .force(
         'center',
@@ -344,7 +344,7 @@ class D3NetworkVisualization {
       })
       .attr('stroke-width', (d) => Math.sqrt(d.value / 10000000))
       .attr('fill', 'none')
-      .attr('opacity', 0.4)
+      .attr('opacity', 0.3)
 
     // Update nodes
     const nodeGroup = this.g.select('.nodes').empty()
@@ -474,7 +474,7 @@ class D3NetworkVisualization {
   }
 
   private resetHighlight() {
-    this.linkElements?.attr('opacity', 0.4)
+    this.linkElements?.attr('opacity', 0.3)
     this.nodeElements?.attr('opacity', 1)
   }
 

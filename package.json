@@ -15,11 +15,13 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:ci": "vitest run",
-    "screenshots": "playwright test e2e/capture-only.spec.ts",
-    "screenshots:ui": "playwright test e2e/capture-only.spec.ts --ui",
-    "screenshots:compare": "tsx e2e/utils/organize-comparisons.ts",
-    "screenshots:all": "tsx e2e/utils/run-comparisons.ts",
-    "screenshots:test": "playwright test e2e/capture-and-compare.spec.ts"
+    "screenshots": "playwright test e2e/capture-screenshots-improved.spec.ts",
+    "screenshots:ui": "playwright test e2e/capture-screenshots-improved.spec.ts --ui",
+    "screenshots:compare": "tsx e2e/utils/visual-comparison.ts",
+    "screenshots:all": "tsx e2e/utils/run-screenshots.ts",
+    "screenshots:clean": "tsx e2e/utils/run-screenshots.ts --clean",
+    "screenshots:test": "playwright test e2e/capture-and-compare.spec.ts",
+    "screenshots:install-deps": "pnpm add -D canvas pixelmatch pngjs @types/pixelmatch"
   },
   "keywords": [],
   "author": "",
