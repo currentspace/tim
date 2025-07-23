@@ -8,7 +8,7 @@ import { createTooltip, showTooltip, hideTooltip } from '../utils/d3Utils'
 import { css, cx } from '../../styled-system/css'
 import { typographyStyles, formStyles } from '../styles/shared'
 import Layout from './Layout'
-import { select, scaleSqrt, max } from 'd3'
+import { select, arc as d3Arc } from 'd3'
 import type { Selection } from 'd3'
 
 interface ArcData {
@@ -59,26 +59,32 @@ class CountryExposureVisualization {
     // Sort data by percentage descending
     const sortedData = [...exposureData].sort((a, b) => b.percentage - a.percentage)
 
-    // Create concentric circles for each country
-    const radiusScale = scaleSqrt()
-      .domain([0, max(sortedData, (d) => d.percentage) ?? 0])
-      .range([30, this.outerRadius])
+    // Create sunburst-style concentric rings
+    const ringWidth = (this.outerRadius - 50) / sortedData.length
+    const innerRadius = 50
 
-    // Add circles from largest to smallest
-    sortedData.forEach((d) => {
-      const radius = radiusScale(d.percentage)
+    // Add rings from inside to outside
+    sortedData.forEach((d, i) => {
+      const inner = innerRadius + i * ringWidth
+      const outer = inner + ringWidth - 3 // Small gap between rings
 
-      g.append('circle')
-        .attr('r', radius)
+      const arc = d3Arc<unknown, { innerRadius: number; outerRadius: number }>()
+        .innerRadius(inner)
+        .outerRadius(outer)
+        .startAngle(0)
+        .endAngle(2 * Math.PI)
+
+      g.append('path')
+        .attr('d', arc({ innerRadius: inner, outerRadius: outer }))
         .attr('fill', COUNTRY_COLORS[d.country] ?? D3_COLORS.DEFAULT_GRAY)
         .attr('stroke', 'white')
-        .attr('stroke-width', 3)
-        .style('opacity', 0.8)
+        .attr('stroke-width', 2)
+        .style('opacity', 0.85)
         .style('cursor', 'pointer')
         .on('mouseenter', (event: MouseEvent) => {
-          select(event.currentTarget as SVGCircleElement)
+          select(event.currentTarget as SVGPathElement)
             .style('opacity', 1)
-            .attr('stroke-width', 4)
+            .attr('stroke-width', 3)
 
           const revenue = d.totalRevenue / 1e6
           const content = `
@@ -90,9 +96,9 @@ class CountryExposureVisualization {
           showTooltip(this.tooltip, content, event)
         })
         .on('mouseleave', (event: MouseEvent) => {
-          select(event.currentTarget as SVGCircleElement)
-            .style('opacity', 0.8)
-            .attr('stroke-width', 3)
+          select(event.currentTarget as SVGPathElement)
+            .style('opacity', 0.85)
+            .attr('stroke-width', 2)
           hideTooltip(this.tooltip)
         })
         .on('mousemove', (event: MouseEvent) => {
@@ -102,6 +108,12 @@ class CountryExposureVisualization {
         })
     })
 
+    // Add center circle background
+    g.append('circle')
+      .attr('r', innerRadius - 5)
+      .attr('fill', '#3b82f6')
+      .style('opacity', 0.9)
+
     // Add center company name
     g.append('text')
       .attr('text-anchor', 'middle')
@@ -109,7 +121,7 @@ class CountryExposureVisualization {
       .style('font-family', FONTS.EDITORIAL)
       .style('font-size', '24px')
       .style('font-weight', 'bold')
-      .style('fill', D3_COLORS.TEXT_PRIMARY)
+      .style('fill', 'white')
       .text(selectedCompany === 'HP Inc.' ? 'HP' : selectedCompany)
 
     // Add legend on the right side

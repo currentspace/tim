@@ -9,7 +9,7 @@ import { TRANSITION_DURATION } from '../utils/d3Utils'
 import { css, cx } from '../../styled-system/css'
 import { layoutStyles, timelineStyles } from '../styles/shared'
 import Layout from './Layout'
-import { max, scaleSqrt, select } from 'd3'
+import { max, scaleSqrt, select, forceSimulation, forceX, forceY, forceCollide } from 'd3'
 
 interface CompanyData {
   company: string
@@ -17,6 +17,12 @@ interface CompanyData {
   tariffImpact: number
   netRevenue: number
   impactPercentage: number
+}
+
+interface NodeData extends CompanyData {
+  radius: number
+  x: number
+  y: number
 }
 
 function AnticipatedTariffImpact() {
@@ -73,9 +79,8 @@ function AnticipatedTariffImpact() {
 
     const width = 800
     const height = 600
-    const leftMargin = 300
-    const topMargin = 150
-    const bubbleSpacing = 140
+    const centerX = width / 2
+    const centerY = height / 2
 
     // Clear previous content
     select(svgRef.current).selectAll('*').remove()
@@ -88,7 +93,7 @@ function AnticipatedTariffImpact() {
     // Create radius scale based on impact percentage - larger circles to match Figma
     const radiusScale = scaleSqrt()
       .domain([0, max(companyData, (d) => d.impactPercentage) ?? 0])
-      .range([40, 80])
+      .range([50, 90])
 
     // Get company colors
     const getCompanyColor = (companyName: string): string => {
@@ -99,30 +104,40 @@ function AnticipatedTariffImpact() {
       return D3_COLORS.TEXT_MUTED
     }
 
-    // Calculate positions for vertical stack layout
-    const getPosition = (index: number) => {
-      return {
-        x: leftMargin,
-        y: topMargin + index * bubbleSpacing,
-      }
-    }
+    // Create node data with positions
+    const nodes: NodeData[] = companyData.map((d, i) => ({
+      ...d,
+      radius: radiusScale(d.impactPercentage),
+      x: centerX + (i - 1) * 150, // Initial spread
+      y: centerY + (i - 1) * 50,
+    }))
 
-    // Create company groups with vertical positioning
+    // Run force simulation to prevent overlaps
+    const simulation = forceSimulation<NodeData>(nodes)
+      .force('x', forceX(centerX).strength(0.05))
+      .force('y', forceY(centerY).strength(0.05))
+      .force(
+        'collide',
+        forceCollide<NodeData>().radius((d) => d.radius + 20),
+      )
+      .stop()
+
+    // Run simulation synchronously
+    for (let i = 0; i < 120; i++) simulation.tick()
+
+    // Create company groups with force-positioned nodes
     const companyGroups = svg
       .selectAll('.company-bubble')
-      .data(companyData)
+      .data(nodes)
       .enter()
       .append('g')
       .attr('class', 'company-bubble')
-      .attr('transform', (_d, i) => {
-        const pos = getPosition(i)
-        return `translate(${String(pos.x)},${String(pos.y)})`
-      })
+      .attr('transform', (d) => `translate(${String(d.x)},${String(d.y)})`)
 
     // Add circles
     companyGroups
       .append('circle')
-      .attr('r', (d) => radiusScale(d.impactPercentage))
+      .attr('r', (d) => d.radius)
       .attr('fill', (d) => getCompanyColor(d.company))
       .attr('stroke', D3_COLORS.BG_PRIMARY)
       .attr('stroke-width', 2)
@@ -132,7 +147,7 @@ function AnticipatedTariffImpact() {
     // Add company names to the left of bubbles (to match Figma)
     companyGroups
       .append('text')
-      .attr('x', (d) => -radiusScale(d.impactPercentage) - 20)
+      .attr('x', (d) => -d.radius - 20)
       .attr('y', 0)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'end')
@@ -151,7 +166,7 @@ function AnticipatedTariffImpact() {
     // Add impact percentage below company name
     companyGroups
       .append('text')
-      .attr('x', (d) => -radiusScale(d.impactPercentage) - 20)
+      .attr('x', (d) => -d.radius - 20)
       .attr('y', 20)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'end')
@@ -192,12 +207,8 @@ function AnticipatedTariffImpact() {
 
     // Add hover interactions
     companyGroups
-      .on('mouseenter', function (this: SVGGElement, _event: MouseEvent, d: CompanyData) {
+      .on('mouseenter', function (this: SVGGElement, _event: MouseEvent, d: NodeData) {
         setHoveredCompany(d.company)
-
-        // Get the index from the data
-        const allData = companyGroups.data()
-        const i = allData.indexOf(d)
 
         // Highlight bubble
         select(this)
@@ -207,9 +218,9 @@ function AnticipatedTariffImpact() {
           .attr('stroke-width', 3)
           .style('filter', 'brightness(1.1)')
 
-        // Get bubble position
-        const bubblePos = getPosition(i)
-        const bubbleRadius = radiusScale(d.impactPercentage)
+        // Get bubble position from node data
+        const bubblePos = { x: d.x, y: d.y }
+        const bubbleRadius = d.radius
 
         // Show popup with product breakdown
         const popupX = bubblePos.x + bubbleRadius + 80

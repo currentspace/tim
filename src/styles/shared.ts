@@ -120,6 +120,25 @@ export const layoutStyles = {
     padding: 0,
     margin: 0,
   }),
+
+  // Content container with subtle background
+  contentContainer: css({
+    background: 'rgba(0, 0, 0, 0.02)',
+    borderRadius: '8px',
+    padding: '24px',
+    margin: '16px',
+  }),
+
+  // Content container for visualizations
+  visualizationContentContainer: css({
+    background: 'rgba(0, 0, 0, 0.02)',
+    borderRadius: '8px',
+    padding: '32px',
+    margin: '24px',
+    minHeight: '600px',
+    display: 'flex',
+    flexDirection: 'column',
+  }),
 }
 
 // ===== BADGE PATTERNS =====
